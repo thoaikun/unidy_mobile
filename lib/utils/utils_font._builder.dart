@@ -11,7 +11,7 @@ class FontBuilder {
     object = GoogleFonts.readexPro(
       fontWeight: option.fontWeight,
       fontSize: option.fontSize,
-      color: option.color
+      color: option.color,
     );
   }
 
@@ -19,20 +19,29 @@ class FontBuilder {
     object = GoogleFonts.readexPro();
   }
   
-  void setColor(Color color) {
+  FontBuilder setColor(Color color) {
     object = object.copyWith(color: color);
+    return this;
   }
   
-  void setFontSize(double size) {
+  FontBuilder setFontSize(double size) {
     object = object.copyWith(fontSize: size);
+    return this;
   }
   
-  void setWeight(FontWeight fontWeight) {
+  FontBuilder setWeight(FontWeight fontWeight) {
     object = object.copyWith(fontWeight: fontWeight);
+    return this;
   }
 
-  void setLineHeight(double lineHeight) {
+  FontBuilder setLineHeight(double lineHeight) {
     object = object.copyWith(height: lineHeight);
+    return this;
+  }
+
+  FontBuilder setLetterSpacing(double value) {
+    object = object.copyWith(letterSpacing: value);
+    return this;
   }
   
   TextStyle get font => object;

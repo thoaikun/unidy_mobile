@@ -66,7 +66,13 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/font
+    - assets/font/ReadexPro-Bold.ttf
+    - assets/font/ReadexPro-ExtraLight.ttf
+    - assets/font/ReadexPro-Light.ttf
+    - assets/font/ReadexPro-Medium.ttf
+    - assets/font/ReadexPro-Regular.ttf
+    - assets/font/ReadexPro-SemiBold.ttf
+    - assets/imgs/logo/logo_2.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
