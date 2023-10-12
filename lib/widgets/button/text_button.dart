@@ -26,13 +26,25 @@ class UnidyTextButton extends StatelessWidget {
 
   const UnidyTextButton({ Key? key, required this.text, this.onPressed, this.height, this.width }) : super(key: key);
   
+  ButtonStyle getButtonStyle() {
+    return ButtonStyle(
+      textStyle: MaterialStatePropertyAll(FontBuilder(option: BodyRegular.fs16).font),
+      shape: MaterialStatePropertyAll(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        )
+      )
+    );
+  }
+
+
   @override
   Widget build(BuildContext context){
     return SizedBox(
       width: width,
       height: height,
       child: TextButton(
-        style: TextButtonStyle(),
+        style: getButtonStyle(),
         onPressed: onPressed,
         child: Text(text),
       ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unidy_mobile/config/config_color_scheme.dart';
+import 'package:unidy_mobile/widgets/button/filled_button.dart';
+import 'package:unidy_mobile/widgets/button/filled_tonal_button.dart';
+import 'package:unidy_mobile/widgets/button/text_button.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
 void main() {
@@ -52,23 +55,36 @@ class _MyHomePageState extends State<MyHomePage> {
           height: 30,
         ),
       ),
-      body: const Padding(
-        padding: EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Input(
+            const Input(
               label: 'Email',
               placeholder: 'Nhập email của bạn',
               icon: Icon(Icons.email_rounded, size: 22,),
             ),
-            SizedBox(height: 15),
-            Input(
+            const SizedBox(height: 15),
+            const Input(
               label: 'Password',
               type: InputType.password,
               placeholder: 'Nhập mật khẩu của bạn',
               icon: Icon(Icons.lock, size: 22,),
+              enableBorder: false,
+            ),
+            UnidyFilledTonalButton(
+              text: 'Login',
+              onPressed: () => print('hii'),
+            ),
+            UnidyTextButton(
+              text: 'Login',
+              onPressed: () => print('hii'),
+            ),
+            UnidyFilledButton(
+              text: 'Login',
+              onPressed: () => print('hii'),
             )
           ],
         ),

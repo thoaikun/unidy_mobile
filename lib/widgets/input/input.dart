@@ -18,6 +18,7 @@ class Input extends StatelessWidget {
   final bool numberKeyboard;
   final bool autoFocus;
   final bool readOnly;
+  final bool enableBorder;
 
   const Input({ 
     Key? key, 
@@ -28,7 +29,8 @@ class Input extends StatelessWidget {
     this.placeholder, 
     this.numberKeyboard = false,
     this.autoFocus = false,
-    this.readOnly = false
+    this.readOnly = false,
+    this.enableBorder = false
   }) : super(key: key);
 
   InputDecoration getInputDecoration() {
@@ -50,22 +52,22 @@ class Input extends StatelessWidget {
         }
       ),
 
-      // enabledBorder: OutlineInputBorder(
-      //   borderRadius: BorderRadius.circular(4),
-      //   borderSide: const BorderSide(
-      //     color: TextColor.textColor200,
-      //     width: 1.5,
-      //     style: BorderStyle.solid
-      //   )
-      // ),
-      // focusedBorder: OutlineInputBorder(
-      //   borderRadius: BorderRadius.circular(4),
-      //   borderSide: const BorderSide(
-      //     color: PrimaryColor.primary500,
-      //     width: 1.5,
-      //     style: BorderStyle.solid
-      //   )
-      // )
+      enabledBorder: enableBorder ? OutlineInputBorder(
+        borderRadius: BorderRadius.circular(4),
+        borderSide: const BorderSide(
+          color: TextColor.textColor200,
+          width: 1.5,
+          style: BorderStyle.solid
+        )
+      ) : null,
+      focusedBorder: enableBorder ? OutlineInputBorder(
+        borderRadius: BorderRadius.circular(4),
+        borderSide: const BorderSide(
+          color: PrimaryColor.primary500,
+          width: 1.5,
+          style: BorderStyle.solid
+        )
+      ) : null
     );
   }
 
