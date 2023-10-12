@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:unidy_mobile/config/config_color_scheme.dart';
-import 'package:unidy_mobile/widgets/button/filled_button.dart';
-import 'package:unidy_mobile/widgets/button/filled_tonal_button.dart';
-import 'package:unidy_mobile/widgets/button/text_button.dart';
+import 'package:unidy_mobile/config/config_theme.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
+import 'package:unidy_mobile/widgets/navigation/main_top_app_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,10 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: unidyColorScheme,
-        useMaterial3: true,
-      ),
+      theme: unidyThemeData,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -40,21 +34,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
+
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    // than having to individually change instances f widgets.
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.2,
-        backgroundColor: Colors.white,
-        shadowColor: Theme.of(context).colorScheme.shadow,
-        title: SvgPicture.asset(
-          'assets/imgs/logo/logo_2.svg',
-          width: 100,
-          height: 30,
-        ),
-      ),
+      appBar: MainTopAppBar().render(context),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
         child: Column(
@@ -74,16 +60,16 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.lock, size: 22,),
               enableBorder: false,
             ),
-            UnidyFilledTonalButton(
-              text: 'Login',
+            FilledButton.tonal(
+              child: const Text('Login'),
               onPressed: () => print('hii'),
             ),
-            UnidyTextButton(
-              text: 'Login',
+            TextButton(
+              child: const Text('Login'),
               onPressed: () => print('hii'),
             ),
-            UnidyFilledButton(
-              text: 'Login',
+            FilledButton(
+              child: const Text('Login'),
               onPressed: () => print('hii'),
             )
           ],

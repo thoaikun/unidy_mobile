@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/config_color.dart';
-import 'package:unidy_mobile/config/config_font.dart';
-import 'package:unidy_mobile/utils/utils_font._builder.dart';
 
 enum InputType {
   text,
@@ -36,11 +34,8 @@ class Input extends StatelessWidget {
   InputDecoration getInputDecoration() {
     return InputDecoration(
       labelText: label,
-      labelStyle: FontBuilder(option: BodyRegular.fs16).setColor(TextColor.textColor300).font,
-      floatingLabelStyle: FontBuilder(option: BodyRegular.fs14).setColor(PrimaryColor.primary500).font,
 
       hintText: placeholder,
-      hintStyle: FontBuilder(option: BodyRegular.fs16).setLetterSpacing(0.8).setColor(TextColor.textColor200).font,
       
       prefixIcon: icon,
       prefixIconColor: MaterialStateColor.resolveWith(
@@ -78,7 +73,6 @@ class Input extends StatelessWidget {
       decoration: getInputDecoration(),
       keyboardType: numberKeyboard ? TextInputType.number : TextInputType.text,
       textAlignVertical: TextAlignVertical.center,
-      style: FontBuilder(option: BodyRegular.fs16).setLetterSpacing(0.8).font,
       autofocus: autoFocus,
       readOnly: readOnly,
       obscureText: type == InputType.password,

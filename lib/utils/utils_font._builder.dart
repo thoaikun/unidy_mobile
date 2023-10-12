@@ -10,7 +10,6 @@ class FontBuilder {
   FontBuilder({required this.option}) {
     object = GoogleFonts.readexPro(
       fontWeight: option.fontWeight,
-      fontSize: option.fontSize,
       color: option.color,
     );
   }
