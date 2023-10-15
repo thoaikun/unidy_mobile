@@ -56,6 +56,28 @@ TextButtonThemeData unidyTextButtonThemeData = TextButtonThemeData(
   )
 );
 
+AppBarTheme unidyAppBarTheme = AppBarTheme(
+  elevation: 0.2,
+  backgroundColor: unidyColorScheme.background,
+  shadowColor: unidyColorScheme.shadow,
+  surfaceTintColor: Colors.transparent,
+  titleTextStyle: FontBuilder(option: fontMedium).setFontSize(18).setLineHeight(26/18).setLetterSpacing(0.15).font
+);
+
+PopupMenuThemeData unidyPopupMenuThemeData = const PopupMenuThemeData(
+  elevation: 0.7,
+  color: Colors.white,
+  surfaceTintColor: Colors.transparent
+);
+
+BottomNavigationBarThemeData unidyBottomNavigationBarThemeData = BottomNavigationBarThemeData(
+  elevation: 4,
+  selectedItemColor: PrimaryColor.primary500,
+  selectedLabelStyle: unidyTextTheme.labelSmall?.copyWith(color: PrimaryColor.primary500),
+  unselectedItemColor: TextColor.textColor200,
+  unselectedLabelStyle: unidyTextTheme.labelSmall?.copyWith(color: TextColor.textColor200)
+);
+
 ThemeData unidyThemeData = ThemeData(
   useMaterial3: true,
   colorScheme: unidyColorScheme,
@@ -63,4 +85,7 @@ ThemeData unidyThemeData = ThemeData(
   filledButtonTheme: unidyFilledButtonThemeData,
   outlinedButtonTheme: unidyOutlinedButtonThemeData,
   textButtonTheme: unidyTextButtonThemeData,
+  appBarTheme: unidyAppBarTheme,
+  bottomNavigationBarTheme: unidyBottomNavigationBarThemeData,
+  popupMenuTheme: unidyPopupMenuThemeData
 );
