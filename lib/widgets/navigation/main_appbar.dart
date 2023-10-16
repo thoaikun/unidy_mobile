@@ -15,6 +15,7 @@ class _UnidyMainAppBarState extends State<UnidyMainAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: SvgPicture.asset(
         'assets/imgs/logo/logo_2.svg',
         semanticsLabel: 'Logo',

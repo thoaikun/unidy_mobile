@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/config_theme.dart';
 import 'package:unidy_mobile/routes/routes.dart';
+import 'config/config_getit.dart';
 
 void main() {
+  configGetIt();
   runApp(const MyApp());
 }
 
