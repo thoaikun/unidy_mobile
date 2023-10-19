@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unidy_mobile/widgets/popup_menu/popup_menu.dart';
-import 'package:unidy_mobile/models/modal_popup_menu_option.dart';
+import 'package:unidy_mobile/models/model_popup_menu_option.dart';
 import 'package:unidy_mobile/widgets/search/search_delegate.dart';
 
 class UnidyMainAppBar extends StatefulWidget {
@@ -16,9 +16,8 @@ class _UnidyMainAppBarState extends State<UnidyMainAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      title: SvgPicture.asset(
-        'assets/imgs/logo/logo_2.svg',
-        semanticsLabel: 'Logo',
+      title: Image.asset(
+        'assets/imgs/logo/logo_2.png',
         width: 85,
       ),
       actions: [

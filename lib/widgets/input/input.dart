@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/config_color.dart';
+import 'package:unidy_mobile/config/config_theme.dart';
 
 enum InputType {
   text,
@@ -8,11 +9,12 @@ enum InputType {
 
 class Input extends StatelessWidget {
   final TextEditingController? controller;
+  final void Function()? onTap;
   final InputType type;
   final Icon? icon;
   final String label;
   final String? placeholder;
-  final String value = '';
+  final String? error;
   final bool numberKeyboard;
   final bool autoFocus;
   final bool readOnly;
@@ -21,10 +23,12 @@ class Input extends StatelessWidget {
   const Input({ 
     Key? key, 
     this.controller,
+    this.onTap,
     this.type = InputType.text,
     this.icon, 
     required this.label, 
-    this.placeholder, 
+    this.placeholder,
+    this.error,
     this.numberKeyboard = false,
     this.autoFocus = false,
     this.readOnly = false,
@@ -34,7 +38,7 @@ class Input extends StatelessWidget {
   InputDecoration getInputDecoration() {
     return InputDecoration(
       labelText: label,
-
+      errorText: error,
       hintText: placeholder,
       
       prefixIcon: icon,
@@ -42,6 +46,9 @@ class Input extends StatelessWidget {
         (Set<MaterialState> states) {
           if (states.contains(MaterialState.focused)) {
             return PrimaryColor.primary500;
+          }
+          if (states.contains(MaterialState.error)) {
+            return unidyColorScheme.error;
           }
           return TextColor.textColor300;
         }
@@ -76,6 +83,7 @@ class Input extends StatelessWidget {
       autofocus: autoFocus,
       readOnly: readOnly,
       obscureText: type == InputType.password,
+      onTap: onTap
     );
   }
 }

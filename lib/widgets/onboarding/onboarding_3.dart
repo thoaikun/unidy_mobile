@@ -4,7 +4,7 @@ import 'package:unidy_mobile/config/config_color.dart';
 import 'package:unidy_mobile/widgets/step_progress_bar/onbroading_step_progress_bar.dart';
 
 class Onboarding3 extends StatelessWidget {
-  final String illustrationUrl = 'assets/imgs/illustration/onboarding_3.svg';
+  final String illustrationUrl = 'assets/imgs/illustration/onboarding_3.png';
 
   const Onboarding3({super.key});
 
@@ -15,7 +15,7 @@ class Onboarding3 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(illustrationUrl),
+          Image.asset(illustrationUrl),
           const SizedBox(height: 20),
           Text(
             'Minh bạch, rõ ràng',
