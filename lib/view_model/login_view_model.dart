@@ -3,6 +3,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:unidy_mobile/utils/untils_validation.dart';
 
 class LoginViewModel extends ChangeNotifier {
+  final BuildContext context;
   final Duration debounceTime = const Duration(milliseconds: 500);
 
   final TextEditingController _emailController = TextEditingController();
@@ -16,15 +17,16 @@ class LoginViewModel extends ChangeNotifier {
 
   String? emailError;
   String? passwordError;
+  bool passwordVisible = false;
 
-  LoginViewModel() {
+  LoginViewModel({ required this.context }) {
     _emailController.addListener(() => _setEmailError(null));
     _passwordController.addListener(() => _setPasswordError(null));
 
     Stream<String> emailStream = _emailSubject.stream;
     Stream<String> passwordStream = _passwordSubject.stream;
 
-    ZipStream.zip2(
+    CombineLatestStream.combine2(
       emailStream.transform(EmailValidation()),
       passwordStream.transform(PasswordValidation()),
       (a, b) => a && b
@@ -32,15 +34,15 @@ class LoginViewModel extends ChangeNotifier {
       if (error is ValidationException) {
         switch (error.message) {
           case 'Mật khẩu không hợp lệ':
-            _setEmailError(error.message);
+            _setPasswordError(error.message);
             break;
           case 'Email không hợp lệ':
-            _setPasswordError(error.message);
+            _setEmailError(error.message);
             break;
         }
       }
     }).listen((event) {
-      print('ok');
+      Navigator.pushNamed(context, '/onboarding');
     });
   }
   
@@ -54,11 +56,23 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void handleOnClick() {
+  void handleClickLogin() {
     Sink<String> emailSink = _emailSubject.sink;
     Sink<String> passwordSink = _passwordSubject.sink;
 
     emailSink.add(_emailController.text);
     passwordSink.add(_passwordController.text);
+  }
+
+  void togglePasswordVisible() {
+    passwordVisible = !passwordVisible;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _emailController.dispose();
+    super.dispose();
   }
 }

@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => LoginViewModel(),
+      create: (_) => LoginViewModel(context: context),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             label: 'Email',
                             placeholder: 'Nhập email của bạn',
                             error: loginViewModel.emailError,
-                            icon: Icon(Icons.email_rounded)
+                            prefixIcon: Icon(Icons.email_rounded)
                           ),
                           const SizedBox(height: 20),
                           Input(
@@ -78,8 +78,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             label: 'Mật khẩu',
                             placeholder: 'Nhập mật khẩu của bạn',
                             error: loginViewModel.passwordError,
-                            type: InputType.password,
-                            icon: Icon(Icons.key_rounded),
+                            prefixIcon: const Icon(Icons.key_rounded),
+                            suffixIcon: IconButton(
+                              onPressed: loginViewModel.togglePasswordVisible,
+                              icon: loginViewModel.passwordVisible ? const Icon(Icons.visibility_off_rounded) : const Icon(Icons.visibility_rounded),
+                            ),
+                            obscureText: !loginViewModel.passwordVisible,
                           ),
                           const SizedBox(height: 15),
                           Row(
@@ -106,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 50,
                             child:
                               FilledButton(
-                                onPressed: loginViewModel.handleOnClick,
+                                onPressed: loginViewModel.handleClickLogin,
                                 child: const Text('Đi thôi')
                             ),
                           )

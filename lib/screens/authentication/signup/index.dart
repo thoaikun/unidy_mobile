@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/config_color.dart';
-import 'package:unidy_mobile/screens/authentication/signup/complete_signup.dart';
-import 'package:unidy_mobile/screens/authentication/signup/create_account.dart';
-import 'package:unidy_mobile/screens/authentication/signup/information.dart';
-import 'package:unidy_mobile/screens/authentication/signup/select_role.dart';
+import 'package:unidy_mobile/screens/authentication/signup/step/complete_signup.dart';
+import 'package:unidy_mobile/screens/authentication/signup/step/create_account.dart';
+import 'package:unidy_mobile/screens/authentication/signup/step/information.dart';
+import 'package:unidy_mobile/screens/authentication/signup/step/select_role.dart';
 import 'package:unidy_mobile/view_model/signup_view_model.dart';
 import 'package:unidy_mobile/widgets/role_card/role_card.dart';
 

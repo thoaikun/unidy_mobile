@@ -2,16 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/config_color.dart';
 import 'package:unidy_mobile/config/config_theme.dart';
 
-enum InputType {
-  text,
-  password
-}
-
 class Input extends StatelessWidget {
   final TextEditingController? controller;
   final void Function()? onTap;
-  final InputType type;
-  final Icon? icon;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final String label;
   final String? placeholder;
   final String? error;
@@ -19,20 +14,22 @@ class Input extends StatelessWidget {
   final bool autoFocus;
   final bool readOnly;
   final bool enableBorder;
+  final bool obscureText;
 
   const Input({ 
     Key? key, 
     this.controller,
     this.onTap,
-    this.type = InputType.text,
-    this.icon, 
+    this.prefixIcon,
+    this.suffixIcon,
     required this.label, 
     this.placeholder,
     this.error,
     this.numberKeyboard = false,
     this.autoFocus = false,
     this.readOnly = false,
-    this.enableBorder = false
+    this.enableBorder = false,
+    this.obscureText = false,
   }) : super(key: key);
 
   InputDecoration getInputDecoration() {
@@ -41,7 +38,7 @@ class Input extends StatelessWidget {
       errorText: error,
       hintText: placeholder,
       
-      prefixIcon: icon,
+      prefixIcon: prefixIcon,
       prefixIconColor: MaterialStateColor.resolveWith(
         (Set<MaterialState> states) {
           if (states.contains(MaterialState.focused)) {
@@ -53,6 +50,8 @@ class Input extends StatelessWidget {
           return TextColor.textColor300;
         }
       ),
+
+      suffixIcon: suffixIcon,
 
       enabledBorder: enableBorder ? OutlineInputBorder(
         borderRadius: BorderRadius.circular(4),
@@ -82,8 +81,25 @@ class Input extends StatelessWidget {
       textAlignVertical: TextAlignVertical.center,
       autofocus: autoFocus,
       readOnly: readOnly,
-      obscureText: type == InputType.password,
+      obscureText: obscureText,
       onTap: onTap
+    );
+  }
+
+  Widget dropdown<String>(BuildContext context, List<String> items, void Function(String?)? onSelected) {
+    return DropdownMenu<String>(
+      width: MediaQuery.of(context).size.width - 40,
+      label: Text(label),
+      leadingIcon: prefixIcon,
+      initialSelection: items[0],
+      dropdownMenuEntries: items.map((String item) => DropdownMenuEntry<String>(
+        value: item,
+        label: '$item',
+      )).toList(),
+      onSelected: onSelected,
+      inputDecorationTheme: const InputDecorationTheme(
+        enabledBorder: null,
+      ),
     );
   }
 }

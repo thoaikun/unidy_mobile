@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:unidy_mobile/utils/untils_validation.dart';
 
 enum EUserRole {
   volunteer,
@@ -11,11 +14,49 @@ class SignUpViewModel extends ChangeNotifier {
   int _currentStep = 0;
   EUserRole? _selectedRole;
 
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+
+  final BehaviorSubject<String> _emailSubject = BehaviorSubject<String>();
+  final BehaviorSubject<String> _passwordSubject = BehaviorSubject<String>();
+
+  String? emailError;
+  String? passwordError;
+
   int get step => _currentStep;
   EUserRole? get selectedRole => _selectedRole;
+  TextEditingController get emailController => _emailController;
+  TextEditingController get passwordController => _passwordController;
+  TextEditingController get dobController => _dobController;
 
   SignUpViewModel() {
     _selectedRole = EUserRole.volunteer;
+    // _emailController.addListener(() => _setEmailError(null));
+    // _passwordController.addListener(() => _setPasswordError(null));
+
+    Stream<String> emailStream = _emailSubject.stream;
+    Stream<String> passwordStream = _passwordSubject.stream;
+
+    // validate new account
+    CombineLatestStream.combine2(
+        emailStream.transform(EmailValidation()),
+        passwordStream.transform(PasswordValidation()),
+            (a, b) => a && b
+    ).doOnError((error, stackTrace) {
+      if (error is ValidationException) {
+        switch (error.message) {
+          case 'Mật khẩu không hợp lệ':
+            _setPasswordError(error.message);
+            break;
+          case 'Email không hợp lệ':
+            _setEmailError(error.message);
+            break;
+        }
+      }
+    }).listen((event) {
+      print('ok');
+    });
   }
 
   void setUserRole(EUserRole role) {
@@ -49,7 +90,24 @@ class SignUpViewModel extends ChangeNotifier {
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != DateTime.now()) {
-      print(picked);
+      String date = DateFormat('dd/MM/yyyy').format(picked).toString();
+      _dobController.text = date;
     }
+  }
+
+  void _setEmailError(String? error) {
+    emailError = error;
+    notifyListeners();
+  }
+  void _setPasswordError(String? error) {
+    passwordError = error;
+    notifyListeners();
+  }
+  void handleClickCreateAccount() {
+    Sink<String> emailSink = _emailSubject.sink;
+    Sink<String> passwordSink = _passwordSubject.sink;
+
+    emailSink.add(_emailController.text);
+    passwordSink.add(_passwordController.text);
   }
 }

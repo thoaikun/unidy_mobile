@@ -35,37 +35,37 @@ class InformationStep extends StatelessWidget {
             const Input(
                 label: 'Tên',
                 placeholder: 'Nhập tên của bạn',
-                icon: Icon(Icons.person_2_rounded)
+                prefixIcon: Icon(Icons.person_2_rounded)
             ),
             const SizedBox(height: 20),
             Input(
+              controller: signUpViewModel.dobController,
               label: 'Ngày sinh',
               onTap: () => signUpViewModel.selectDate(context),
-              icon: const Icon(Icons.calendar_month_rounded),
+              prefixIcon: const Icon(Icons.calendar_month_rounded),
               readOnly: true,
             ),
             const SizedBox(height: 20),
             const Input(
                 label: 'Giới tính',
                 placeholder: 'Thêm giới tính của bạn',
-                icon: Icon(Icons.transgender_rounded)
-            ),
+                prefixIcon: Icon(Icons.transgender_rounded)
+            ).dropdown(context, ['Nam', 'Nữ', 'Khác'], null),
             const SizedBox(height: 20),
             const Input(
               label: 'Số điện thoại',
-              type: InputType.password,
-              icon: Icon(Icons.phone_android_rounded),
+              numberKeyboard: true,
+              prefixIcon: Icon(Icons.phone_android_rounded),
             ),
             const SizedBox(height: 20),
             const Input(
                 label: 'Nghề nghiệp',
-                icon: Icon(Icons.cases_rounded)
+                prefixIcon: Icon(Icons.cases_rounded)
             ),
             const SizedBox(height: 20),
             const Input(
               label: 'Nơi công tác',
-              type: InputType.password,
-              icon: Icon(Icons.business),
+              prefixIcon: Icon(Icons.business),
             )
           ],
         );
