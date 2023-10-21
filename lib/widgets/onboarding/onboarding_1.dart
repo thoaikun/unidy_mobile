@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:unidy_mobile/config/config_color.dart';
+import 'package:unidy_mobile/config/color_config.dart';
 import 'package:unidy_mobile/widgets/step_progress_bar/onbroading_step_progress_bar.dart';
 
 class Onboarding1 extends StatelessWidget {

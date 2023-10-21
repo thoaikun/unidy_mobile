@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:unidy_mobile/config/config_color.dart';
+import 'package:unidy_mobile/config/color_config.dart';
 
 class FontOption {
   final Color fontColor;

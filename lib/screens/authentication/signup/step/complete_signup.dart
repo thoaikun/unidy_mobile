@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/config_color.dart';
+import 'package:unidy_mobile/config/color_config.dart';
 
 class CompleteSignUpStep extends StatelessWidget {
   const CompleteSignUpStep({super.key});

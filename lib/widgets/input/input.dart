@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/config_color.dart';
-import 'package:unidy_mobile/config/config_theme.dart';
+import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/theme_config.dart';
 
 class Input extends StatelessWidget {
   final TextEditingController? controller;
@@ -100,6 +100,16 @@ class Input extends StatelessWidget {
       inputDecorationTheme: const InputDecorationTheme(
         enabledBorder: null,
       ),
+    );
+  }
+
+  Widget textarea() {
+    return TextFormField(
+      controller: controller,
+      decoration: getInputDecoration(),
+      minLines: 5,
+      keyboardType: TextInputType.multiline,
+      maxLines: null,
     );
   }
 }

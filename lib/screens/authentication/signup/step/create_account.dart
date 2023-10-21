@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unidy_mobile/config/config_color.dart';
-import 'package:unidy_mobile/view_model/signup_view_model.dart';
+import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/controller/signup_controller.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
 class CreateAccountStep extends StatelessWidget {

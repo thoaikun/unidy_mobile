@@ -43,6 +43,7 @@ dependencies:
   font_awesome_flutter: ^10.5.0
   rxdart: ^0.27.7
   intl: ^0.18.1
+  file_picker: ^6.0.0
 
 dev_dependencies:
   flutter_test:

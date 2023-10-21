@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/config_theme.dart';
+import 'package:unidy_mobile/config/theme_config.dart';
 import 'package:unidy_mobile/routes/routes.dart';
-import 'config/config_getit.dart';
+import 'config/getit_config.dart';
 
 void main() {
   configGetIt();
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    bool isFirstTime = true;
+    bool isFirstTime = false;
 
     return MaterialApp(
       title: 'Unidy',

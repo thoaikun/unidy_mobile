@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/config_color.dart';
-import 'package:unidy_mobile/config/config_font.dart';
+import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/font_config.dart';
 import 'package:unidy_mobile/utils/utils_font._builder.dart';
 
 class UnidySearchDelegate extends SearchDelegate<String> {

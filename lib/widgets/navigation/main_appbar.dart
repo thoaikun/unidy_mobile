@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:unidy_mobile/config/color_config.dart';
 import 'package:unidy_mobile/widgets/popup_menu/popup_menu.dart';
-import 'package:unidy_mobile/models/model_popup_menu_option.dart';
+import 'package:unidy_mobile/models/popup_menu_option_model.dart';
 import 'package:unidy_mobile/widgets/search/search_delegate.dart';
 
 class UnidyMainAppBar extends StatefulWidget {
@@ -23,7 +24,7 @@ class _UnidyMainAppBarState extends State<UnidyMainAppBar> {
       actions: [
         IconButton(
           onPressed: () => showSearch(context: context, delegate: UnidySearchDelegate()),
-          icon: const Icon(Icons.search_rounded),
+          icon: const Icon(Icons.search_rounded, color: PrimaryColor.primary500),
         ),
         IconButton(
           onPressed: () {},

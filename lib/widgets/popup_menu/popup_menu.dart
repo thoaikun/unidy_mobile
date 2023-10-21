@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/config_color.dart';
-import 'package:unidy_mobile/models/model_popup_menu_option.dart';
+import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/models/popup_menu_option_model.dart';
 
 class UnidyPopupMenu extends StatefulWidget {
   final List<IPopupMenuItem> popupMenuItems;
