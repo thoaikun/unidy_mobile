@@ -21,7 +21,10 @@ class _AddPostState extends State<AddPost> {
         (BuildContext context, int index) {
           switch (index) {
             case 0:
-              return const AvatarCard();
+              return const Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: AvatarCard(),
+              );
             case 1:
               return const SizedBox(height: 5);
             case 2:
@@ -98,7 +101,7 @@ class _AddPostState extends State<AddPost> {
     return Consumer<AddPostController>(
       builder: (BuildContext context, AddPostController addPostController, Widget? child) {
         return Container(
-          margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: CustomScrollView(
             slivers: [
               _buildTextAreaInput(addPostController),
