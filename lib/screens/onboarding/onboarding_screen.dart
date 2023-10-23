@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/color_config.dart';
-import 'package:unidy_mobile/screens/user/home/index.dart';
+import 'package:unidy_mobile/screens/user/home/home_screen.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_1.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_2.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_3.dart';
-import 'package:unidy_mobile/widgets/step_progress_bar/onbroading_step_progress_bar.dart';
+import 'package:unidy_mobile/widgets/dot_progress_bar.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -83,7 +83,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               left: (MediaQuery.of(context).size.width - 240) * 0.5,
               child: Column(
                 children: [
-                  OnboardingStepProgressBar(step: onboardings.length, currentStep: currentStep),
+                  DotProgressBar(max: onboardings.length, current: currentStep),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: 200,

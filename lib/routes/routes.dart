@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/screens/authentication/login.dart';
-import 'package:unidy_mobile/screens/authentication/signup/index.dart';
-import 'package:unidy_mobile/screens/friends_list/friends_list.dart';
-import 'package:unidy_mobile/screens/friends_list/request_friends_list.dart';
-import 'package:unidy_mobile/screens/friends_list/suggestion_friend_list.dart';
-import 'package:unidy_mobile/screens/onboarding/onboarding.dart';
-import 'package:unidy_mobile/screens/user/home/index.dart';
+import 'package:unidy_mobile/screens/authentication/login_screen.dart';
+import 'package:unidy_mobile/screens/authentication/signup/signup_screen.dart';
+import 'package:unidy_mobile/screens/friends_list/friends_list_screen.dart';
+import 'package:unidy_mobile/screens/friends_list/request_friends_list_screen.dart';
+import 'package:unidy_mobile/screens/friends_list/suggestion_friend_list_screen.dart';
+import 'package:unidy_mobile/screens/onboarding/onboarding_screen.dart';
+import 'package:unidy_mobile/screens/user/home/home_screen.dart';
 
 Map<String, Widget Function(BuildContext)> routes = <String, Widget Function(BuildContext)> {
   '/': (context) => const Home(),
   '/authentication/login': (context) => const LoginScreen(),
   '/authentication/signup': (context) => const SignUpScreen(),
   '/onboarding': (context) => const OnboardingScreen(),
+  '/post_detail': (context) => Container(),
   '/notification': (context) => Container(),
   'search/posts': (context) => Container(),
   'search/organizations': (context) => Container(),

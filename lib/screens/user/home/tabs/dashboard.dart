@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
+import 'package:unidy_mobile/widgets/post_card/post_card.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -11,12 +12,10 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      child: const AvatarCard(
-        showTime: true,
-        description: 'Đã đăng một kỉ niệm',
-      ),
+    return ListView.separated(
+      itemBuilder: (BuildContext context, int index) => const PostCard(),
+      separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
+      itemCount: 4
     );
   }
 }

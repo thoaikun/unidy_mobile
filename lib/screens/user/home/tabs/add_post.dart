@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unidy_mobile/controller/add_post_controller.dart';
+import 'package:unidy_mobile/viewmodel/add_post_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
-import 'package:unidy_mobile/widgets/image_preview/image_preview.dart';
-import 'package:unidy_mobile/widgets/input/input.dart';
-import 'package:unidy_mobile/widgets/upload_btn/upload_btn.dart';
+import 'package:unidy_mobile/widgets/image_preview.dart';
+import 'package:unidy_mobile/widgets/input.dart';
+import 'package:unidy_mobile/widgets/upload_btn.dart';
 
 class AddPost extends StatefulWidget {
   const AddPost({super.key});

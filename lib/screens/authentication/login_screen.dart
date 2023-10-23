@@ -3,8 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'package:unidy_mobile/config/color_config.dart';
-import 'package:unidy_mobile/controller/login_controller.dart';
-import 'package:unidy_mobile/widgets/input/input.dart';
+import 'package:unidy_mobile/viewmodel/login_viewmodel.dart';
+import 'package:unidy_mobile/widgets/input.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

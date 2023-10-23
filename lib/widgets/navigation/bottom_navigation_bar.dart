@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unidy_mobile/controller/navigation_controller.dart';
+import 'package:unidy_mobile/viewmodel/navigation_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_navigation_icon.dart';
 
 class UnidyBottomNavigationBar extends StatefulWidget {

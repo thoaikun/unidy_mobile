@@ -5,8 +5,8 @@ import 'package:unidy_mobile/screens/authentication/signup/step/complete_signup.
 import 'package:unidy_mobile/screens/authentication/signup/step/create_account.dart';
 import 'package:unidy_mobile/screens/authentication/signup/step/information.dart';
 import 'package:unidy_mobile/screens/authentication/signup/step/select_role.dart';
-import 'package:unidy_mobile/controller/signup_controller.dart';
-import 'package:unidy_mobile/widgets/role_card/role_card.dart';
+import 'package:unidy_mobile/viewmodel/signup_viewmodel.dart';
+import 'package:unidy_mobile/widgets/role_card.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

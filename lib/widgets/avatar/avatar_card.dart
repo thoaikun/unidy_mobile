@@ -61,8 +61,8 @@ class AvatarCard extends StatelessWidget {
             Visibility(
               visible: description != null,
               child: Text(
-                'Đã chia sẽ một kỷ niệm mới',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300)
+                description ?? '',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TextColor.textColor300)
               ),
             )
           ],

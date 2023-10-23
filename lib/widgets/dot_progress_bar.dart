@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/color_config.dart';
 
-class OnboardingStepProgressBar extends StatelessWidget {
-  final int step;
-  final int currentStep;
+class DotProgressBar extends StatelessWidget {
+  final int max;
+  final int current;
+  final double dotSize;
 
-  const OnboardingStepProgressBar({
+  const DotProgressBar({
     super.key,
-    required this.step,
-    this.currentStep = 0
+    required this.max,
+    this.current = 0,
+    this.dotSize = 10
   });
 
   List<Widget> _buildStepIndicator() {
     List<Widget> result = [];
 
-    for (int i=0; i < step; i++) {
+    for (int i=0; i < max; i++) {
       result.add(Container(
-        width: 10,
-        height: 10,
+        width: dotSize,
+        height: dotSize,
         decoration: BoxDecoration(
-          color: i == currentStep ? PrimaryColor.primary500 : TextColor.textColor200,
+          color: i == current ? PrimaryColor.primary500 : TextColor.textColor200,
           shape: BoxShape.circle
         ),
       ));
       
-      if (i < step-1) {
+      if (i < max-1) {
         result.add(const SizedBox(width: 10));
       }
     }

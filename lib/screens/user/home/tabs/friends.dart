@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/widgets/friend_card/friend_card.dart';
+import 'package:unidy_mobile/widgets/friend_card.dart';
 
 class Friends extends StatefulWidget {
   const Friends({super.key});

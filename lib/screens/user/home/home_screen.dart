@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unidy_mobile/controller/add_post_controller.dart';
-import 'package:unidy_mobile/controller/navigation_controller.dart';
+import 'package:unidy_mobile/viewmodel/add_post_viewmodel.dart';
+import 'package:unidy_mobile/viewmodel/navigation_viewmodel.dart';
 import 'package:unidy_mobile/screens/user/home/tabs/add_post.dart';
 import 'package:unidy_mobile/screens/user/home/tabs/dashboard.dart';
 import 'package:unidy_mobile/screens/user/home/tabs/friends.dart';
