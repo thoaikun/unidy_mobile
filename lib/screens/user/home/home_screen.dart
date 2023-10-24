@@ -36,12 +36,13 @@ class _HomeState extends State<Home> {
       ],
       child: Consumer<NavigationViewModel>(
         builder: (BuildContext context, NavigationViewModel navigationViewModal, Widget? child) => Scaffold(
-            appBar: const PreferredSize(
-                preferredSize: Size.fromHeight(55),
-                child: UnidyMainAppBar()
-            ),
-            bottomNavigationBar: const UnidyBottomNavigationBar(),
-            body: _screenOptions[navigationViewModal.currentScreen]
+          resizeToAvoidBottomInset: true,
+          appBar: const PreferredSize(
+              preferredSize: Size.fromHeight(55),
+              child: UnidyMainAppBar()
+          ),
+          bottomNavigationBar: const UnidyBottomNavigationBar(),
+          body: _screenOptions[navigationViewModal.currentScreen]
         ),
       ),
     );

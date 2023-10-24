@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/color_config.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
-import 'package:unidy_mobile/widgets/comment_card.dart';
+import 'package:unidy_mobile/widgets/comment/comment_card.dart';
+import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image_slider.dart';
+import 'package:unidy_mobile/widgets/input.dart';
 
 class PostCard extends StatelessWidget {
   const PostCard({super.key});
@@ -28,7 +30,7 @@ class PostCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPostInteration(BuildContext context) {
+  Widget _buildPostInteraction(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -60,8 +62,8 @@ class PostCard extends StatelessWidget {
 
   Widget _buildCommentSheetModal(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.4,
-      minChildSize: 0.2,
+      initialChildSize: 0.6,
+      minChildSize: 0.4,
       maxChildSize: 0.9,
       expand: false,
       builder: (_, controller) => Column(
@@ -74,17 +76,35 @@ class PostCard extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               controller: controller,
-              itemCount: 5,
+              itemCount: 2,
+              physics: const BouncingScrollPhysics(),
               itemBuilder: (_, index) {
-                return const CommentCard();
+                return CommentTree();
               },
-            ),
+            )
           ),
+          AnimatedPadding(
+            padding: MediaQuery.of(context).viewInsets,
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeInOut,
+            child:  Container(
+              decoration: const BoxDecoration(
+                color: PrimaryColor.primary100
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              alignment: Alignment.bottomCenter,
+              child: Input(
+                label: 'Bình luận',
+                placeholder: 'Nhập bình luận',
+                suffixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.send_rounded))
+              )
+            ),
+          )
         ],
       ),
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -104,7 +124,7 @@ class PostCard extends StatelessWidget {
               'https://images.ctfassets.net/81iqaqpfd8fy/57NATA4649mbTvRfGpd6R1/911f94cdfd6089a77aefb4b1e9ebac7a/Teenvolunteercover.jpg'
             ]),
             const SizedBox(height: 15),
-            _buildPostInteration(context)
+            _buildPostInteraction(context)
           ],
         ),
       ),
