@@ -19,12 +19,10 @@ class AvatarProfile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20)
       ),
       padding: const EdgeInsets.all(2),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(50),
-        child: Image.network(
-          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
-          width: 15,
-          height: 15,
+      child: const CircleAvatar(
+        radius: 15,
+        backgroundImage: NetworkImage(
+          'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
         )
       )
     );

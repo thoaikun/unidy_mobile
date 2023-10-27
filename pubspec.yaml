@@ -45,6 +45,8 @@ dependencies:
   intl: ^0.18.1
   file_picker: ^6.0.0
   carousel_slider: ^4.2.1
+  skeletonizer: ^0.8.0
+  readmore: ^2.2.0
 
 dev_dependencies:
   flutter_test:

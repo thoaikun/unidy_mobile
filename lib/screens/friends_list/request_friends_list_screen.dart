@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/widgets/friend_card.dart';
+import 'package:unidy_mobile/widgets/card/friend_card.dart';
 
 class RequestFriendListScreen extends StatefulWidget {
   const RequestFriendListScreen({super.key});

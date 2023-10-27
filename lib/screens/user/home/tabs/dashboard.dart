@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
-import 'package:unidy_mobile/widgets/post_card/post_card.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:unidy_mobile/widgets/card/post_card.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -12,10 +12,13 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemBuilder: (BuildContext context, int index) => const PostCard(),
-      separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
-      itemCount: 4
+    return Skeletonizer(
+      enabled: false,
+      child: ListView.separated(
+        itemBuilder: (BuildContext context, int index) => const PostCard(),
+        separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
+        itemCount: 4
+      ),
     );
   }
 }

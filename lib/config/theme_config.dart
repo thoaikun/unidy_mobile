@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/font_config.dart';
-import 'package:unidy_mobile/utils/utils_font._builder.dart';
+import 'package:unidy_mobile/utils/font_builder_util.dart';
 import 'color_config.dart';
 
 ColorScheme unidyColorScheme = ColorScheme.fromSeed(seedColor: PrimaryColor.primary500).copyWith(
@@ -55,7 +55,6 @@ TextButtonThemeData unidyTextButtonThemeData = TextButtonThemeData(
       )
   )
 );
-
 
 
 AppBarTheme unidyAppBarTheme = AppBarTheme(

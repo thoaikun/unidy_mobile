@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/widgets/dot_progress_bar.dart';
 
 class ImageSlider extends StatefulWidget {
@@ -63,7 +64,9 @@ class _ImageSliderState extends State<ImageSlider> {
         ),
         Visibility(
           visible: widget.imageUrls.length > 1,
-          child: DotProgressBar(max: widget.imageUrls.length, current: currentIndex, dotSize: 7)
+          child: Skeleton.ignore(
+            child: DotProgressBar(max: widget.imageUrls.length, current: currentIndex, dotSize: 7)
+          )
         )
       ]
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:unidy_mobile/utils/untils_validation.dart';
+import 'package:unidy_mobile/utils/validation_util.dart';
 
 enum EUserRole {
   volunteer,
