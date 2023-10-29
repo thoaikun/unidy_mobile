@@ -23,7 +23,7 @@ class _FriendsState extends State<Friends> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Lời mời kết bạn', style: Theme.of(context).textTheme.bodyLarge),
+                    Text('Lời mời kết bạn', style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(width: 5),
                     const Icon(Icons.arrow_forward_ios_rounded, size: 12),
                   ],
@@ -58,7 +58,7 @@ class _FriendsState extends State<Friends> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Có thể bạn quan tâm', style: Theme.of(context).textTheme.bodyLarge),
+                    Text('Có thể bạn quan tâm', style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(width: 5),
                     const Icon(Icons.arrow_forward_ios_rounded, size: 12),
                   ],
@@ -92,7 +92,7 @@ class _FriendsState extends State<Friends> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Bạn bè của bạn', style: Theme.of(context).textTheme.bodyLarge),
+                    Text('Bạn bè của bạn', style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(width: 5),
                     const Icon(Icons.arrow_forward_ios_rounded, size: 12),
                   ],

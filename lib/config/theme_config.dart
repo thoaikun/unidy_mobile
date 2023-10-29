@@ -58,7 +58,7 @@ TextButtonThemeData unidyTextButtonThemeData = TextButtonThemeData(
 
 
 AppBarTheme unidyAppBarTheme = AppBarTheme(
-  elevation: 0.2,
+  elevation: 0,
   scrolledUnderElevation: 0.2,
   backgroundColor: unidyColorScheme.background,
   shadowColor: unidyColorScheme.shadow,

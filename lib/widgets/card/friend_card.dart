@@ -14,8 +14,9 @@ class FriendCard extends StatelessWidget {
           'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
         ),
       ),
-      title:const Text(
+      title: Text(
         'Trương Huy Thái',
+        style: Theme.of(context).textTheme.bodyMedium,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -36,8 +37,9 @@ class FriendCard extends StatelessWidget {
           'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
         ),
       ),
-      title:const Text(
+      title: Text(
         'Trương Huy Thái',
+        style: Theme.of(context).textTheme.bodyMedium,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -73,8 +75,9 @@ class FriendCard extends StatelessWidget {
           'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
         ),
       ),
-      title:const Text(
+      title: Text(
         'Trương Huy Thái',
+        style: Theme.of(context).textTheme.bodyMedium,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),

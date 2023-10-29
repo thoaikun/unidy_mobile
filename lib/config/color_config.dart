@@ -49,6 +49,18 @@ class SuccessColor {
   static const Color success800 = Color.fromRGBO(68, 101, 7, 1);
 }
 
+class InfoColor {
+  static const Color info50  = Color.fromRGBO(239, 249, 255, 1);
+  static const Color info100 = Color.fromRGBO(231, 246, 255, 1);
+  static const Color info200 = Color.fromRGBO(206, 236, 254, 1);
+  static const Color info300 = Color.fromRGBO(98, 193, 252, 1);
+  static const Color info400 = Color.fromRGBO(88, 174, 227, 1);
+  static const Color info500 = Color.fromRGBO(78, 154, 202, 1);
+  static const Color info600 = Color.fromRGBO(74, 145, 189, 1);
+  static const Color info700 = Color.fromRGBO(59, 116, 151, 1);
+  static const Color info800 = Color.fromRGBO(44, 87, 113, 1);
+}
+
 class TextColor {
   static const Color textColor50 = Color.fromRGBO(240, 241, 242, 1);
   static const Color textColor100 = Color.fromRGBO(233, 234, 236, 1);

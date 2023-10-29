@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:unidy_mobile/widgets/dot_progress_bar.dart';
+import 'package:unidy_mobile/widgets/progress_bar/dot_progress_bar.dart';
 
 class ImageSlider extends StatefulWidget {
   final List<String> imageUrls;
@@ -23,25 +23,22 @@ class _ImageSliderState extends State<ImageSlider> {
   }
 
   Widget _buildImage(String imgUrl) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Image.network(
-          imgUrl,
-          width: double.infinity,
-          height: 300,
-          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const Center(
-              child: SizedBox(
-                width: 25,
-                height: 25,
-                child: CircularProgressIndicator()
-              ),
-            );
-          },
-          errorBuilder: (BuildContext context, Object child, StackTrace? error) => const Icon(Icons.error),
-          fit: BoxFit.contain
-      ),
+    return Image.network(
+        imgUrl,
+        width: double.infinity,
+        height: 300,
+        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const Center(
+            child: SizedBox(
+              width: 25,
+              height: 25,
+              child: CircularProgressIndicator()
+            ),
+          );
+        },
+        errorBuilder: (BuildContext context, Object child, StackTrace? error) => const Icon(Icons.error),
+        fit: BoxFit.contain
     );
   }
 
@@ -52,7 +49,6 @@ class _ImageSliderState extends State<ImageSlider> {
         CarouselSlider(
           items: widget.imageUrls.map((imgUrl) => _buildImage(imgUrl)).toList(),
           options: CarouselOptions(
-            height: 260,
             viewportFraction: 1,
             enableInfiniteScroll: false,
             enlargeCenterPage: true,
@@ -62,6 +58,7 @@ class _ImageSliderState extends State<ImageSlider> {
             onPageChanged: _onScroll
           )
         ),
+        const SizedBox(height: 8),
         Visibility(
           visible: widget.imageUrls.length > 1,
           child: Skeleton.ignore(

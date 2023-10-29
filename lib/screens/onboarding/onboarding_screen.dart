@@ -4,7 +4,7 @@ import 'package:unidy_mobile/screens/user/home/home_screen.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_1.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_2.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_3.dart';
-import 'package:unidy_mobile/widgets/dot_progress_bar.dart';
+import 'package:unidy_mobile/widgets/progress_bar/dot_progress_bar.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

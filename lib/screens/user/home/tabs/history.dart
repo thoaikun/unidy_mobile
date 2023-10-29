@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/widgets/card/campaign_card.dart';
 
 class History extends StatefulWidget {
   const History({super.key});
@@ -16,19 +18,25 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
     _tabController = TabController(length: 2, vsync: this);
   }
 
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   Widget _buildJoinedCampaignList() {
-    return const Card(
-      margin: EdgeInsets.all(16.0),
-      child: Center(
-          child: Text('Hoạt động tham gia nè')),
+    return ListView.separated(
+      itemBuilder: (BuildContext context, int index) => const CampaignJoinedCard(),
+      separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
+      itemCount: 5,
     );
   }
 
   Widget _buildDonationCampaignList() {
-    return const Card(
-      margin: EdgeInsets.all(16.0),
-      child: Center(
-          child: Text('Quyên góp ở đây nè')),
+    return ListView.separated(
+      itemBuilder: (BuildContext context, int index) => const CampaignDonationCard(),
+      separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
+      itemCount: 3,
     );
   }
 
@@ -38,6 +46,8 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
       children: <Widget>[
         TabBar.secondary(
           controller: _tabController,
+          labelColor: PrimaryColor.primary500,
+          unselectedLabelColor: TextColor.textColor300,
           tabs: const <Widget>[
             Tab(text: 'Hoạt động tham gia'),
             Tab(text: 'Quyên góp'),
