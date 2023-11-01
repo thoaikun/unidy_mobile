@@ -8,7 +8,7 @@ class AddPostController extends ChangeNotifier {
   final TextEditingController _contentController = TextEditingController();
   final BehaviorSubject<String> contentSubject = BehaviorSubject<String>();
 
-  AddPostController() {}
+  AddPostController();
 
   List<File> get files => _files;
   TextEditingController get contentController => _contentController;

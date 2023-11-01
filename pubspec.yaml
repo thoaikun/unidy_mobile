@@ -47,6 +47,8 @@ dependencies:
   carousel_slider: ^4.2.1
   skeletonizer: ^0.8.0
   readmore: ^2.2.0
+  flutter_dotenv: ^5.1.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +75,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - .env
     - assets/font/ReadexPro-Bold.ttf
     - assets/font/ReadexPro-ExtraLight.ttf
     - assets/font/ReadexPro-Light.ttf

@@ -1,45 +1,27 @@
-import 'dart:async';
+import 'exception_util.dart';
 
-class ValidationException implements Exception {
-  String value;
-  String get message => value;
-
-  ValidationException({ required this.value });
-}
-
-abstract class Validation extends StreamTransformerBase<String, bool> {
-  bool _validate(String value) {
-    if (value.isEmpty) {
+class Validation  {
+  static String validateInput(String? value) {
+    if (value == null) {
+      throw ValidationException(value: 'Thông tin không hợp lệ');
+    }
+    else if (value.isEmpty) {
       throw ValidationException(value: 'Không được bỏ trống');
     }
-    return true;
+    return value;
   }
-  @override
-  Stream<bool> bind(Stream<String> stream) {
-    return stream.map((email) => _validate(email));
-  }
-}
 
-class EmailValidation extends StreamTransformerBase<String, bool> implements Validation  {
-  @override
-  bool _validate(String email) {
+  static String validateEmail(String? email) {
     final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$');
-    if (!emailRegex.hasMatch(email)) {
+    if (email == null || !emailRegex.hasMatch(email)) {
       throw ValidationException(value: 'Email không hợp lệ');
     }
-    return true;
+    return email;
   }
 
-  @override
-  Stream<bool> bind(Stream<String> stream) {
-    return stream.map((email) => _validate(email));
-  }
-}
-
-class PasswordValidation extends StreamTransformerBase<String, bool> implements Validation {
-  @override
-  bool _validate(String password) {
-    if (password.length < 8 ||
+  static String validatePassword(String? password) {
+    if (password == null ||
+        password.length < 8 ||
         !RegExp(r'[A-Z]').hasMatch(password) ||
         !RegExp(r'[a-z]').hasMatch(password) ||
         !RegExp(r'[0-9]').hasMatch(password) ||
@@ -47,28 +29,15 @@ class PasswordValidation extends StreamTransformerBase<String, bool> implements 
     ) {
       throw ValidationException(value: 'Mật khẩu không hợp lệ');
     }
-    return true;
+    return password;
   }
 
-  @override
-  Stream<bool> bind(Stream<String> stream) {
-    return stream.map((password) => _validate(password));
-  }
-}
-
-class PhoneValidation extends StreamTransformerBase<String, bool> implements Validation {
-  @override
-  bool _validate(String phone) {
+  static String validatePhone(String? phone) {
     RegExp phonePattern = RegExp(r'^0\d{9}$');
-    if (!phonePattern.hasMatch(phone)) {
+    if (phone == null || !phonePattern.hasMatch(phone)) {
       throw ValidationException(value: 'Số điện thoại không hợp lệ');
     }
-    return true;
-  }
-
-  @override
-  Stream<bool> bind(Stream<String> stream) {
-    return stream.map((event) => _validate(event));
+    return phone;
   }
 }
 

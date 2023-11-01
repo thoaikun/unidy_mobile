@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class NotificationCard extends StatelessWidget {
   final String content;

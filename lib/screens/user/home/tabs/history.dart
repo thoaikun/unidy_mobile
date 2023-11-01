@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/widgets/card/campaign_card.dart';
 
 class History extends StatefulWidget {

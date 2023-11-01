@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:unidy_mobile/utils/validation_util.dart';
+import 'package:unidy_mobile/config/app_preferences.dart';
+import 'package:unidy_mobile/services/authentication_service.dart';
+import 'package:unidy_mobile/utils/exception_util.dart';
+import 'package:unidy_mobile/models/authentication/authenticate_model.dart';
+import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final BuildContext context;
+  final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
+  final AppPreferences appPreferences = GetIt.instance<AppPreferences>();
   final Duration debounceTime = const Duration(milliseconds: 500);
 
   final TextEditingController _emailController = TextEditingController();
@@ -18,32 +25,12 @@ class LoginViewModel extends ChangeNotifier {
   String? emailError;
   String? passwordError;
   bool passwordVisible = false;
+  bool loadingLogin = false;
 
   LoginViewModel({ required this.context }) {
     _emailController.addListener(() => _setEmailError(null));
     _passwordController.addListener(() => _setPasswordError(null));
-
-    Stream<String> emailStream = _emailSubject.stream;
-    Stream<String> passwordStream = _passwordSubject.stream;
-
-    CombineLatestStream.combine2(
-      emailStream.transform(EmailValidation()),
-      passwordStream.transform(PasswordValidation()),
-      (a, b) => a && b
-    ).doOnError((error, stackTrace) {
-      if (error is ValidationException) {
-        switch (error.message) {
-          case 'Mật khẩu không hợp lệ':
-            _setPasswordError(error.message);
-            break;
-          case 'Email không hợp lệ':
-            _setEmailError(error.message);
-            break;
-        }
-      }
-    }).listen((event) {
-      Navigator.pushNamed(context, '/onboarding');
-    });
+    handleLogin();
   }
   
   void _setEmailError(String? error) {
@@ -56,7 +43,33 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void handleClickLogin() {
+  void _setLoadingLogin(bool value) {
+    loadingLogin = value;
+    notifyListeners();
+  }
+
+  void handleLogin() {
+    Stream<String> emailStream = _emailSubject.stream;
+    Stream<String> passwordStream = _passwordSubject.stream;
+
+    CombineLatestStream.combine2(
+      emailStream.transform(EmailValidationTransformer()),
+      passwordStream,
+      (email, password) => {
+        'email': email,
+        'password': password
+      }
+    )
+      .debounceTime(debounceTime)
+      .listen((payload) {
+        _setLoadingLogin(true);
+        authenticationService.login(payload)
+          .then(handleLoginSuccess)
+          .catchError(handleLoginError);
+      });
+  }
+
+  void onClickLogin() {
     Sink<String> emailSink = _emailSubject.sink;
     Sink<String> passwordSink = _passwordSubject.sink;
 
@@ -67,6 +80,27 @@ class LoginViewModel extends ChangeNotifier {
   void togglePasswordVisible() {
     passwordVisible = !passwordVisible;
     notifyListeners();
+  }
+
+  void handleLoginSuccess(Authenticate authenticationResponse) async {
+    if (authenticationResponse.body != null) {
+      await appPreferences.setString('access_key', authenticationResponse.body!.accessToken);
+      await appPreferences.setString('refresh_key', authenticationResponse.body!.refreshToken);
+    }
+    _setLoadingLogin(false);
+    Navigator.pushReplacementNamed(context, '/');
+  }
+
+  void handleLoginError(Object error) {
+    if (error is ValidationException) {
+      _setEmailError(error.message);
+      _setLoadingLogin(false);
+    }
+    if (error is ResponseException) {
+      _setEmailError(error.message);
+      _setPasswordError(error.message);
+      _setLoadingLogin(false);
+    }
   }
 
   @override

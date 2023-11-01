@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/signup_viewmodel.dart';
 import 'package:unidy_mobile/widgets/input.dart';
 
@@ -36,7 +36,7 @@ class CreateAccountStep extends StatelessWidget {
                 controller: signUpViewModel.emailController,
                 label: 'Email',
                 placeholder: 'Nhập email của bạn',
-                prefixIcon: Icon(Icons.email_rounded)
+                prefixIcon: const Icon(Icons.email_rounded)
             ),
             const SizedBox(height: 20),
             Input(

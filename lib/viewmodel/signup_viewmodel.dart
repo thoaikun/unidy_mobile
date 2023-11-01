@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:unidy_mobile/utils/validation_util.dart';
 
 enum EUserRole {
   volunteer,
@@ -35,28 +34,10 @@ class SignUpViewModel extends ChangeNotifier {
     // _emailController.addListener(() => _setEmailError(null));
     // _passwordController.addListener(() => _setPasswordError(null));
 
-    Stream<String> emailStream = _emailSubject.stream;
-    Stream<String> passwordStream = _passwordSubject.stream;
+    // Stream<String> emailStream = _emailSubject.stream;
+    // Stream<String> passwordStream = _passwordSubject.stream;
 
     // validate new account
-    CombineLatestStream.combine2(
-        emailStream.transform(EmailValidation()),
-        passwordStream.transform(PasswordValidation()),
-            (a, b) => a && b
-    ).doOnError((error, stackTrace) {
-      if (error is ValidationException) {
-        switch (error.message) {
-          case 'Mật khẩu không hợp lệ':
-            _setPasswordError(error.message);
-            break;
-          case 'Email không hợp lệ':
-            _setEmailError(error.message);
-            break;
-        }
-      }
-    }).listen((event) {
-      print('ok');
-    });
   }
 
   void setUserRole(EUserRole role) {

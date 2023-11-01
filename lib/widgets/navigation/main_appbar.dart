@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/notification_viewmodel.dart';
 import 'package:unidy_mobile/widgets/popup_menu.dart';
-import 'package:unidy_mobile/models/popup_menu_option_model.dart';
 import 'package:unidy_mobile/widgets/search/search_delegate.dart';
 
 class UnidyMainAppBar extends StatefulWidget {

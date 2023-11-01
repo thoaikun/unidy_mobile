@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-
-import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/login_viewmodel.dart';
 import 'package:unidy_mobile/widgets/input.dart';
 
@@ -25,108 +23,112 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
-          child: Stack(
-            children: [
-              const Positioned(
-                child: LinearProgressIndicator()
-              ),
-              Container(
-                margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.09),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Image.asset(
-                      logoImage,
-                      width: 70,
-                      height: 70,
-                    ),
-                    const SizedBox(height: 35),
-                    Consumer<LoginViewModel>(
-                      builder: (BuildContext context, LoginViewModel loginViewModel, Widget? child) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
+          child: Consumer<LoginViewModel>(
+            builder: (BuildContext context, LoginViewModel loginViewModel, Widget? child) {
+              return Stack(
+                children: [
+                  Positioned(
+                    child: Visibility(
+                      visible: loginViewModel.loadingLogin,
+                      child: const LinearProgressIndicator()
+                    )
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          logoImage,
+                          width: 70,
+                          height: 70,
+                        ),
+                        const SizedBox(height: 45),
+                        Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Đăng nhập',
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Đăng nhập',
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Nhập email và mật khẩu của bạn',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(color: TextColor.textColor300),
+                                  )
+                                ],
                               ),
-                              const SizedBox(height: 5),
-                              Text(
-                                'Nhập email và mật khẩu của bạn',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(color: TextColor.textColor300),
+                              const SizedBox(height: 20),
+                              Input(
+                                controller: loginViewModel.emailController,
+                                label: 'Email',
+                                error: loginViewModel.emailError,
+                                prefixIcon: const Icon(Icons.email_rounded)
+                              ),
+                              const SizedBox(height: 20),
+                              Input(
+                                controller: loginViewModel.passwordController,
+                                label: 'Mật khẩu',
+                                error: loginViewModel.passwordError,
+                                prefixIcon: const Icon(Icons.key_rounded),
+                                suffixIcon: IconButton(
+                                  onPressed: loginViewModel.togglePasswordVisible,
+                                  icon: loginViewModel.passwordVisible ? const Icon(Icons.visibility_off_rounded) : const Icon(Icons.visibility_rounded),
+                                ),
+                                obscureText: !loginViewModel.passwordVisible,
+                              ),
+                              const SizedBox(height: 15),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text('Chưa có tài khoản?', style: Theme.of(context).textTheme.bodySmall),
+                                  const SizedBox(width: 8),
+                                  TextButton(
+                                    onPressed: ()  => Navigator.pushNamed(context, '/authentication/signup'),
+                                    style: const ButtonStyle(
+                                        fixedSize: MaterialStatePropertyAll<Size>(Size.fromHeight(20)),
+                                        padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.zero)
+                                    ),
+                                    child: Text(
+                                      'Đăng ký ngay',
+                                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: PrimaryColor.primary500)
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 30),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child:
+                                  FilledButton(
+                                    onPressed: loginViewModel.onClickLogin,
+                                    child: const Text('Đi thôi')
+                                ),
                               )
                             ],
                           ),
-                          const SizedBox(height: 35),
-                          Input(
-                            controller: loginViewModel.emailController,
-                            label: 'Email',
-                            placeholder: 'Nhập email của bạn',
-                            error: loginViewModel.emailError,
-                            prefixIcon: Icon(Icons.email_rounded)
-                          ),
-                          const SizedBox(height: 20),
-                          Input(
-                            controller: loginViewModel.passwordController,
-                            label: 'Mật khẩu',
-                            placeholder: 'Nhập mật khẩu của bạn',
-                            error: loginViewModel.passwordError,
-                            prefixIcon: const Icon(Icons.key_rounded),
-                            suffixIcon: IconButton(
-                              onPressed: loginViewModel.togglePasswordVisible,
-                              icon: loginViewModel.passwordVisible ? const Icon(Icons.visibility_off_rounded) : const Icon(Icons.visibility_rounded),
-                            ),
-                            obscureText: !loginViewModel.passwordVisible,
-                          ),
-                          const SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text('Chưa có tài khoản?', style: Theme.of(context).textTheme.bodySmall),
-                              const SizedBox(width: 8),
-                              TextButton(
-                                onPressed: ()  => Navigator.pushNamed(context, '/authentication/signup'),
-                                style: const ButtonStyle(
-                                    fixedSize: MaterialStatePropertyAll<Size>(Size.fromHeight(20)),
-                                    padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.zero)
-                                ),
-                                child: Text(
-                                  'Đăng ký ngay',
-                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(color: PrimaryColor.primary500)
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 35),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child:
-                              FilledButton(
-                                onPressed: loginViewModel.handleClickLogin,
-                                child: const Text('Đi thôi')
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Image.asset(backgroundImage, scale: 2,)
-            )
-          ]
-        )),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Image.asset(backgroundImage, scale: 2,)
+                )
+                ]
+              );
+            }
+          )
+        ),
       ),
     );
   }

@@ -1,7 +1,6 @@
-import 'dart:ui';
-import 'package:flutter/src/painting/text_style.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:unidy_mobile/config/font_config.dart';
+import 'package:unidy_mobile/config/themes/font_config.dart';
 
 class FontBuilder {
   TextStyle object = GoogleFonts.readexPro();

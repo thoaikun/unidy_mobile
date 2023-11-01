@@ -10,14 +10,14 @@ import 'package:unidy_mobile/screens/user/home/tabs/profile.dart';
 import 'package:unidy_mobile/widgets/navigation/bottom_navigation_bar.dart';
 import 'package:unidy_mobile/widgets/navigation/main_appbar.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screenOptions = const [
     Dashboard(),

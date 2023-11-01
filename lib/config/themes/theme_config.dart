@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/font_config.dart';
+import 'package:unidy_mobile/config/themes/font_config.dart';
 import 'package:unidy_mobile/utils/font_builder_util.dart';
 import 'color_config.dart';
 

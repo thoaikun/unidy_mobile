@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 
 class AvatarCard extends StatelessWidget {
   final bool showTime;
@@ -11,7 +11,7 @@ class AvatarCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: const CircleAvatar(
-          radius: 20,
+          radius: 18,
           backgroundImage: NetworkImage(
             'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
           ),
@@ -50,7 +50,7 @@ class AvatarCard extends StatelessWidget {
           description ?? '',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TextColor.textColor300)
       ) : null,
-      contentPadding: EdgeInsets.symmetric(horizontal: 0),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
-import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
 import 'package:unidy_mobile/widgets/progress_bar/circle_progress_bar.dart';
 import 'package:unidy_mobile/widgets/status_tag.dart';

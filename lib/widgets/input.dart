@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/color_config.dart';
-import 'package:unidy_mobile/config/theme_config.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/config/themes/theme_config.dart';
 
 class Input extends StatelessWidget {
   final TextEditingController? controller;

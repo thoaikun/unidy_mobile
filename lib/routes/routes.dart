@@ -8,9 +8,11 @@ import 'package:unidy_mobile/screens/user/friends_list/suggestion_friend_list_sc
 import 'package:unidy_mobile/screens/user/notification/notification_screen.dart';
 import 'package:unidy_mobile/screens/onboarding/onboarding_screen.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen.dart';
+import 'package:unidy_mobile/screens/placeholder/placeholder.dart';
 
 Map<String, Widget Function(BuildContext)> routes = <String, Widget Function(BuildContext)> {
-  '/': (context) => const Home(),
+  '/placeholder': (context) => const PlaceholderScreen(),
+  '/': (context) => const HomeScreen(),
   '/authentication/login': (context) => const LoginScreen(),
   '/authentication/signup': (context) => const SignUpScreen(),
   '/onboarding': (context) => const OnboardingScreen(),

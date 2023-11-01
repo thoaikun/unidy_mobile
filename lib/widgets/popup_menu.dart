@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/color_config.dart';
-import 'package:unidy_mobile/models/popup_menu_option_model.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
+
+enum EPopupMenuOption {
+  logout,
+  organizationMode,
+  sponsorMode,
+  volunteerMode
+}
+
+class IPopupMenuItem {
+  EPopupMenuOption value;
+  String label;
+  IPopupMenuItem({ required this.value, required this.label });
+}
 
 class UnidyPopupMenu extends StatefulWidget {
   final List<IPopupMenuItem> popupMenuItems;

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:unidy_mobile/config/color_config.dart';
-import 'package:unidy_mobile/widgets/progress_bar/dot_progress_bar.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 
 class Onboarding3 extends StatelessWidget {
   final String illustrationUrl = 'assets/imgs/illustration/onboarding_3.png';

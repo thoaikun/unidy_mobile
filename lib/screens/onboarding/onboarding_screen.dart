@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/color_config.dart';
-import 'package:unidy_mobile/screens/user/home/home_screen.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_1.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_2.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_3.dart';

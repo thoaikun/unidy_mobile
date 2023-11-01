@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
-import 'package:unidy_mobile/config/color_config.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
@@ -13,18 +13,29 @@ class PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const AvatarCard(showTime: true, description: 'Đã chia sẽ một kỉ niệm'),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: AvatarCard(showTime: true, description: 'Đã chia sẽ một kỉ niệm'),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildPostContent(context),
+            ),
             const SizedBox(height: 15),
-            _buildPostContent(context),
-            const SizedBox(height: 15),
-            _buildImageSlide(),
-            const SizedBox(height: 15),
-            _buildPostInteraction(context)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildImageSlide(),
+            ),
+            const SizedBox(height: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: _buildPostInteraction(context),
+            )
           ],
         ),
       ),
@@ -81,8 +92,11 @@ class PostCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border_rounded)),
-            const Text('4 lượt thích')
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.favorite_border_rounded)
+            ),
+            Text('4 lượt thích', style: Theme.of(context).textTheme.bodySmall)
           ],
         ),
         IconButton(
@@ -141,7 +155,7 @@ class PostCard extends StatelessWidget {
                 child: Input(
                     label: 'Bình luận',
                     placeholder: 'Nhập bình luận',
-                    suffixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.send_rounded))
+                    suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.send_rounded))
                 )
             ),
           )
