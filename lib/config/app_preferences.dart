@@ -26,4 +26,8 @@ class AppPreferences {
   Future<void> setInt(String key, int value) {
     return _prefs.setInt(key, value);
   }
+
+  Future<void> clean() async {
+    await _prefs.clear();
+  }
 }

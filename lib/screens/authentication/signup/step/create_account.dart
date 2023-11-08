@@ -36,6 +36,7 @@ class CreateAccountStep extends StatelessWidget {
                 controller: signUpViewModel.emailController,
                 label: 'Email',
                 placeholder: 'Nhập email của bạn',
+                error: signUpViewModel.emailError,
                 prefixIcon: const Icon(Icons.email_rounded)
             ),
             const SizedBox(height: 20),
@@ -43,12 +44,13 @@ class CreateAccountStep extends StatelessWidget {
               controller: signUpViewModel.passwordController,
               label: 'Mật khẩu',
               placeholder: 'Nhập mật khẩu của bạn',
+              error: signUpViewModel.passwordError,
               prefixIcon: const Icon(Icons.key_rounded),
               suffixIcon: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.visibility_rounded)
+                onPressed: signUpViewModel.togglePasswordVisible,
+                icon: signUpViewModel.passwordVisible ? const Icon(Icons.visibility_off_rounded) : const Icon(Icons.visibility_rounded),
               ),
-              obscureText: true,
+              obscureText: signUpViewModel.passwordVisible,
             ),
             const SizedBox(height: 20),
             Text(

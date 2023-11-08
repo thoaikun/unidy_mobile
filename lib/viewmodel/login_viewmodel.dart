@@ -66,7 +66,8 @@ class LoginViewModel extends ChangeNotifier {
         authenticationService.login(payload)
           .then(handleLoginSuccess)
           .catchError(handleLoginError);
-      });
+        })
+        .onError(handleLoginError);
   }
 
   void onClickLogin() {
@@ -83,10 +84,8 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   void handleLoginSuccess(Authenticate authenticationResponse) async {
-    if (authenticationResponse.body != null) {
-      await appPreferences.setString('access_key', authenticationResponse.body!.accessToken);
-      await appPreferences.setString('refresh_key', authenticationResponse.body!.refreshToken);
-    }
+    await appPreferences.setString('accessToken', authenticationResponse.accessToken);
+    await appPreferences.setString('refreshToken', authenticationResponse.refreshToken);
     _setLoadingLogin(false);
     Navigator.pushReplacementNamed(context, '/');
   }

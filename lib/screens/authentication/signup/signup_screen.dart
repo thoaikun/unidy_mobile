@@ -36,7 +36,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
             builder: (BuildContext context, SignUpViewModel signUpViewModel, Widget? child)  {
               return Stack(
                 children: [
-                  Positioned(
+                  signUpViewModel.loadingSignUp ? const LinearProgressIndicator() : Positioned(
                       child: TweenAnimationBuilder(
                         duration: const Duration(milliseconds: 500),
                         curve: Curves.easeInOut,
@@ -108,8 +108,15 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                   height: 50,
                                   child:
                                   FilledButton(
-                                    onPressed: signUpViewModel.nextStep,
-                                    child: const Text('Tiếp tục')
+                                    onPressed:() {
+                                      if (signUpViewModel.step != 3) {
+                                        signUpViewModel.pickNextStepFunction();
+                                      }
+                                      else {
+                                        Navigator.pushNamed(context, '/authentication/login');
+                                      }
+                                    },
+                                    child: Text(signUpViewModel.step != 3 ? 'Tiếp tục' : 'Đăng nhập')
                                   ),
                                 ),
                               ),

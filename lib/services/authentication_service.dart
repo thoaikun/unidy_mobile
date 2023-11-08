@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:unidy_mobile/models/authentication/authenticate_model.dart';
-import 'package:unidy_mobile/models/authentication/registration_model.dart';
+import 'package:unidy_mobile/models/error_response_model.dart';
 import 'package:unidy_mobile/repository/authentication/authentication_repository.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
@@ -10,15 +12,14 @@ class AuthenticationService {
   Future<Authenticate> login(Map<String, String> payload) async {
     try {
       Response response = await authenticationRepository.authenticate(payload);
-      Authenticate authenticationResponse = authenticateFromJson(response.body);
 
-      switch(authenticationResponse.statusCodeValue) {
+      switch(response.statusCode) {
         case 200:
+          Authenticate authenticationResponse = authenticateFromJson(utf8.decode(response.bodyBytes));
           return authenticationResponse;
-        case 400:
-          throw ResponseException(value: 'Thông tin tài khoản sai', code: ExceptionErrorCode.invalidLogin);
         case 404:
-          throw ResponseException(value: 'Tài khoản chưa được tạo', code: ExceptionErrorCode.invalidLogin);
+          ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
+          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
@@ -28,16 +29,16 @@ class AuthenticationService {
     }
   }
 
-  Future<Registration> signUp(Map<String, String> payload) async {
+  Future<Response> signUp(Map<String, String> payload) async {
     try {
       Response response = await authenticationRepository.createAccount(payload);
-      Registration registrationResponse = registrationFromJson(response.body);
 
-      switch(registrationResponse.statusCodeValue) {
+      switch(response.statusCode) {
         case 200:
-          return registrationResponse;
+          return response;
         case 400:
-          throw ResponseException(value: 'Đăng ký tài khoản không thành công', code: ExceptionErrorCode.invalidRegistration);
+          ErrorResponse errorResponse = errorFromJson(response.body);
+          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
@@ -69,7 +70,8 @@ class AuthenticationService {
         case 200:
           return;
         case 400:
-          throw ResponseException(value: 'Email chưa được sử dụng', code: ExceptionErrorCode.invalidEmail);
+          ErrorResponse errorResponse = errorFromJson(response.body);
+          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
@@ -87,7 +89,8 @@ class AuthenticationService {
         case 200:
           return;
         case 400:
-          throw ResponseException(value: 'OTP không hợp lệ', code: ExceptionErrorCode.invalidOtp);
+          ErrorResponse errorResponse = errorFromJson(response.body);
+          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }

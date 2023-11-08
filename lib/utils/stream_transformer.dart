@@ -23,8 +23,11 @@ class PhoneValidationTransformer extends StreamTransformerBase<String, String> {
 }
 
 class ValidationTransformer extends StreamTransformerBase<String, String> {
+  String? validationType;
+  ValidationTransformer({ this.validationType });
+
   @override
   Stream<String> bind(Stream<String> stream) {
-    return stream.map((value) => Validation.validateInput(value));
+    return stream.map((value) => Validation.validateInput(value, validationType ?? 'input'));
   }
 }

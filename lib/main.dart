@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:unidy_mobile/config/themes/theme_config.dart';
 import 'package:unidy_mobile/routes/routes.dart';
@@ -8,7 +9,10 @@ import 'config/getit_config.dart';
 void main() async {
   await dotenv.load(fileName: ".env");
   configGetIt();
-  runApp(const MyApp());
+
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+    .then((_) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

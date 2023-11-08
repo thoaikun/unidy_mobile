@@ -1,8 +1,11 @@
 class ValidationException implements Exception {
   String value;
-  String get message => value;
+  ExceptionErrorCode code;
 
-  ValidationException({ required this.value });
+  String get message => value;
+  ExceptionErrorCode get errorCode => code;
+
+  ValidationException({ required this.value, required this.code  });
 }
 
 class ResponseException implements Exception {
@@ -18,7 +21,13 @@ class ResponseException implements Exception {
 enum ExceptionErrorCode {
   invalidEmail,
   invalidPassword,
+  invalidInput,
+  invalidPhone,
+  invalidJob,
+  invalidWorkplace,
+  invalidName,
+  invalidDob,
   invalidOtp,
   invalidRegistration,
-  invalidLogin
+  invalidLogin,
 }

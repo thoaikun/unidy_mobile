@@ -32,40 +32,51 @@ class InformationStep extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            const Input(
-                label: 'Tên',
-                placeholder: 'Nhập tên của bạn',
-                prefixIcon: Icon(Icons.person_2_rounded)
+            Input(
+              controller: signUpViewModel.nameController,
+              label: 'Tên',
+              placeholder: 'Nhập tên của bạn',
+              error: signUpViewModel.nameError,
+              prefixIcon: const Icon(Icons.person_2_rounded)
             ),
             const SizedBox(height: 20),
             Input(
               controller: signUpViewModel.dobController,
               label: 'Ngày sinh',
+              error: signUpViewModel.dobError,
               onTap: () => signUpViewModel.selectDate(context),
               prefixIcon: const Icon(Icons.calendar_month_rounded),
               readOnly: true,
             ),
             const SizedBox(height: 20),
-            const Input(
-                label: 'Giới tính',
-                placeholder: 'Thêm giới tính của bạn',
-                prefixIcon: Icon(Icons.transgender_rounded)
-            ).dropdown(context, ['Nam', 'Nữ', 'Khác'], null),
+            Input(
+              controller: signUpViewModel.sexController,
+              label: 'Giới tính',
+              placeholder: 'Thêm giới tính của bạn',
+              error: signUpViewModel.sexError,
+              prefixIcon: const Icon(Icons.transgender_rounded)
+            ).dropdown(context, ['Nam', 'Nữ', 'Khác'], signUpViewModel.setUseSex),
             const SizedBox(height: 20),
-            const Input(
+            Input(
+              controller: signUpViewModel.phoneController,
               label: 'Số điện thoại',
+              error: signUpViewModel.phoneError,
               numberKeyboard: true,
-              prefixIcon: Icon(Icons.phone_android_rounded),
+              prefixIcon: const Icon(Icons.phone_android_rounded),
             ),
             const SizedBox(height: 20),
-            const Input(
-                label: 'Nghề nghiệp',
-                prefixIcon: Icon(Icons.cases_rounded)
+            Input(
+              controller: signUpViewModel.jobController,
+              label: 'Nghề nghiệp',
+              error: signUpViewModel.jobError,
+              prefixIcon: const Icon(Icons.cases_rounded)
             ),
             const SizedBox(height: 20),
-            const Input(
+            Input(
+              controller: signUpViewModel.workPlaceController,
               label: 'Nơi công tác',
-              prefixIcon: Icon(Icons.business),
+              error: signUpViewModel.workplaceError,
+              prefixIcon: const Icon(Icons.business),
             )
           ],
         );

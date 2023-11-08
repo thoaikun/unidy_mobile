@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 
 enum EPopupMenuOption {
@@ -28,11 +30,12 @@ class UnidyPopupMenu extends StatefulWidget {
 
 class _UnidyPopupMenuState extends State<UnidyPopupMenu> {
   IPopupMenuItem? selectedItem;
+  AppPreferences appPreferences = GetIt.instance<AppPreferences>();
 
   void _handleSelect(IPopupMenuItem item) {
     switch(item.value) {
       case EPopupMenuOption.logout:
-        print('logout');
+        appPreferences.clean();
         break;
       case EPopupMenuOption.organizationMode:
       case EPopupMenuOption.sponsorMode:

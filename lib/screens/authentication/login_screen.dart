@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: loginViewModel.togglePasswordVisible,
                                   icon: loginViewModel.passwordVisible ? const Icon(Icons.visibility_off_rounded) : const Icon(Icons.visibility_rounded),
                                 ),
-                                obscureText: !loginViewModel.passwordVisible,
+                                obscureText: loginViewModel.passwordVisible,
                               ),
                               const SizedBox(height: 15),
                               Row(
@@ -113,6 +113,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                     onPressed: loginViewModel.onClickLogin,
                                     child: const Text('Đi thôi')
                                 ),
+                              ),
+                              Center(
+                                child: TextButton(
+                                  onPressed: () {},
+                                  child: const Text('Quên mật khẩu')
+                                )
                               )
                             ],
                           ),

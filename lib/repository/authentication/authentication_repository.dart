@@ -21,7 +21,7 @@ class AuthenticationRepository implements IAuthenticationRepository {
   @override
   Future<Response> createAccount(Map<String, String> payload) async{
     try {
-      Response response = await httpClient.post('api/v1/auth/register', payload);
+      Response response = await httpClient.post('api/v1/auth/register', jsonEncode(payload));
       return response;
     }
     catch (error) {

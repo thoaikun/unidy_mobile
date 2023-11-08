@@ -59,7 +59,7 @@ class _PlaceholderScreenState extends State<PlaceholderScreen> {
   }
 
   Future<bool> isLogin() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     String? accessToken = appPreferences.getString('accessToken');
     return accessToken == null ? false : true;
   }
