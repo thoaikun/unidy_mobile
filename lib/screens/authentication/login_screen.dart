@@ -116,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               Center(
                                 child: TextButton(
-                                  onPressed: () {},
+                                  onPressed: () => Navigator.pushNamed(context, '/authentication/forgot_password'),
                                   child: const Text('Quên mật khẩu')
                                 )
                               )

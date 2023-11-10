@@ -80,6 +80,14 @@ BottomNavigationBarThemeData unidyBottomNavigationBarThemeData = BottomNavigatio
   unselectedLabelStyle: unidyTextTheme.labelSmall?.copyWith(color: TextColor.textColor200)
 );
 
+DialogTheme unidyDialogTheme = DialogTheme(
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(8)
+  ),
+  elevation: 0,
+  backgroundColor: Colors.white
+);
+
 ThemeData unidyThemeData = ThemeData(
   useMaterial3: true,
   colorScheme: unidyColorScheme,
@@ -89,5 +97,6 @@ ThemeData unidyThemeData = ThemeData(
   textButtonTheme: unidyTextButtonThemeData,
   appBarTheme: unidyAppBarTheme,
   bottomNavigationBarTheme: unidyBottomNavigationBarThemeData,
-  popupMenuTheme: unidyPopupMenuThemeData
+  popupMenuTheme: unidyPopupMenuThemeData,
+  dialogTheme: unidyDialogTheme
 );

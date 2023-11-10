@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unidy_mobile/screens/authentication/forgot_password/forgot_password.dart';
 import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/screens/authentication/signup/signup_screen.dart';
 import 'package:unidy_mobile/screens/user/campaign_detail/campaign_detail.dart';
@@ -15,6 +16,7 @@ Map<String, Widget Function(BuildContext)> routes = <String, Widget Function(Bui
   '/': (context) => const HomeScreen(),
   '/authentication/login': (context) => const LoginScreen(),
   '/authentication/signup': (context) => const SignUpScreen(),
+  '/authentication/forgot_password': (context) => const ForgotPasswordScreen(),
   '/onboarding': (context) => const OnboardingScreen(),
   '/post_detail': (context) => Container(),
   '/notification': (context) => const NotificationScreen(),
