@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/forgot_password_viewmodel.dart';
-import 'package:unidy_mobile/widgets/input.dart';
+import 'package:unidy_mobile/widgets/input/input.dart';
 
 class ConfirmEmail extends StatelessWidget {
   final String logoImage = 'assets/imgs/logo/logo_1.png';
@@ -43,9 +43,11 @@ class ConfirmEmail extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
-                const Input(
-                    label: 'Email',
-                    prefixIcon: Icon(Icons.email_rounded)
+                Input(
+                  controller: forgotPasswordViewModel.emailController,
+                  label: 'Email',
+                  error: forgotPasswordViewModel.emailError,
+                  prefixIcon: const Icon(Icons.email_rounded)
                 ),
                 const SizedBox(height: 30),
                 SizedBox(
@@ -53,7 +55,7 @@ class ConfirmEmail extends StatelessWidget {
                   height: 50,
                   child:
                   FilledButton(
-                      onPressed: () => forgotPasswordViewModel.setCurrentStep(forgotPasswordViewModel.currentStep + 1),
+                      onPressed: () => forgotPasswordViewModel.onClickConfirmEmail(),
                       child: const Text('Xác nhận')
                   ),
                 ),

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/viewmodel/add_post_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/image/image_preview.dart';
-import 'package:unidy_mobile/widgets/input.dart';
+import 'package:unidy_mobile/widgets/input/input.dart';
 import 'package:unidy_mobile/widgets/upload_btn.dart';
 
 class AddPost extends StatefulWidget {

@@ -53,7 +53,7 @@ class AuthenticationRepository implements IAuthenticationRepository {
   @override
   Future<Response> confirmEmail(Map<String, String> payload) async {
     try {
-      Response response = await httpClient.post('api/v1/auth/send-email-reset-password', payload);
+      Response response = await httpClient.post('api/v1/auth/send-email-reset-password', json.encode(payload));
       return response;
     }
     catch (error) {
@@ -62,9 +62,9 @@ class AuthenticationRepository implements IAuthenticationRepository {
   }
 
   @override
-  Future<Response> submitOtp(Map<String, String> payload) async {
+  Future<Response> confirmOtp(Map<String, String> payload) async {
     try {
-      Response response = await httpClient.post('api/v1/auth/submit', payload);
+      Response response = await httpClient.post('api/v1/auth/submit-OPT', json.encode(payload));
       return response;
     }
     catch (error) {

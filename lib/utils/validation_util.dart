@@ -46,5 +46,12 @@ class Validation  {
     }
     return phone;
   }
+
+  static String validateSimilarPassword(String? password, String? confirmPassword) {
+    if (password == null || confirmPassword == null || password != confirmPassword) {
+      throw ValidationException(value: 'Mật khẩu không trùng khớp', code: ExceptionErrorCode.invalidConfirmPassword);
+    }
+    return password;
+  }
 }
 

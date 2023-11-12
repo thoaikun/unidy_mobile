@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/login_viewmodel.dart';
-import 'package:unidy_mobile/widgets/input.dart';
+import 'package:unidy_mobile/widgets/input/input.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: loginViewModel.togglePasswordVisible,
                                   icon: loginViewModel.passwordVisible ? const Icon(Icons.visibility_off_rounded) : const Icon(Icons.visibility_rounded),
                                 ),
-                                obscureText: loginViewModel.passwordVisible,
+                                obscureText: !loginViewModel.passwordVisible,
                               ),
                               const SizedBox(height: 15),
                               Row(

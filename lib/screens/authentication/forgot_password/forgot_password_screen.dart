@@ -34,7 +34,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             builder: (BuildContext context, ForgotPasswordViewModel forgotPasswordViewModel, Widget? child) {
               return Stack(
                 children: [
-                  Positioned(
+                  (forgotPasswordViewModel.loading) ? const LinearProgressIndicator() : Positioned(
                     child: TweenAnimationBuilder(
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut,

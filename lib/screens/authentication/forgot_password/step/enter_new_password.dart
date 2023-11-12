@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/forgot_password_viewmodel.dart';
-import 'package:unidy_mobile/widgets/input.dart';
+import 'package:unidy_mobile/widgets/input/input.dart';
 
 class EnterNewPassword extends StatelessWidget {
   final String logoImage = 'assets/imgs/logo/logo_1.png';
@@ -47,23 +47,29 @@ class EnterNewPassword extends StatelessWidget {
                 Input(
                   controller: forgotPasswordViewModel.newPasswordController,
                   label: 'Mật khẩu mới',
+                  error: forgotPasswordViewModel.passwordError,
                   prefixIcon: const Icon(Icons.key_rounded),
-                  suffixIcon: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.visibility_off_rounded),
-                  ),
-                  obscureText: true,
+                  obscureText: !forgotPasswordViewModel.showPassword,
                 ),
                 const SizedBox(height: 15),
                 Input(
                   controller: forgotPasswordViewModel.confirmNewPasswordController,
-                  label: 'Xác nhận mật khẩu',
-                  prefixIcon: const Icon(Icons.key_rounded),
-                  suffixIcon: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.visibility_off_rounded),
-                  ),
-                  obscureText: true,
+                  label: 'Xác nhận mật khẩu mới',
+                  error: forgotPasswordViewModel.confirmPasswordError,
+                  prefixIcon: const Icon(Icons.lock_rounded),
+                  obscureText: !forgotPasswordViewModel.showPassword,
+                ),
+                const SizedBox(height: 15),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Checkbox(
+                      value: forgotPasswordViewModel.showPassword,
+                      onChanged: (value) => forgotPasswordViewModel.toggleShowPassword(value)
+                    ),
+                    const Text('Hiển thị mật khẩu')
+                  ],
                 ),
                 const SizedBox(height: 30),
                 SizedBox(
@@ -71,7 +77,7 @@ class EnterNewPassword extends StatelessWidget {
                   height: 50,
                   child:
                   FilledButton(
-                      onPressed: () => forgotPasswordViewModel.showCompleteDialog(false),
+                      onPressed: () => forgotPasswordViewModel.onClickConfirmNewPassword(),
                       child: const Text('Xác nhận')
                   ),
                 ),

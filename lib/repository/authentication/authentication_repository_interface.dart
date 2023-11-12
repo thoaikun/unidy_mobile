@@ -7,5 +7,5 @@ abstract class IAuthenticationRepository {
   Future<Response> getRefreshToken();
   Future<void> logout();
   Future<Response> confirmEmail(Map<String, String> payload);
-  Future<Response> submitOtp(Map<String, String> payload);
+  Future<Response> confirmOtp(Map<String, String> payload);
 }

@@ -21,6 +21,7 @@ class ResponseException implements Exception {
 enum ExceptionErrorCode {
   invalidEmail,
   invalidPassword,
+  invalidConfirmPassword,
   invalidInput,
   invalidPhone,
   invalidJob,

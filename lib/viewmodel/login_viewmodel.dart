@@ -30,7 +30,7 @@ class LoginViewModel extends ChangeNotifier {
   LoginViewModel({ required this.context }) {
     _emailController.addListener(() => _setEmailError(null));
     _passwordController.addListener(() => _setPasswordError(null));
-    handleLogin();
+    _setupLoginStream();
   }
   
   void _setEmailError(String? error) {
@@ -48,7 +48,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void handleLogin() {
+  void _setupLoginStream() {
     Stream<String> emailStream = _emailSubject.stream;
     Stream<String> passwordStream = _passwordSubject.stream;
 
@@ -64,10 +64,10 @@ class LoginViewModel extends ChangeNotifier {
       .listen((payload) {
         _setLoadingLogin(true);
         authenticationService.login(payload)
-          .then(handleLoginSuccess)
-          .catchError(handleLoginError);
+          .then(_handleLoginSuccess)
+          .catchError(_handleLoginError);
         })
-        .onError(handleLoginError);
+        .onError(_handleLoginError);
   }
 
   void onClickLogin() {
@@ -83,14 +83,14 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void handleLoginSuccess(Authenticate authenticationResponse) async {
+  void _handleLoginSuccess(Authenticate authenticationResponse) async {
     await appPreferences.setString('accessToken', authenticationResponse.accessToken);
     await appPreferences.setString('refreshToken', authenticationResponse.refreshToken);
     _setLoadingLogin(false);
     Navigator.pushReplacementNamed(context, '/');
   }
 
-  void handleLoginError(Object error) {
+  void _handleLoginError(Object error) {
     if (error is ValidationException) {
       _setEmailError(error.message);
       _setLoadingLogin(false);

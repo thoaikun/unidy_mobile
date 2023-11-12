@@ -71,7 +71,7 @@ class AuthenticationService {
           return;
         case 400:
           ErrorResponse errorResponse = errorFromJson(response.body);
-          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
+          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidEmail);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
@@ -81,9 +81,9 @@ class AuthenticationService {
     }
   }
 
-  Future<void> submitOtp(Map<String, String> payload) async {
+  Future<void> confirmOtp(Map<String, String> payload) async {
     try {
-      Response response = await authenticationRepository.confirmEmail(payload);
+      Response response = await authenticationRepository.confirmOtp(payload);
 
       switch (response.statusCode) {
         case 200:

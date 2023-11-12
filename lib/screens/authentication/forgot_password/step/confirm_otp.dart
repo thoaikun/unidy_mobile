@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/forgot_password_viewmodel.dart';
-import 'package:unidy_mobile/widgets/waiting_button.dart';
-import 'package:unidy_mobile/widgets/otp_input.dart';
+import 'package:unidy_mobile/widgets/waiting_btn.dart';
+import 'package:unidy_mobile/widgets/input/otp_input.dart';
 
 class ConfirmOtp extends StatelessWidget {
   final String logoImage = 'assets/imgs/logo/logo_1.png';
@@ -14,7 +14,7 @@ class ConfirmOtp extends StatelessWidget {
     return Consumer<ForgotPasswordViewModel>(
       builder: (BuildContext context, ForgotPasswordViewModel forgotPasswordViewModel, Widget? child) {
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Image.asset(
@@ -44,7 +44,7 @@ class ConfirmOtp extends StatelessWidget {
                               ?.copyWith(color: TextColor.textColor300),
                         ),
                         Text(
-                          'lenguyenhuyenthoai@gmail.com ',
+                          forgotPasswordViewModel.email,
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium
@@ -69,14 +69,14 @@ class ConfirmOtp extends StatelessWidget {
                   height: 50,
                   child:
                   FilledButton(
-                      onPressed: () => forgotPasswordViewModel.setCurrentStep(forgotPasswordViewModel.currentStep + 1),
-                      child: const Text('Xác nhận')
+                    onPressed: () => forgotPasswordViewModel.onClickConfirmOtp(),
+                    child: const Text('Xác nhận')
                   ),
                 ),
                 Center(
                   child: WaitingButton(
                     text: 'Gửi lại',
-                    onPressed: () {print('hiii');},
+                    onPressed: () => forgotPasswordViewModel.onClickResendOtp(),
                     duration: const Duration(seconds: 5)
                   )
                 )

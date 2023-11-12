@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/screens/authentication/forgot_password/forgot_password.dart';
+import 'package:unidy_mobile/screens/authentication/forgot_password/forgot_password_screen.dart';
 import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/screens/authentication/signup/signup_screen.dart';
 import 'package:unidy_mobile/screens/user/campaign_detail/campaign_detail.dart';
@@ -9,7 +9,7 @@ import 'package:unidy_mobile/screens/user/friends_list/suggestion_friend_list_sc
 import 'package:unidy_mobile/screens/user/notification/notification_screen.dart';
 import 'package:unidy_mobile/screens/onboarding/onboarding_screen.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen.dart';
-import 'package:unidy_mobile/screens/placeholder/placeholder.dart';
+import 'package:unidy_mobile/screens/placeholder/placeholder_screen.dart';
 
 Map<String, Widget Function(BuildContext)> routes = <String, Widget Function(BuildContext)> {
   '/placeholder': (context) => const PlaceholderScreen(),
@@ -27,7 +27,7 @@ Map<String, Widget Function(BuildContext)> routes = <String, Widget Function(Bui
   '/friends/request': (context) => const RequestFriendListScreen(),
   '/friends/list': (context) => const FriendListScreen(),
   '/campaign': (context) => const CampaignDetailScreen(),
-  'profile': (context) => Container(),
+  '/profile': (context) => Container(),
 
   '/organization': (context) => Container(),
   '/organization/campaign': (context) => Container(),

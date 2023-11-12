@@ -4,7 +4,7 @@ import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
-import 'package:unidy_mobile/widgets/input.dart';
+import 'package:unidy_mobile/widgets/input/input.dart';
 
 class PostCard extends StatelessWidget {
   const PostCard({super.key});

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/src/foundation/change_notifier.dart';
 
 class OtpInput extends StatefulWidget {
   final int numberOfDigit;
@@ -18,31 +19,17 @@ class OtpInput extends StatefulWidget {
 class _OtpInputState extends State<OtpInput> {
   List<String> digits =List.filled(6, '');
   List<TextEditingController> inputControllers = [];
-  List<FocusNode> inputFocusNodes = [
-    FocusNode(debugLabel: '0'),
-    FocusNode(debugLabel: '1'),
-    FocusNode(debugLabel: '2'),
-    FocusNode(debugLabel: '3'),
-    FocusNode(debugLabel: '4'),
-    FocusNode(debugLabel: '5'),
-  ];
+  List<FocusNode> inputFocusNodes = [];
   List<FocusAttachment> inputFocusAttach = [];
   int index = 0;
 
   @override
   void initState() {
     super.initState();
-    for (int i=0; i < 6; i++) {
+    for (int i=0; i < widget.numberOfDigit; i++) {
       inputControllers.add(TextEditingController());
+      inputFocusNodes.add(FocusNode(debugLabel: '$i'));
       inputFocusAttach.add(inputFocusNodes[i].attach(context, onKey: _handlePressKey));
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    for (int i=0; i < 6; i++) {
-     inputFocusNodes[i].dispose();
     }
   }
 
@@ -56,10 +43,10 @@ class _OtpInputState extends State<OtpInput> {
       else if (_isDigit(event)) {
         int index = int.parse(node.debugLabel ?? '0');
         inputControllers[index].text = event.logicalKey.keyLabel;
-        bool isFinalInput = index == 5;
+        bool isFinalInput = index == widget.numberOfDigit - 1;
         if (isFinalInput) {
           String otpValue = '';
-          for (int i=0; i < 6; i++) {
+          for (int i=0; i < widget.numberOfDigit; i++) {
             otpValue += inputControllers[i].text;
           }
           widget.onComplete!(otpValue);
@@ -74,8 +61,6 @@ class _OtpInputState extends State<OtpInput> {
   bool _isDigit(RawKeyDownEvent event) {
     return RegExp(r'[0-9]').hasMatch(event.logicalKey.keyLabel);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -109,5 +94,13 @@ class _OtpInputState extends State<OtpInput> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    for (int i=0; i < widget.numberOfDigit; i++) {
+      inputFocusNodes[i].dispose();
+    }
   }
 }

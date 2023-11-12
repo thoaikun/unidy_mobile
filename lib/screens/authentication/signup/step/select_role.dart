@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/signup_viewmodel.dart';
-import 'package:unidy_mobile/widgets/role_card.dart';
+import 'package:unidy_mobile/widgets/card/role_card.dart';
 
 class SelectRoleStep extends StatelessWidget {
   const SelectRoleStep({super.key});
