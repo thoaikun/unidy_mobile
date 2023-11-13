@@ -36,6 +36,10 @@ class _UnidyPopupMenuState extends State<UnidyPopupMenu> {
     switch(item.value) {
       case EPopupMenuOption.logout:
         appPreferences.clean();
+        while(Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+        Navigator.pushReplacementNamed(context, '/authentication/login');
         break;
       case EPopupMenuOption.organizationMode:
       case EPopupMenuOption.sponsorMode:

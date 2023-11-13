@@ -15,7 +15,7 @@ class Authenticate {
 
   factory Authenticate.fromJson(Map<String, dynamic> json) => Authenticate(
     accessToken: json["access_token"],
-    refreshToken: json["refresh_token"],
+    refreshToken: json["refresh_token"].toString(),
   );
 
   Map<String, dynamic> toJson() => {

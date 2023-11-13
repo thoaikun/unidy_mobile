@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/services/authentication_service.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:unidy_mobile/services/user_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
 import 'package:unidy_mobile/utils/validation_util.dart';
@@ -9,6 +10,7 @@ import 'package:unidy_mobile/utils/validation_util.dart';
 class ForgotPasswordViewModel extends ChangeNotifier {
   static const int MAX_STEP = 3;
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
+  final UserService userService = GetIt.instance<UserService>();
 
   final BuildContext context;
   int _currentStep = 0;
@@ -16,6 +18,7 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   String otpValue = '';
   String email = '';
   String newPassword = '';
+  String resetPasswordToken = '';
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
@@ -100,7 +103,10 @@ class ForgotPasswordViewModel extends ChangeNotifier {
             TextButton(
               child: const Text('Đồng ý'),
               onPressed: () {
-                Navigator.of(context).pop();
+                if (title == 'Thất bại')
+                  Navigator.of(context).pop();
+                else
+                  Navigator.pushReplacementNamed(context, '/authentication/login');
               },
             ),
           ],
@@ -120,8 +126,14 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   }
 
   void onClickResendOtp() {
-    Sink<String> emailSink = _emailSubject.sink;
-    emailSink.add(_emailController.text);
+    _setLoading(true);
+    authenticationService.confirmEmail({
+      'email': email
+    })
+      .then((_) {
+        _setLoading(false);
+      })
+      .catchError(_handleForgotPasswordError);
   }
 
   void onClickConfirmNewPassword() {
@@ -139,15 +151,15 @@ class ForgotPasswordViewModel extends ChangeNotifier {
       .debounceTime(const Duration(milliseconds: 500))
       .listen((email) {
         this.email = email;
-        // _setLoadingConfirmEmail(true);
-        // authenticationService.confirmEmail({
-        //   'email': email
-        // })
-        //   .then((_) {
-        //     _setLoadingConfirmEmail(false);
+        _setLoading(true);
+        authenticationService.confirmEmail({
+          'email': email
+        })
+          .then((_) {
+            _setLoading(false);
             _setCurrentStep(_currentStep + 1);
-        //   })
-        //   .catchError(_handleForgotPasswordError);
+          })
+          .catchError(_handleForgotPasswordError);
       })
       .onError(_handleForgotPasswordError);
   }
@@ -157,13 +169,17 @@ class ForgotPasswordViewModel extends ChangeNotifier {
 
     otpStream.debounceTime(const Duration(milliseconds: 500))
       .listen((otp) {
-        _setCurrentStep(_currentStep + 1);
-        // authenticationService.confirmOtp({
-        //   'otp': otp,
-        //   // 'email': email
-        // })
-        //   .then((_) => _setCurrentStep(_currentStep + 1))
-        //   .catchError(_handleForgotPasswordError);
+        _setLoading(true);
+        authenticationService.confirmOtp({
+          'otp': otp,
+          'email': email
+        })
+          .then((authenticate) {
+            resetPasswordToken = authenticate.accessToken;
+            _setCurrentStep(_currentStep + 1);
+            _setLoading(false);
+          })
+          .catchError(_handleForgotPasswordError);
       });
   }
 
@@ -178,12 +194,22 @@ class ForgotPasswordViewModel extends ChangeNotifier {
     )
       .debounceTime(const Duration(milliseconds: 500))
       .listen((newPassword) {
-        print(newPassword);
+        _setLoading(true);
+        userService.resetPassword({
+          'newPassword' : newPassword,
+          'confirmationPassword' : newPassword
+        }, resetPasswordToken)
+          .then((_) {
+            _setLoading(false);
+            showForgotPasswordDialog('Thành công', 'Mật khẩu đã được thay đổi');
+          })
+          .catchError(_handleForgotPasswordError);
       })
       .onError(_handleForgotPasswordError);
   }
 
   void _handleForgotPasswordError(Object error) {
+    _setLoading(false);
     if (error is ValidationException) {
       switch (error.code) {
         case ExceptionErrorCode.invalidEmail:
@@ -205,7 +231,7 @@ class ForgotPasswordViewModel extends ChangeNotifier {
           _setEmailError(error.message);
           break;
         case ExceptionErrorCode.invalidOtp:
-          _setOtpError(error.message);
+          showForgotPasswordDialog('Thất bại', 'Mã OTP không đúng, vui lòng thử lại.');
           break;
         default:
           break;

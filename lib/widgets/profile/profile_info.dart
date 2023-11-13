@@ -11,11 +11,22 @@ class ProfileInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Thông tin cá nhân',
-            style: Theme.of(context).textTheme.titleMedium,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Thông tin cá nhân',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.edit,
+                  size: 20,
+                )
+              )
+            ],
           ),
-          const Divider(thickness: 1),
           const SizedBox(height: 5),
           Row(
             children: [
@@ -49,11 +60,6 @@ class ProfileInfo extends StatelessWidget {
               Text('Tại: ', style: Theme.of(context).textTheme.labelLarge,),
               Text('Đại học Bách Khoa Tp.HCM', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
             ],
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: MediaQuery.of(context).size.width - 40,
-            child: OutlinedButton(onPressed: () {}, child: const Text('Chỉnh sửa thông tin'))
           )
         ],
       ),

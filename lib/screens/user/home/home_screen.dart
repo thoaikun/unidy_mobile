@@ -7,6 +7,7 @@ import 'package:unidy_mobile/screens/user/home/tabs/dashboard.dart';
 import 'package:unidy_mobile/screens/user/home/tabs/friends.dart';
 import 'package:unidy_mobile/screens/user/home/tabs/history.dart';
 import 'package:unidy_mobile/screens/user/home/tabs/profile.dart';
+import 'package:unidy_mobile/viewmodel/profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/navigation/bottom_navigation_bar.dart';
 import 'package:unidy_mobile/widgets/navigation/main_appbar.dart';
 
@@ -32,7 +33,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NavigationViewModel()),
-        ChangeNotifierProvider(create: (_) => AddPostController())
+        ChangeNotifierProvider(create: (_) => AddPostController()),
+        ChangeNotifierProvider(create: (_) => ProfileViewModel())
       ],
       child: Consumer<NavigationViewModel>(
         builder: (BuildContext context, NavigationViewModel navigationViewModal, Widget? child) => Scaffold(

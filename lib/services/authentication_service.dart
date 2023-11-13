@@ -70,7 +70,7 @@ class AuthenticationService {
         case 200:
           return;
         case 400:
-          ErrorResponse errorResponse = errorFromJson(response.body);
+          ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidEmail);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -81,16 +81,17 @@ class AuthenticationService {
     }
   }
 
-  Future<void> confirmOtp(Map<String, String> payload) async {
+  Future<Authenticate> confirmOtp(Map<String, String> payload) async {
     try {
       Response response = await authenticationRepository.confirmOtp(payload);
 
       switch (response.statusCode) {
         case 200:
-          return;
+          Authenticate authenticationResponse = authenticateFromJson(utf8.decode(response.bodyBytes));
+          return authenticationResponse;
         case 400:
-          ErrorResponse errorResponse = errorFromJson(response.body);
-          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
+          ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
+          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidOtp);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
