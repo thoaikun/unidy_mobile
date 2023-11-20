@@ -10,9 +10,9 @@ enum StatusType {
 
 class StatusTag extends StatelessWidget {
   final String label;
-  final StatusType type;
+  final StatusType? type;
 
-  const StatusTag({super.key, required this.label, this.type = StatusType.success});
+  const StatusTag({super.key, required this.label, this.type });
 
   Color _getStatusBackgroundColor() {
     switch(type) {
@@ -24,6 +24,8 @@ class StatusTag extends StatelessWidget {
         return WarningColor.warning100;
       case StatusType.info:
         return InfoColor.info100;
+      default:
+        return Colors.white;
     }
   }
 
@@ -37,13 +39,15 @@ class StatusTag extends StatelessWidget {
         return WarningColor.warning500;
       case StatusType.info:
         return InfoColor.info500;
+      default:
+        return TextColor.textColor800;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Chip(
-      label: const Text('Đã tham gia'),
+      label: Text(label.toUpperCase()),
       labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(color: _getStatusLabelColor()),
       labelPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: -4),
       color: MaterialStatePropertyAll(_getStatusBackgroundColor()),

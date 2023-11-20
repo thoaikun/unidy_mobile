@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:unidy_mobile/models/authentication/authenticate_model.dart';
+import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
 import 'package:unidy_mobile/repository/authentication/authentication_repository.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
 class AuthenticationService {
-  AuthenticationRepository authenticationRepository = AuthenticationRepository();
+  final AuthenticationRepository _authenticationRepository = AuthenticationRepository();
   
   Future<Authenticate> login(Map<String, String> payload) async {
     try {
-      Response response = await authenticationRepository.authenticate(payload);
+      Response response = await _authenticationRepository.authenticate(payload);
 
       switch(response.statusCode) {
         case 200:
@@ -31,7 +31,7 @@ class AuthenticationService {
 
   Future<Response> signUp(Map<String, String> payload) async {
     try {
-      Response response = await authenticationRepository.createAccount(payload);
+      Response response = await _authenticationRepository.createAccount(payload);
 
       switch(response.statusCode) {
         case 200:
@@ -55,7 +55,7 @@ class AuthenticationService {
 
   Future<void> logout() async {
     try {
-      await authenticationRepository.logout();
+      await _authenticationRepository.logout();
     }
     catch (error) {
       rethrow;
@@ -64,7 +64,7 @@ class AuthenticationService {
 
   Future<void> confirmEmail(Map<String, String> payload) async {
     try {
-      Response response = await authenticationRepository.confirmEmail(payload);
+      Response response = await _authenticationRepository.confirmEmail(payload);
 
       switch (response.statusCode) {
         case 200:
@@ -83,7 +83,7 @@ class AuthenticationService {
 
   Future<Authenticate> confirmOtp(Map<String, String> payload) async {
     try {
-      Response response = await authenticationRepository.confirmOtp(payload);
+      Response response = await _authenticationRepository.confirmOtp(payload);
 
       switch (response.statusCode) {
         case 200:

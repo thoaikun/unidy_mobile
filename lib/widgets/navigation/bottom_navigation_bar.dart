@@ -3,14 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/viewmodel/navigation_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_navigation_icon.dart';
 
-class UnidyBottomNavigationBar extends StatefulWidget {
-  const UnidyBottomNavigationBar({super.key});
+class UnidyMainBottomNavigationBar extends StatefulWidget {
+  const UnidyMainBottomNavigationBar({super.key});
 
   @override
-  State<UnidyBottomNavigationBar> createState() => _UnidyBottomNavigationBarState();
+  State<UnidyMainBottomNavigationBar> createState() => _UnidyMainBottomNavigationBarState();
 }
 
-class _UnidyBottomNavigationBarState extends State<UnidyBottomNavigationBar> {
+class _UnidyMainBottomNavigationBarState extends State<UnidyMainBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Consumer<NavigationViewModel>(
@@ -44,3 +44,5 @@ class _UnidyBottomNavigationBarState extends State<UnidyBottomNavigationBar> {
     );
   }
 }
+
+

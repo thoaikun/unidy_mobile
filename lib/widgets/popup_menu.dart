@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
+import 'package:unidy_mobile/screens/user/home/home_screen.dart';
 
 enum EPopupMenuOption {
   logout,
@@ -42,9 +44,13 @@ class _UnidyPopupMenuState extends State<UnidyPopupMenu> {
         Navigator.pushReplacementNamed(context, '/authentication/login');
         break;
       case EPopupMenuOption.organizationMode:
+        appPreferences.setString('accountMode', 'organization');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => WillPopScope(child: const OrganizationHomeScreen(), onWillPop: () async => false )));
+        break;
       case EPopupMenuOption.sponsorMode:
       case EPopupMenuOption.volunteerMode:
-        print('change mode');
+        appPreferences.setString('accountMode', 'user');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => WillPopScope(child: const HomeScreen(), onWillPop: () async => false )));
         break;
     }
   }

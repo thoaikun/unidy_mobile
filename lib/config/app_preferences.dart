@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppPreferences {
@@ -25,6 +27,15 @@ class AppPreferences {
 
   Future<void> setInt(String key, int value) {
     return _prefs.setInt(key, value);
+  }
+
+  Future<void> setObject(String key, Object object) {
+    return _prefs.setString(key, jsonEncode(object));
+  }
+
+  Object? getObject(String key) {
+    String? jsonObject = _prefs.getString(key);
+    return jsonObject != null ? jsonDecode(jsonObject) : null;
   }
 
   Future<void> clean() async {

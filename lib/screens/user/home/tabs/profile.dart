@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/viewmodel/profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/profile/profile_archievement.dart';
 import 'package:unidy_mobile/widgets/profile/profile_header.dart';
@@ -38,12 +40,12 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  SliverToBoxAdapter _buildProfileInfo() {
-    return const SliverToBoxAdapter(
+  SliverToBoxAdapter _buildProfileInfo(User user) {
+    return SliverToBoxAdapter(
       child: Column(
         children: [
-          ProfileInfo(),
-          Divider(thickness: 5, color: PrimaryColor.primary50)
+          ProfileInfo(user: user),
+          const Divider(thickness: 5, color: PrimaryColor.primary50)
         ],
       ),
     );
@@ -64,20 +66,23 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Consumer<ProfileViewModel>(
       builder: (BuildContext context, ProfileViewModel profileViewModel, Widget? child) {
-        return CustomScrollView(
-          controller: profileViewModel.scrollController,
-          slivers: [
-            _buildProfileHeader(),
-            _buildProfileInfo(),
-            _buildProfileAchievement(),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                child: Text('Bài đăng gần đây', style: Theme.of(context).textTheme.titleMedium),
+        return Skeletonizer(
+          enabled: profileViewModel.loading,
+          child: CustomScrollView(
+            controller: profileViewModel.scrollController,
+            slivers: [
+              _buildProfileHeader(),
+              _buildProfileInfo(profileViewModel.user),
+              _buildProfileAchievement(),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                  child: Text('Bài đăng gần đây', style: Theme.of(context).textTheme.titleMedium),
+                ),
               ),
-            ),
-            const ProfileRecentPost()
-          ],
+              const ProfileRecentPost()
+            ],
+          ),
         );
       }
     );

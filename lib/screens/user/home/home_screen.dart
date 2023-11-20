@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NavigationViewModel()),
-        ChangeNotifierProvider(create: (_) => AddPostController()),
+        ChangeNotifierProvider(create: (_) => AddPostViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel())
       ],
       child: Consumer<NavigationViewModel>(
@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
               preferredSize: Size.fromHeight(55),
               child: UnidyMainAppBar()
           ),
-          bottomNavigationBar: const UnidyBottomNavigationBar(),
+          bottomNavigationBar: const UnidyMainBottomNavigationBar(),
           body: _screenOptions[navigationViewModal.currentScreen]
         ),
       ),

@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
+import 'package:unidy_mobile/config/http_client.dart';
+import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/services/authentication_service.dart';
+import 'package:unidy_mobile/services/user_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
-import 'package:unidy_mobile/models/authentication/authenticate_model.dart';
+import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final BuildContext context;
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
+  final UserService userService = GetIt.instance<UserService>();
   final AppPreferences appPreferences = GetIt.instance<AppPreferences>();
   final Duration debounceTime = const Duration(milliseconds: 500);
 
@@ -86,6 +90,7 @@ class LoginViewModel extends ChangeNotifier {
   void _handleLoginSuccess(Authenticate authenticationResponse) async {
     await appPreferences.setString('accessToken', authenticationResponse.accessToken);
     await appPreferences.setString('refreshToken', authenticationResponse.refreshToken);
+    await appPreferences.setString('accountMode', 'user');
     _setLoadingLogin(false);
     Navigator.pushReplacementNamed(context, '/');
   }
@@ -95,10 +100,28 @@ class LoginViewModel extends ChangeNotifier {
       _setEmailError(error.message);
       _setLoadingLogin(false);
     }
-    if (error is ResponseException) {
+    else if (error is ResponseException) {
       _setEmailError(error.message);
       _setPasswordError(error.message);
       _setLoadingLogin(false);
+    }
+    else {
+      _setLoadingLogin(false);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Hệ thống đang bận'),
+            content: const Text('Vui lòng đợi trong giây lát và thử lại'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Đồng ý'),
+                onPressed: () => Navigator.of(context).pop()
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 

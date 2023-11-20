@@ -107,7 +107,7 @@ class Input extends StatelessWidget {
     return TextFormField(
       controller: controller,
       decoration: getInputDecoration(),
-      minLines: 5,
+      minLines: 1,
       keyboardType: TextInputType.multiline,
       maxLines: null,
     );

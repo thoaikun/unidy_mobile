@@ -47,89 +47,89 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 45),
                         Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Đăng nhập',
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Đăng nhập',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  'Nhập email và mật khẩu của bạn',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(color: TextColor.textColor300),
+                                )
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Input(
+                              controller: loginViewModel.emailController,
+                              label: 'Email',
+                              error: loginViewModel.emailError,
+                              prefixIcon: const Icon(Icons.email_rounded)
+                            ),
+                            const SizedBox(height: 20),
+                            Input(
+                              controller: loginViewModel.passwordController,
+                              label: 'Mật khẩu',
+                              error: loginViewModel.passwordError,
+                              prefixIcon: const Icon(Icons.key_rounded),
+                              suffixIcon: IconButton(
+                                onPressed: loginViewModel.togglePasswordVisible,
+                                icon: loginViewModel.passwordVisible ? const Icon(Icons.visibility_off_rounded) : const Icon(Icons.visibility_rounded),
+                              ),
+                              obscureText: !loginViewModel.passwordVisible,
+                            ),
+                            const SizedBox(height: 15),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text('Chưa có tài khoản?', style: Theme.of(context).textTheme.bodySmall),
+                                const SizedBox(width: 8),
+                                TextButton(
+                                  onPressed: ()  => Navigator.pushNamed(context, '/authentication/signup'),
+                                  style: const ButtonStyle(
+                                      fixedSize: MaterialStatePropertyAll<Size>(Size.fromHeight(20)),
+                                      padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.zero)
                                   ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    'Nhập email và mật khẩu của bạn',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(color: TextColor.textColor300),
-                                  )
-                                ],
+                                  child: Text(
+                                    'Đăng ký ngay',
+                                    style: Theme.of(context).textTheme.labelMedium?.copyWith(color: PrimaryColor.primary500)
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(height: 30),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child:
+                                FilledButton(
+                                  onPressed: loginViewModel.onClickLogin,
+                                  child: const Text('Đi thôi')
                               ),
-                              const SizedBox(height: 20),
-                              Input(
-                                controller: loginViewModel.emailController,
-                                label: 'Email',
-                                error: loginViewModel.emailError,
-                                prefixIcon: const Icon(Icons.email_rounded)
-                              ),
-                              const SizedBox(height: 20),
-                              Input(
-                                controller: loginViewModel.passwordController,
-                                label: 'Mật khẩu',
-                                error: loginViewModel.passwordError,
-                                prefixIcon: const Icon(Icons.key_rounded),
-                                suffixIcon: IconButton(
-                                  onPressed: loginViewModel.togglePasswordVisible,
-                                  icon: loginViewModel.passwordVisible ? const Icon(Icons.visibility_off_rounded) : const Icon(Icons.visibility_rounded),
-                                ),
-                                obscureText: !loginViewModel.passwordVisible,
-                              ),
-                              const SizedBox(height: 15),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text('Chưa có tài khoản?', style: Theme.of(context).textTheme.bodySmall),
-                                  const SizedBox(width: 8),
-                                  TextButton(
-                                    onPressed: ()  => Navigator.pushNamed(context, '/authentication/signup'),
-                                    style: const ButtonStyle(
-                                        fixedSize: MaterialStatePropertyAll<Size>(Size.fromHeight(20)),
-                                        padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.zero)
-                                    ),
-                                    child: Text(
-                                      'Đăng ký ngay',
-                                      style: Theme.of(context).textTheme.labelMedium?.copyWith(color: PrimaryColor.primary500)
-                                    ),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(height: 30),
-                              SizedBox(
-                                width: double.infinity,
-                                height: 50,
-                                child:
-                                  FilledButton(
-                                    onPressed: loginViewModel.onClickLogin,
-                                    child: const Text('Đi thôi')
-                                ),
-                              ),
-                              Center(
+                            ),
+                            Center(
                                 child: TextButton(
                                   onPressed: () => Navigator.pushNamed(context, '/authentication/forgot_password'),
                                   child: const Text('Quên mật khẩu')
                                 )
                               )
-                            ],
-                          ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                   Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: Image.asset(backgroundImage, scale: 2,)
-                )
+                    bottom: 0,
+                    right: 0,
+                    child: Image.asset(backgroundImage, scale: 2,)
+                  )
                 ]
               );
             }

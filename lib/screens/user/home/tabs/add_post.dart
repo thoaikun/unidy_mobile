@@ -14,8 +14,25 @@ class AddPost extends StatefulWidget {
 }
 
 class _AddPostState extends State<AddPost> {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AddPostViewModel>(
+        builder: (BuildContext context, AddPostViewModel addPostViewModel, Widget? child) {
+          return Container(
+            margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: CustomScrollView(
+              slivers: [
+                _buildTextAreaInput(addPostViewModel),
+                _buildImageGrid(addPostViewModel),
+                _buildButton(addPostViewModel)
+              ],
+            ),
+          );
+        }
+    );
+  }
 
-  SliverList _buildTextAreaInput(AddPostController addPostController) {
+  SliverList _buildTextAreaInput(AddPostViewModel addPostViewModel) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
@@ -29,7 +46,7 @@ class _AddPostState extends State<AddPost> {
               return const SizedBox(height: 5);
             case 2:
               return Input(
-                controller: addPostController.contentController,
+                controller: addPostViewModel.contentController,
                 label: 'Nêu cảm nghĩ của bạn'
               ).textarea();
             case 3:
@@ -49,7 +66,7 @@ class _AddPostState extends State<AddPost> {
     );
   }
 
-  SliverGrid _buildImageGrid(AddPostController addPostController) {
+  SliverGrid _buildImageGrid(AddPostViewModel addPostViewModel) {
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -58,24 +75,24 @@ class _AddPostState extends State<AddPost> {
       ),
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          if (index == addPostController.files.length) {
+          if (index == addPostViewModel.files.length) {
             return UploadButton(
-              onTap: () => addPostController.handleAddImage(),
+              onTap: () => addPostViewModel.handleAddImage(),
             );
           }
           else {
             return ImagePreview(
-              file: addPostController.files[index],
-              onDelete: () =>  addPostController.removeFile(addPostController.files[index]),
+              file: addPostViewModel.files[index],
+              onDelete: () =>  addPostViewModel.removeFile(addPostViewModel.files[index]),
             );
           }
         },
-        childCount: addPostController.files.length + 1
+        childCount: addPostViewModel.files.length + 1
       ),
     );
   }
 
-  SliverToBoxAdapter _buildButton(AddPostController addPostController) {
+  SliverToBoxAdapter _buildButton(AddPostViewModel addPostController) {
     return SliverToBoxAdapter(
       child: Container(
         margin: const EdgeInsets.only(top: 20),
@@ -96,21 +113,4 @@ class _AddPostState extends State<AddPost> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<AddPostController>(
-      builder: (BuildContext context, AddPostController addPostController, Widget? child) {
-        return Container(
-          margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-          child: CustomScrollView(
-            slivers: [
-              _buildTextAreaInput(addPostController),
-              _buildImageGrid(addPostController),
-              _buildButton(addPostController)
-            ],
-          ),
-        );
-      }
-    );
-  }
 }

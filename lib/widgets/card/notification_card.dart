@@ -22,7 +22,7 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       child: Container(
         decoration: _getBoxDecoration(),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),

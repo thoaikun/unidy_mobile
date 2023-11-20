@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class ProfileInfo extends StatelessWidget {
-  const ProfileInfo({super.key});
+  final User? user;
+
+  const ProfileInfo({
+    super.key,
+    required this.user
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +25,11 @@ class ProfileInfo extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.edit,
-                  size: 20,
-                )
+                  onPressed: () => Navigator.pushNamed(context, '/profile/edit'),
+                  icon: const Icon(
+                    Icons.edit,
+                    size: 20,
+                  )
               )
             ],
           ),
@@ -35,7 +41,7 @@ class ProfileInfo extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               Text(
-                Formatter.formatTime(DateTime.now()).toString(),
+                Formatter.formatTime(user?.dayOfBirth ?? DateTime.now()).toString(),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),
               )
             ],
@@ -44,21 +50,21 @@ class ProfileInfo extends StatelessWidget {
           Row(
             children: [
               Text('Giới tính: ', style: Theme.of(context).textTheme.labelLarge,),
-              Text('Nam', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
+              Text(user?.sex ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
             ],
           ),
           const SizedBox(height: 5),
           Row(
             children: [
               Text('Công việc: ', style: Theme.of(context).textTheme.labelLarge,),
-              Text('Sinh viên', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
+              Text(user?.job ?? 'không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
             ],
           ),
           const SizedBox(height: 5),
           Row(
             children: [
               Text('Tại: ', style: Theme.of(context).textTheme.labelLarge,),
-              Text('Đại học Bách Khoa Tp.HCM', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
+              Text(user?.workLocation ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
             ],
           )
         ],

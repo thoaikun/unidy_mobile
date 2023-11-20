@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
+import 'package:unidy_mobile/config/http_client.dart';
+import 'package:unidy_mobile/models/account_mode_model.dart';
+import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/screens/authentication/login_screen.dart';
+import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen.dart';
 
 class PlaceholderScreen extends StatefulWidget {
@@ -12,8 +16,9 @@ class PlaceholderScreen extends StatefulWidget {
 }
 
 class _PlaceholderScreenState extends State<PlaceholderScreen> {
-  late Future<bool> hasLoginFuture;
+  late Future<AccountMode> hasLoginFuture;
   AppPreferences appPreferences = GetIt.instance<AppPreferences>();
+  HttpClient httpClient = GetIt.instance<HttpClient>();
 
   @override
   void initState() {
@@ -26,11 +31,17 @@ class _PlaceholderScreenState extends State<PlaceholderScreen> {
     return FutureBuilder(
       future: hasLoginFuture,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data == true) return const HomeScreen();
-          return const LoginScreen();
+        switch (snapshot.data) {
+          case AccountMode.user:
+          case AccountMode.sponsor:
+            return WillPopScope(child: const HomeScreen(), onWillPop: () async => false );
+          case AccountMode.organization:
+            return WillPopScope(child: const OrganizationHomeScreen(), onWillPop: () async => false );
+          case AccountMode.none:
+            return WillPopScope(child: const LoginScreen(), onWillPop: () async => false );
+          default:
+            return _buildPlaceHolder();
         }
-        return _buildPlaceHolder();
       }
     );
   }
@@ -58,9 +69,13 @@ class _PlaceholderScreenState extends State<PlaceholderScreen> {
     );
   }
 
-  Future<bool> isLogin() async {
+  Future<AccountMode> isLogin() async {
     await Future.delayed(const Duration(seconds: 1));
     String? accessToken = appPreferences.getString('accessToken');
-    return accessToken == null ? false : true;
+    AccountMode accountMode = accountModeFromString(appPreferences.getString('accountMode')) ?? AccountMode.none;
+    if (accessToken != null) {
+      httpClient.addHeader('Authorization', 'Bearer $accessToken');
+    }
+    return accountMode;
   }
 }

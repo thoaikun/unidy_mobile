@@ -2,6 +2,7 @@ import 'package:http/http.dart';
 
 class HttpClient {
   final Client client = Client();
+  final Duration timeLimit = const Duration(seconds: 10);
   String baseUri = 'http://192.168.88.138:8080';
   Map<String, String>? headers;
 
@@ -14,27 +15,27 @@ class HttpClient {
 
   Future<Response> get(String path) {
     Uri url = Uri.parse('$baseUri/$path');
-    return client.get(url, headers: headers);
+    return client.get(url, headers: headers).timeout(timeLimit);
   }
 
   Future<Response> post(String path, Object? body) async {
     Uri url = Uri.parse('$baseUri/$path');
-    return client.post(url, headers: headers, body: body);
+    return client.post(url, headers: headers, body: body).timeout(timeLimit);
   }
 
   Future<Response> put(String path, Object? body) {
     Uri url = Uri.parse('$baseUri/$path');
-    return client.put(url, headers: headers, body: body);
+    return client.put(url, headers: headers, body: body).timeout(timeLimit);
   }
 
   Future<Response> patch(String path, Object? body) {
     Uri url = Uri.parse('$baseUri/$path');
-    return client.patch(url, headers: headers, body: body);
+    return client.patch(url, headers: headers, body: body).timeout(timeLimit);
   }
 
   Future<Response> delete(String path, Object? body) {
     Uri url = Uri.parse('$baseUri/$path');
-    return client.delete(url, headers: headers, body: body);
+    return client.delete(url, headers: headers, body: body).timeout(timeLimit);
   }
 
   void close() {

@@ -28,31 +28,32 @@ TextTheme unidyTextTheme = TextTheme(
 
 FilledButtonThemeData unidyFilledButtonThemeData = FilledButtonThemeData(
   style: ButtonStyle(
-      shape: MaterialStatePropertyAll(
-          RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4)
-          )
+    shape: MaterialStatePropertyAll(
+      RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4)
       )
+    )
   )
 );
 
 OutlinedButtonThemeData unidyOutlinedButtonThemeData = OutlinedButtonThemeData(
   style: ButtonStyle(
-      shape: MaterialStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          )
+    shape: MaterialStatePropertyAll(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
       )
+    ),
+    side: const MaterialStatePropertyAll(BorderSide(color: PrimaryColor.primary500))
   )
 );
 
 TextButtonThemeData unidyTextButtonThemeData = TextButtonThemeData(
   style: ButtonStyle(
-      shape: MaterialStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          )
+    shape: MaterialStatePropertyAll(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
       )
+    ),
   )
 );
 
@@ -88,6 +89,10 @@ DialogTheme unidyDialogTheme = DialogTheme(
   backgroundColor: Colors.white
 );
 
+BadgeThemeData unidyBadgeTheme = const BadgeThemeData(
+  backgroundColor: ErrorColor.error400
+);
+
 ThemeData unidyThemeData = ThemeData(
   useMaterial3: true,
   colorScheme: unidyColorScheme,
@@ -98,5 +103,6 @@ ThemeData unidyThemeData = ThemeData(
   appBarTheme: unidyAppBarTheme,
   bottomNavigationBarTheme: unidyBottomNavigationBarThemeData,
   popupMenuTheme: unidyPopupMenuThemeData,
-  dialogTheme: unidyDialogTheme
+  dialogTheme: unidyDialogTheme,
+  badgeTheme: unidyBadgeTheme
 );

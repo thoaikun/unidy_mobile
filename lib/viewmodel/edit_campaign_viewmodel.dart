@@ -1,15 +1,12 @@
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 
-class AddPostViewModel extends ChangeNotifier {
+class EditCampaignViewModel extends ChangeNotifier {
   final List<File> _files = [];
-  final TextEditingController _contentController = TextEditingController();
-  final BehaviorSubject<String> contentSubject = BehaviorSubject<String>();
 
   List<File> get files => _files;
-  TextEditingController get contentController => _contentController;
 
   void addFile(File file) {
     _files.add(file);
@@ -18,12 +15,6 @@ class AddPostViewModel extends ChangeNotifier {
 
   void removeFile(File file) {
     _files.remove(file);
-    notifyListeners();
-  }
-
-  void handleCancel() {
-    files.clear();
-    contentController.clear();
     notifyListeners();
   }
 
