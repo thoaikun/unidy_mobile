@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/screens/organization/home/tabs/campaign_history.dart';
 import 'package:unidy_mobile/screens/organization/home/tabs/dashboard.dart';
+import 'package:unidy_mobile/screens/organization/home/tabs/organization_profile.dart';
 import 'package:unidy_mobile/viewmodel/navigation_viewmodel.dart';
 import 'package:unidy_mobile/widgets/navigation/organization_appbar.dart';
 import 'package:unidy_mobile/widgets/navigation/organization_bottom_navigation_bar.dart';
@@ -18,7 +19,7 @@ class _OrganizationHomeScreenState extends State<OrganizationHomeScreen> {
     const Dashboard(),
     const CampaignHistory(),
     const Placeholder(),
-    const Placeholder(),
+    const OrganizationProfile()
   ];
 
   @override

@@ -6,7 +6,7 @@ import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/viewmodel/profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/profile/profile_archievement.dart';
 import 'package:unidy_mobile/widgets/profile/profile_header.dart';
-import 'package:unidy_mobile/widgets/profile/profile_info.dart';
+import 'package:unidy_mobile/widgets/profile/profile_user_info.dart';
 import 'package:unidy_mobile/widgets/profile/profile_recent_post.dart';
 
 class Profile extends StatefulWidget {
@@ -34,6 +34,7 @@ class _ProfileState extends State<Profile> {
       child: Column(
         children: [
           ProfileHeader(),
+          SizedBox(height: 20),
           Divider(thickness: 5, color: PrimaryColor.primary50)
         ],
       )
@@ -44,7 +45,7 @@ class _ProfileState extends State<Profile> {
     return SliverToBoxAdapter(
       child: Column(
         children: [
-          ProfileInfo(user: user),
+          ProfileUserInfo(user: user),
           const Divider(thickness: 5, color: PrimaryColor.primary50)
         ],
       ),
@@ -67,7 +68,7 @@ class _ProfileState extends State<Profile> {
     return Consumer<ProfileViewModel>(
       builder: (BuildContext context, ProfileViewModel profileViewModel, Widget? child) {
         return Skeletonizer(
-          enabled: profileViewModel.loading,
+          enabled: false,
           child: CustomScrollView(
             controller: profileViewModel.scrollController,
             slivers: [

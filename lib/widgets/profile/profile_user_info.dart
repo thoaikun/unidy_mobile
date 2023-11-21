@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 
-class ProfileInfo extends StatelessWidget {
+class ProfileUserInfo extends StatelessWidget {
   final User? user;
 
-  const ProfileInfo({
+  const ProfileUserInfo({
     super.key,
     required this.user
   });
@@ -13,7 +13,7 @@ class ProfileInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

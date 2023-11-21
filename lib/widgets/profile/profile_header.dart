@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
+  final bool showBtn;
+
+  const ProfileHeader({
+    super.key,
+    this.showBtn = false
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +46,10 @@ class ProfileHeader extends StatelessWidget {
           ],
         ),
         Container(
-          padding: const EdgeInsets.fromLTRB(150, 10, 15, 30),
+          padding: const EdgeInsets.fromLTRB(20, 10, 15, 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 'Thoại Lê nè',
@@ -52,31 +58,7 @@ class ProfileHeader extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 5),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: SizedBox(
-                      height: 30,
-                      child: FilledButton(
-                        onPressed: () { print('hii'); },
-                        child: Text('Kết bạn', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white)),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Visibility(
-                    visible: false,
-                    child: SizedBox(
-                      height: 30,
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        child: Text('Kết bạn', style: Theme.of(context).textTheme.bodySmall),
-                      ),
-                    ),
-                  )
-                ],
-              )
+              Visibility(visible: showBtn, child: _buildButton())
             ],
           ),
         ),
@@ -84,5 +66,35 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 
-
+  Widget _buildButton() {
+    return Builder(
+      builder: (context) {
+        return Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: SizedBox(
+                height: 30,
+                child: FilledButton(
+                  onPressed: () { print('hii'); },
+                  child: Text('Kết bạn', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white)),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Visibility(
+              visible: false,
+              child: SizedBox(
+                height: 30,
+                child: OutlinedButton(
+                  onPressed: () {},
+                  child: Text('Kết bạn', style: Theme.of(context).textTheme.bodySmall),
+                ),
+              ),
+            )
+          ],
+        );
+      }
+    );
+  }
 }
