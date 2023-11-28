@@ -234,7 +234,7 @@ class SignUpViewModel extends ChangeNotifier {
           })
           .catchError((error) {
             print(error);
-        });
+          });
       })
       .onError(handleSignUpError);
   }
@@ -275,8 +275,6 @@ class SignUpViewModel extends ChangeNotifier {
     nameSink.add(_nameController.text); // Replace with your name controller
     jobSink.add(_jobController.text); // Replace with your job controller
     workplaceSink.add(_workplaceController.text); // Replace with your workplace controller
-
-
   }
 
   void handleSignUpError(Object error) {

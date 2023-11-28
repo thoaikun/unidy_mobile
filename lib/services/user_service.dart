@@ -27,6 +27,44 @@ class UserService {
     }
   }
 
+  Future<void> updateProfile(Map<String, dynamic> payload) async {
+    try {
+      Response response = await _userRepository.updateProfile(payload);
+
+      switch (response.statusCode) {
+        case 200:
+          break;
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<String> updateProfileImage(MultipartFile file) async {
+    try {
+      Response response = await _userRepository.updateProfileImage(file);
+
+      switch (response.statusCode) {
+        case 200:
+          return jsonDecode(response.body)['success'];
+        case 400:
+          throw ResponseException(value: 'Định dạng ảnh không phù hợp', code: ExceptionErrorCode.invalidImageExtension);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
   Future<void> resetPassword(Map<String, String> payload, String token) async {
     try {
       Response response = await _userRepository.resetPassword(payload, token);

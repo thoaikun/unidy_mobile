@@ -10,14 +10,14 @@ class ProfileViewModel extends ChangeNotifier {
   bool loading = true;
   User _user = User(
     userId: 0,
-    fullName: '',
-    address: '',
+    fullName: 'Không rõ',
+    address: 'Không rõ',
     phone: '',
     sex: '',
     job: '',
     role: '',
     dayOfBirth: DateTime.now(),
-    workLocation: '',
+    workLocation: ''
   );
 
   ScrollController get scrollController => _scrollController;

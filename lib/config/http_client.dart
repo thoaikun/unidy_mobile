@@ -13,29 +13,40 @@ class HttpClient {
     return this;
   }
 
-  Future<Response> get(String path) {
-    Uri url = Uri.parse('$baseUri/$path');
+  Future<Response> get(String path, [Map<String, dynamic>? queryParams]) {
+    Uri url = Uri.parse('$baseUri/$path').replace(queryParameters: queryParams);
     return client.get(url, headers: headers).timeout(timeLimit);
   }
 
-  Future<Response> post(String path, Object? body) async {
+  Future<Response> post(String path, [Object? body]) async {
     Uri url = Uri.parse('$baseUri/$path');
     return client.post(url, headers: headers, body: body).timeout(timeLimit);
   }
 
-  Future<Response> put(String path, Object? body) {
+  Future<Response> put(String path, [Object? body]) {
     Uri url = Uri.parse('$baseUri/$path');
     return client.put(url, headers: headers, body: body).timeout(timeLimit);
   }
 
-  Future<Response> patch(String path, Object? body) {
+  Future<Response> patch(String path, [Object? body]) {
     Uri url = Uri.parse('$baseUri/$path');
     return client.patch(url, headers: headers, body: body).timeout(timeLimit);
   }
 
-  Future<Response> delete(String path, Object? body) {
+  Future<Response> delete(String path, [Object? body]) {
     Uri url = Uri.parse('$baseUri/$path');
     return client.delete(url, headers: headers, body: body).timeout(timeLimit);
+  }
+
+  Future<StreamedResponse> uploadImage(String path, List<MultipartFile> files, [Map<String, String>? body]) {
+    Uri url = Uri.parse('$baseUri/$path');
+    MultipartRequest request = MultipartRequest('POST', url);
+    request.headers.addAll({
+      'Authorization': headers?['Authorization'] ?? '',
+    });
+    request.fields.addAll(body ?? {});
+    request.files.addAll(files);
+    return request.send();
   }
 
   void close() {

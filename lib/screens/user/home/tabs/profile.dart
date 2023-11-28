@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/user_model.dart';
+import 'package:unidy_mobile/screens/user/edit_profile/edit_profile_screen.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/viewmodel/profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/profile/profile_archievement.dart';
-import 'package:unidy_mobile/widgets/profile/profile_header.dart';
-import 'package:unidy_mobile/widgets/profile/profile_user_info.dart';
 import 'package:unidy_mobile/widgets/profile/profile_recent_post.dart';
 
 class Profile extends StatefulWidget {
@@ -29,13 +29,61 @@ class _ProfileState extends State<Profile> {
     });
   }
   
-  SliverToBoxAdapter _buildProfileHeader() {
-    return const SliverToBoxAdapter(
+  SliverToBoxAdapter _buildProfileHeader(User user) {
+    return SliverToBoxAdapter(
       child: Column(
         children: [
-          ProfileHeader(),
-          SizedBox(height: 20),
-          Divider(thickness: 5, color: PrimaryColor.primary50)
+          Column(
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    height: 180,
+                    child: Image.network(
+                      'https://ispe.org/sites/default/files/styles/hero_banner_large/public/banner-images/volunteer-page-hero-1900x600.png.webp?itok=JwOK6xl2',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    left: 15,
+                    bottom: -80,
+                    child: Container(
+                      width: 120,
+                      height: 120,
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                          color: PrimaryColor.primary500,
+                          borderRadius: BorderRadius.circular(100)
+                      ),
+                      child: CircleAvatar(
+                        radius: 120,
+                        backgroundImage: NetworkImage(
+                          user.image ?? 'https://api.dicebear.com/7.x/initials/png?seed=${user.fullName}',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(0, 20, 10, 20),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    user.fullName ?? 'Không rõ',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+            ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Divider(thickness: 5, color: PrimaryColor.primary50)
         ],
       )
     );
@@ -45,7 +93,68 @@ class _ProfileState extends State<Profile> {
     return SliverToBoxAdapter(
       child: Column(
         children: [
-          ProfileUserInfo(user: user),
+          Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Thông tin cá nhân',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (BuildContext context) => EditProfileScreen(user: user)));
+                          },
+                          icon: const Icon(
+                            Icons.edit,
+                            size: 20,
+                          )
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Text(
+                        'Ngày sinh: ',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      Text(
+                        Formatter.formatTime(user.dayOfBirth).toString(),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Text('Giới tính: ', style: Theme.of(context).textTheme.labelLarge,),
+                      Text(user.sex ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Text('Công việc: ', style: Theme.of(context).textTheme.labelLarge,),
+                      Text(user.job ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
+                    ],
+                  ),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Text('Tại: ', style: Theme.of(context).textTheme.labelLarge,),
+                      Text(user.workLocation ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
+                    ],
+                  )
+                ],
+              ),
+          ),
           const Divider(thickness: 5, color: PrimaryColor.primary50)
         ],
       ),
@@ -72,7 +181,7 @@ class _ProfileState extends State<Profile> {
           child: CustomScrollView(
             controller: profileViewModel.scrollController,
             slivers: [
-              _buildProfileHeader(),
+              _buildProfileHeader(profileViewModel.user),
               _buildProfileInfo(profileViewModel.user),
               _buildProfileAchievement(),
               SliverToBoxAdapter(

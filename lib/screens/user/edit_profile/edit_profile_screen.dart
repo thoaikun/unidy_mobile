@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/user_model.dart';
+import 'package:unidy_mobile/viewmodel/edit_profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+  final User user;
+
+  const EditProfileScreen({super.key, required this.user});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -12,122 +17,149 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chỉnh sửa tài khoản'),
-        actions: [
-          TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.check_rounded, color: PrimaryColor.primary500),
-            label: const Text('Lưu'),
-          )
-        ],
+    return ChangeNotifierProvider(
+      create: (_) => EditProfileViewModel(widget.user, context: context),
+      child: Consumer<EditProfileViewModel>(
+          builder: (BuildContext context, EditProfileViewModel editProfileViewModel, Widget? child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Chỉnh sửa tài khoản'),
+              actions: [
+                TextButton.icon(
+                  onPressed: () => editProfileViewModel.handleUpdateProfile(),
+                  icon: const Icon(Icons.check_rounded, color: PrimaryColor.primary500),
+                  label: const Text('Lưu'),
+                )
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: CustomScrollView(
+                slivers: [
+                  _buildAvatarForm(),
+                  _buildWallpaperForm(),
+                  _buildInformationForm()
+                ],
+              ),
+            )
+          );
+        }
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: CustomScrollView(
-          slivers: [
-            _buildAvatarForm(),
-            _buildWallpaperForm(),
-            _buildInformationForm()
-          ],
-        ),
-      )
     );
   }
 
   Widget _buildInformationForm() {
     return SliverToBoxAdapter(
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-                'Thông tin cá nhân',
-                style: Theme.of(context).textTheme.bodyLarge
+      child: Consumer<EditProfileViewModel>(
+        builder: (BuildContext context, EditProfileViewModel editProfileViewModel, Widget? child) {
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    'Thông tin cá nhân',
+                    style: Theme.of(context).textTheme.bodyLarge
+                ),
+                const SizedBox(height: 10),
+                Input(
+                  controller: editProfileViewModel.nameController,
+                  label: 'Tên',
+                  error: editProfileViewModel.nameError,
+                  prefixIcon: const Icon(Icons.person_2_rounded)
+                ),
+                const SizedBox(height: 20),
+                Input(
+                  controller: editProfileViewModel.dobController,
+                  label: 'Ngày sinh',
+                  error: editProfileViewModel.dobError,
+                  prefixIcon: const Icon(Icons.calendar_month_rounded),
+                  readOnly: true,
+                ),
+                const SizedBox(height: 20),
+                Input(
+                  controller: editProfileViewModel.sexController,
+                  label: 'Giới tính',
+                  error: editProfileViewModel.sexError,
+                  prefixIcon: const Icon(Icons.transgender_rounded)
+                ).dropdown(context, ['Nam', 'Nữ', 'Khác'], null),
+                const SizedBox(height: 20),
+                Input(
+                  controller: editProfileViewModel.phoneController,
+                  label: 'Số điện thoại',
+                  error: editProfileViewModel.phoneError,
+                  numberKeyboard: true,
+                  prefixIcon: const Icon(Icons.phone_android_rounded),
+                ),
+                const SizedBox(height: 20),
+                Input(
+                  controller: editProfileViewModel.jobController,
+                  label: 'Nghề nghiệp',
+                  error: editProfileViewModel.jobError,
+                  prefixIcon: const Icon(Icons.cases_rounded)
+                ),
+                const SizedBox(height: 20),
+                Input(
+                  controller: editProfileViewModel.workPlaceController,
+                  label: 'Nơi công tác',
+                  error: editProfileViewModel.workplaceError,
+                  prefixIcon: const Icon(Icons.business),
+                ),
+                const SizedBox(height: 40)
+              ],
             ),
-            const SizedBox(height: 10),
-            const Input(
-                label: 'Tên',
-                prefixIcon: Icon(Icons.person_2_rounded)
-            ),
-            const SizedBox(height: 20),
-            const Input(
-              label: 'Ngày sinh',
-              prefixIcon: Icon(Icons.calendar_month_rounded),
-              readOnly: true,
-            ),
-            const SizedBox(height: 20),
-            const Input(
-                label: 'Giới tính',
-                prefixIcon: Icon(Icons.transgender_rounded)
-            ).dropdown(context, ['Nam', 'Nữ', 'Khác'], null),
-            const SizedBox(height: 20),
-            const Input(
-              label: 'Số điện thoại',
-              numberKeyboard: true,
-              prefixIcon: Icon(Icons.phone_android_rounded),
-            ),
-            const SizedBox(height: 20),
-            const Input(
-                label: 'Nghề nghiệp',
-                prefixIcon: Icon(Icons.cases_rounded)
-            ),
-            const SizedBox(height: 20),
-            const Input(
-              label: 'Nơi công tác',
-              prefixIcon: Icon(Icons.business),
-            ),
-            const SizedBox(height: 40)
-          ],
-        ),
+          );
+        }
       ),
     );
   }
 
   Widget _buildAvatarForm() {
     return SliverToBoxAdapter(
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Consumer<EditProfileViewModel>(
+        builder: (BuildContext context, EditProfileViewModel editProfileViewModel, Widget? widget) {
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            child: Column(
               children: [
-                Text(
-                  'Ảnh đại diện',
-                  style: Theme.of(context).textTheme.bodyLarge
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Ảnh đại diện',
+                      style: Theme.of(context).textTheme.bodyLarge
+                    ),
+                    TextButton.icon(
+                      onPressed: () => editProfileViewModel.handleAddImage(),
+                      icon: const Icon(Icons.edit, size: 18,),
+                      label: const Text('Thay đổi'),
+                      style: ButtonStyle(
+                        textStyle: MaterialStatePropertyAll(Theme.of(context).textTheme.labelMedium),
+                        padding: const MaterialStatePropertyAll(EdgeInsets.fromLTRB(5, 0, 0, 0))
+                      ),
+                    )
+                  ],
                 ),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.edit, size: 18,),
-                  label: const Text('Thay đổi'),
-                  style: ButtonStyle(
-                    textStyle: MaterialStatePropertyAll(Theme.of(context).textTheme.labelMedium),
-                    padding: const MaterialStatePropertyAll(EdgeInsets.fromLTRB(5, 0, 0, 0))
+                const SizedBox(height: 10),
+                Container(
+                  width: 120,
+                  height: 120,
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                      color: PrimaryColor.primary500,
+                      borderRadius: BorderRadius.circular(100)
                   ),
-                )
+                  child: CircleAvatar(
+                    radius: 120,
+                    backgroundImage: NetworkImage(
+                     editProfileViewModel.previewUploadedImagePath ?? editProfileViewModel.user?.image ?? 'https://api.dicebear.com/7.x/initials/png?seed=${editProfileViewModel.user?.fullName ?? 'unknown'}',
+                    ),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 10),
-            Container(
-              width: 120,
-              height: 120,
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                  color: PrimaryColor.primary500,
-                  borderRadius: BorderRadius.circular(100)
-              ),
-              child: const CircleAvatar(
-                radius: 120,
-                backgroundImage: NetworkImage(
-                  'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        }
       )
     );
   }
