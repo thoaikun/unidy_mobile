@@ -1,17 +1,18 @@
 import 'dart:convert';
 
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
+import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
-import 'package:unidy_mobile/repository/authentication/authentication_repository.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
 class AuthenticationService {
-  final AuthenticationRepository _authenticationRepository = AuthenticationRepository();
-  
+  HttpClient httpClient = GetIt.instance<HttpClient>();
+
   Future<Authenticate> login(Map<String, String> payload) async {
     try {
-      Response response = await _authenticationRepository.authenticate(payload);
+      Response response = await httpClient.post('api/v1/auth/authenticate', jsonEncode(payload));
 
       switch(response.statusCode) {
         case 200:
@@ -31,7 +32,7 @@ class AuthenticationService {
 
   Future<Response> signUp(Map<String, String> payload) async {
     try {
-      Response response = await _authenticationRepository.createAccount(payload);
+      Response response = await httpClient.post('api/v1/auth/register', jsonEncode(payload));
 
       switch(response.statusCode) {
         case 200:
@@ -55,7 +56,7 @@ class AuthenticationService {
 
   Future<void> logout() async {
     try {
-      await _authenticationRepository.logout();
+      await httpClient.get('api/v1/auth/refresh-token');
     }
     catch (error) {
       rethrow;
@@ -64,7 +65,7 @@ class AuthenticationService {
 
   Future<void> confirmEmail(Map<String, String> payload) async {
     try {
-      Response response = await _authenticationRepository.confirmEmail(payload);
+      Response response = await httpClient.post('api/v1/auth/send-OTP', json.encode(payload));
 
       switch (response.statusCode) {
         case 200:
@@ -83,7 +84,7 @@ class AuthenticationService {
 
   Future<Authenticate> confirmOtp(Map<String, String> payload) async {
     try {
-      Response response = await _authenticationRepository.confirmOtp(payload);
+      Response response = await httpClient.post('api/v1/auth/submit-OTP', json.encode(payload));
 
       switch (response.statusCode) {
         case 200:

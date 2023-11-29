@@ -25,11 +25,6 @@ class ProfileViewModel extends ChangeNotifier {
 
   ProfileViewModel() {
     _scrollController.addListener(onScroll);
-    userService.whoAmI()
-      .then((user) {
-        setUser(user);
-        setLoading(false);
-      });
   }
 
   void onScroll() {
@@ -46,6 +41,14 @@ class ProfileViewModel extends ChangeNotifier {
   void setUser(User value) {
     _user = value;
     notifyListeners();
+  }
+
+  void getUserProfile() {
+    userService.whoAmI()
+        .then((user) {
+      setUser(user);
+      setLoading(false);
+    });
   }
 
   @override

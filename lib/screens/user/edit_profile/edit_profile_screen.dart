@@ -31,6 +31,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   label: const Text('Lưu'),
                 )
               ],
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(10),
+                child: Visibility(
+                  visible: editProfileViewModel.loading,
+                  child: LinearProgressIndicator(),
+                ),
+              )
             ),
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),

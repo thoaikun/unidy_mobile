@@ -1,16 +1,17 @@
 import 'dart:convert';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
+import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
-import 'package:unidy_mobile/repository/user/user_repository.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
 class UserService {
-  final UserRepository _userRepository = UserRepository();
+  HttpClient httpClient = GetIt.instance<HttpClient>();
 
   Future<User> whoAmI() async {
     try {
-      Response response = await _userRepository.whoAmI();
+      Response response = await httpClient.get('api/v1/users/profile');
 
       switch(response.statusCode) {
         case 200:
@@ -29,7 +30,7 @@ class UserService {
 
   Future<void> updateProfile(Map<String, dynamic> payload) async {
     try {
-      Response response = await _userRepository.updateProfile(payload);
+      Response response = await httpClient.patch('api/v1/users/profile', jsonEncode(payload));
 
       switch (response.statusCode) {
         case 200:
@@ -47,7 +48,8 @@ class UserService {
 
   Future<String> updateProfileImage(MultipartFile file) async {
     try {
-      Response response = await _userRepository.updateProfileImage(file);
+      StreamedResponse streamedResponse = await httpClient.uploadImage('api/v1/users/update-profile-image', [file]);
+      Response response = await Response.fromStream(streamedResponse);
 
       switch (response.statusCode) {
         case 200:
@@ -67,7 +69,8 @@ class UserService {
 
   Future<void> resetPassword(Map<String, String> payload, String token) async {
     try {
-      Response response = await _userRepository.resetPassword(payload, token);
+      httpClient.addHeader('Authorization', 'Bearer $token');
+      Response response = await httpClient.patch('api/v1/users/new-password', jsonEncode(payload));
 
       switch(response.statusCode) {
         case 200:

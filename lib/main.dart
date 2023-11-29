@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:unidy_mobile/config/themes/theme_config.dart';
-import 'package:unidy_mobile/routes/routes.dart';
+import 'package:unidy_mobile/routes.dart';
 
 import 'config/getit_config.dart';
 

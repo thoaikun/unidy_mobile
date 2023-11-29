@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -19,6 +17,7 @@ class EditProfileViewModel extends ChangeNotifier {
 
   User? _user;
   String? _previewUploadedImagePath;
+  bool _loading = false;
 
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -43,6 +42,7 @@ class EditProfileViewModel extends ChangeNotifier {
 
   User? get user => _user;
   String? get previewUploadedImagePath => _previewUploadedImagePath;
+  bool get loading => _loading;
   TextEditingController get dobController => _dobController;
   TextEditingController get nameController => _nameController;
   TextEditingController get sexController => _sexController;
@@ -77,6 +77,11 @@ class EditProfileViewModel extends ChangeNotifier {
 
   void _setPreviewUploadedImage(String? path) {
     _previewUploadedImagePath = path;
+    notifyListeners();
+  }
+
+  void _setLoading(bool value) {
+    _loading = value;
     notifyListeners();
   }
 
@@ -138,23 +143,31 @@ class EditProfileViewModel extends ChangeNotifier {
     )
       .debounceTime(debounceTime)
       .listen((payload) {
-        userService.updateProfile(payload)
-          .then((_) => showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Thành công'),
-                content: const Text('Thông tin tài khoản của bạn đã được cập nhật'),
-                actions: <Widget>[
-                  TextButton(
-                      child: const Text('Đồng ý'),
-                      onPressed: () => Navigator.of(context).pop()
-                  ),
-                ],
-              );
-            },
-          ))
-          .catchError(handleUpdateProfileError);
+        _setLoading(true);
+        Future.delayed(const Duration(seconds: 1))
+          .then((_) => userService.updateProfile(payload))
+          .then((_) {
+            _setLoading(false);
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Thành công'),
+                  content: const Text('Thông tin tài khoản của bạn đã được cập nhật'),
+                  actions: <Widget>[
+                    TextButton(
+                        child: const Text('Đồng ý'),
+                        onPressed: () => Navigator.of(context).pop()
+                    ),
+                  ],
+                );
+              },
+            );
+          })
+          .catchError((error) {
+            _setLoading(false);
+            handleUpdateProfileError(error);
+          });
       })
       .onError(handleUpdateProfileError);
   }
