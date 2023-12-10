@@ -1,25 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class AvatarCard extends StatelessWidget {
   final bool showTime;
   final String? description;
+  final String? userName;
+  final String? avatarUrl;
+  final String? createdAt;
 
-  const AvatarCard({super.key, this.showTime = false, this.description});
+  const AvatarCard({
+    super.key,
+    this.showTime = false,
+    this.description,
+    this.userName,
+    this.avatarUrl,
+    this.createdAt
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const CircleAvatar(
+      leading: CircleAvatar(
           radius: 18,
           backgroundImage: NetworkImage(
-            'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
+            avatarUrl ?? 'https://api.dicebear.com/7.x/initials/png?seed=$userName'
           ),
         ),
       title: Row(
         children: [
           Text(
-            'Tên người dùng',
+            userName ?? 'Tên người dùng',
             style: Theme.of(context).textTheme.titleSmall,
           ),
           const SizedBox(width: 10),
@@ -38,7 +49,7 @@ class AvatarCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  '10m',
+                  Formatter.calculateTimeDifference(createdAt),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w300),
                 )
               ],

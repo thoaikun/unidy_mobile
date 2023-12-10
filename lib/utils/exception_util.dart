@@ -33,5 +33,6 @@ enum ExceptionErrorCode {
   invalidLogin,
   invalidResetPassword,
   invalidToken,
-  invalidImageExtension
+  invalidImageExtension,
+  invalidUserId,
 }

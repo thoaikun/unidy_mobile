@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart';
+import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
+import 'package:unidy_mobile/services/post_service.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   final UserService userService = GetIt.instance<UserService>();
+  final PostService postService = GetIt.instance<PostService>();
   final ScrollController _scrollController = ScrollController();
 
   bool loading = true;
@@ -19,11 +23,14 @@ class ProfileViewModel extends ChangeNotifier {
     dayOfBirth: DateTime.now(),
     workLocation: ''
   );
+  List<Post> _postList = [];
 
   ScrollController get scrollController => _scrollController;
   User get user => _user;
+  List<Post> get postList => _postList;
 
   ProfileViewModel() {
+    initData();
     _scrollController.addListener(onScroll);
   }
 
@@ -43,12 +50,25 @@ class ProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getUserProfile() {
+  void setPostList(List<Post> value) {
+    _postList = value;
+    notifyListeners();
+  }
+
+  void initData() {
     userService.whoAmI()
-        .then((user) {
-      setUser(user);
-      setLoading(false);
-    });
+      .then((user) {
+        setUser(user);
+        return postService.getUserPosts(user.userId);
+      })
+      .then((postList) {
+        setPostList(postList);
+        setLoading(false);
+      })
+      .catchError((error) {
+        print(error);
+        setLoading(false);
+      });
   }
 
   @override

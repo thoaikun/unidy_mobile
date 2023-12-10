@@ -21,34 +21,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       create: (_) => EditProfileViewModel(widget.user, context: context),
       child: Consumer<EditProfileViewModel>(
           builder: (BuildContext context, EditProfileViewModel editProfileViewModel, Widget? child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Chỉnh sửa tài khoản'),
-              actions: [
-                TextButton.icon(
-                  onPressed: () => editProfileViewModel.handleUpdateProfile(),
-                  icon: const Icon(Icons.check_rounded, color: PrimaryColor.primary500),
-                  label: const Text('Lưu'),
+          return WillPopScope(
+            onWillPop: () async {
+              Navigator.pop(context, editProfileViewModel.user);
+              return true;
+            },
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('Chỉnh sửa tài khoản'),
+                actions: [
+                  TextButton.icon(
+                    onPressed: () => editProfileViewModel.handleUpdateProfile(),
+                    icon: const Icon(Icons.check_rounded, color: PrimaryColor.primary500),
+                    label: const Text('Lưu'),
+                  )
+                ],
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(10),
+                  child: Visibility(
+                    visible: editProfileViewModel.loading,
+                    child: LinearProgressIndicator(),
+                  ),
                 )
-              ],
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(10),
-                child: Visibility(
-                  visible: editProfileViewModel.loading,
-                  child: LinearProgressIndicator(),
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: CustomScrollView(
+                  slivers: [
+                    _buildAvatarForm(),
+                    _buildWallpaperForm(),
+                    _buildInformationForm()
+                  ],
                 ),
               )
             ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: CustomScrollView(
-                slivers: [
-                  _buildAvatarForm(),
-                  _buildWallpaperForm(),
-                  _buildInformationForm()
-                ],
-              ),
-            )
           );
         }
       ),

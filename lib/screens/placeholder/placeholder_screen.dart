@@ -16,20 +16,13 @@ class PlaceholderScreen extends StatefulWidget {
 }
 
 class _PlaceholderScreenState extends State<PlaceholderScreen> {
-  late Future<AccountMode> hasLoginFuture;
   AppPreferences appPreferences = GetIt.instance<AppPreferences>();
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
   @override
-  void initState() {
-    super.initState();
-    hasLoginFuture = isLogin();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: hasLoginFuture,
+      future: isLogin(),
       builder: (context, snapshot) {
         switch (snapshot.data) {
           case AccountMode.user:

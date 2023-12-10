@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/screens/user/edit_profile/edit_profile_screen.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/viewmodel/profile_viewmodel.dart';
+import 'package:unidy_mobile/widgets/card/post_card.dart';
 import 'package:unidy_mobile/widgets/profile/profile_archievement.dart';
 import 'package:unidy_mobile/widgets/profile/profile_recent_post.dart';
 
@@ -27,6 +29,12 @@ class _ProfileState extends State<Profile> {
         print('hihihihi');
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Provider.of<ProfileViewModel>(context, listen: false).initData();
   }
   
   SliverToBoxAdapter _buildProfileHeader(User user) {
@@ -82,7 +90,7 @@ class _ProfileState extends State<Profile> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: SizedBox(
-                    width: 250,
+                    width: 240,
                     child: Text(
                       user.fullName ?? 'Không rõ',
                       maxLines: 1,
@@ -102,7 +110,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  SliverToBoxAdapter _buildProfileInfo(User user) {
+  SliverToBoxAdapter _buildProfileInfo(User user, ProfileViewModel profileViewModel) {
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -119,10 +127,11 @@ class _ProfileState extends State<Profile> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       IconButton(
-                          onPressed: () {
-                            Navigator.push(
+                          onPressed: () async {
+                            User editedUser = await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (BuildContext context) => EditProfileScreen(user: user)));
+                            profileViewModel.setUser(editedUser);
                           },
                           icon: const Icon(
                             Icons.edit,
@@ -185,11 +194,18 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+  SliverList _buildRecentPost(List<Post> postList, User user) {
+    return SliverList.separated(
+      itemBuilder: (BuildContext context, int index) {
+        return PostCard(post: postList[index], userName: user.fullName, avatarUrl: user.image);
+      },
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
+      itemCount: postList.length,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    ProfileViewModel profileViewModel = Provider.of(context);
-    profileViewModel.getUserProfile();
-
     return Consumer<ProfileViewModel>(
       builder: (BuildContext context, ProfileViewModel profileViewModel, Widget? child) {
         return Skeletonizer(
@@ -198,7 +214,7 @@ class _ProfileState extends State<Profile> {
             controller: profileViewModel.scrollController,
             slivers: [
               _buildProfileHeader(profileViewModel.user),
-              _buildProfileInfo(profileViewModel.user),
+              _buildProfileInfo(profileViewModel.user, profileViewModel),
               _buildProfileAchievement(),
               SliverToBoxAdapter(
                 child: Padding(
@@ -206,7 +222,7 @@ class _ProfileState extends State<Profile> {
                   child: Text('Bài đăng gần đây', style: Theme.of(context).textTheme.titleMedium),
                 ),
               ),
-              const ProfileRecentPost()
+              _buildRecentPost(profileViewModel.postList, profileViewModel.user)
             ],
           ),
         );

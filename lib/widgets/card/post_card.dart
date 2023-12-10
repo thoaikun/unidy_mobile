@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/post_model.dart';
+import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
 class PostCard extends StatelessWidget {
-  const PostCard({super.key});
+  final Post? post;
+  final String? userName;
+  final String? avatarUrl;
+
+  const PostCard({
+    super.key,
+    this.post,
+    this.userName,
+    this.avatarUrl
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +29,15 @@ class PostCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: AvatarCard(showTime: true, description: 'Đã chia sẽ một kỉ niệm'),
+              child: AvatarCard(
+                showTime: true,
+                userName: userName,
+                avatarUrl: avatarUrl != null ? 'https://unidy.s3.ap-southeast-1.amazonaws.com/profile-images${avatarUrl}' : null,
+                createdAt: post?.createDate,
+                description: 'Đang cảm thấy ${post?.status}'
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -63,19 +80,18 @@ class PostCard extends StatelessWidget {
   }
 
   Widget _buildPostContent(BuildContext context) {
-    return Wrap(
-      alignment: WrapAlignment.start,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      runSpacing: 5,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ReadMoreText(
-          'Cake or pie? I can tell a lot about you by which one you pick. It may seem silly, but cake people and pie people are really different. I know which one I hope you are, but that\'s not for me to decide. So, what is it? Cake or pie? ',
+          post?.content ?? 'Không có nội dung',
           trimLines: 3,
           trimMode: TrimMode.Line,
           trimCollapsedText: 'Đọc thêm',
           trimExpandedText: '',
           moreStyle: Theme.of(context).textTheme.labelLarge?.copyWith(color: TextColor.textColor300),
         ),
+        const SizedBox(height: 5),
         Text(
           '#dieforone #gogo',
           maxLines: 2,
@@ -165,11 +181,7 @@ class PostCard extends StatelessWidget {
   }
 
   Widget _buildImageSlide() {
-    return const ImageSlider(imageUrls: [
-      'https://upload.wikimedia.org/wikipedia/commons/6/6c/Vilnius_Marathon_2015_volunteers_by_Augustas_Didzgalvis.jpg',
-      'https://kindful.com/wp-content/uploads/volunteer-management_Feature.jpg',
-      'https://images.ctfassets.net/81iqaqpfd8fy/57NATA4649mbTvRfGpd6R1/911f94cdfd6089a77aefb4b1e9ebac7a/Teenvolunteercover.jpg'
-    ]);
+    return ImageSlider(imageUrls: [post?.linkImage ?? 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Vilnius_Marathon_2015_volunteers_by_Augustas_Didzgalvis.jpg']);
   }
 
   Widget _buildImageList(BuildContext context) {

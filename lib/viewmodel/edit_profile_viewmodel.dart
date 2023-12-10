@@ -132,6 +132,13 @@ class EditProfileViewModel extends ChangeNotifier {
       (name, dob, phone, job, workplace) {
         DateTime dateTime = DateFormat('dd/MM/yyyy').parse(dob);
 
+        _user?.fullName = name;
+        _user?.dayOfBirth = dateTime;
+        _user?.phone = phone;
+        _user?.job = job;
+        _user?.workLocation = workplace;
+        _user?.image = _previewUploadedImagePath;
+
         return <String, dynamic>{
           "fullName" : name,
           "dayOfBirth" : DateFormat('yyyy-MM-dd').format(dateTime).toString(),
