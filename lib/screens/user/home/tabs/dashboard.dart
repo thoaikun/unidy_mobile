@@ -25,7 +25,6 @@ class _DashboardState extends State<Dashboard> {
       builder: (BuildContext context, DashboardViewModel dashboardViewModel, Widget? child) {
         return RefreshIndicator(
           onRefresh: () async {
-            print('refresh');
             dashboardViewModel.initData();
           },
           child: Skeletonizer(
