@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/viewmodel/add_post_viewmodel.dart';
+import 'package:unidy_mobile/viewmodel/dashboard_viewmodel.dart';
 import 'package:unidy_mobile/viewmodel/navigation_viewmodel.dart';
 import 'package:unidy_mobile/screens/user/home/tabs/add_post.dart';
 import 'package:unidy_mobile/screens/user/home/tabs/dashboard.dart';
@@ -34,7 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
       providers: [
         ChangeNotifierProvider(create: (_) => NavigationViewModel()),
         ChangeNotifierProvider(create: (_) => AddPostViewModel()),
-        ChangeNotifierProvider(create: (_) => ProfileViewModel())
+        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => DashboardViewModel())
       ],
       child: Consumer<NavigationViewModel>(
         builder: (BuildContext context, NavigationViewModel navigationViewModal, Widget? child) => Scaffold(

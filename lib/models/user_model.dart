@@ -6,26 +6,29 @@ String userToJson(User data) => json.encode(data.toJson());
 
 class User {
   int userId;
-  String fullName;
-  dynamic address;
-  String phone;
-  dynamic sex;
-  DateTime dayOfBirth;
-  String job;
-  String workLocation;
-  String role;
+  String? fullName;
+  String? address;
+  String? phone;
+  String? sex;
+  DateTime? dayOfBirth;
+  String? job;
+  String? workLocation;
+  String? role;
+  String? image;
 
   User({
     required this.userId,
-    required this.fullName,
-    required this.address,
-    required this.phone,
-    required this.sex,
-    required this.dayOfBirth,
-    required this.job,
-    required this.workLocation,
-    required this.role,
+    this.fullName,
+    this.address,
+    this.phone,
+    this.sex,
+    this.dayOfBirth,
+    this.job,
+    this.workLocation,
+    this.role,
+    this.image
   });
+
 
   factory User.fromJson(Map<String, dynamic> json) => User(
     userId: json["userId"],
@@ -37,6 +40,7 @@ class User {
     job: json["job"],
     workLocation: json["workLocation"],
     role: json["role"],
+    image: json['image']
   );
 
   Map<String, dynamic> toJson() => {
@@ -45,9 +49,10 @@ class User {
     "address": address,
     "phone": phone,
     "sex": sex,
-    "dayOfBirth": dayOfBirth.toIso8601String(),
+    "dayOfBirth": dayOfBirth?.toIso8601String(),
     "job": job,
     "workLocation": workLocation,
     "role": role,
+    "image": image
   };
 }

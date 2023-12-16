@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/http_client.dart';
-import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/services/authentication_service.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
@@ -13,6 +12,7 @@ import 'package:unidy_mobile/utils/stream_transformer.dart';
 class LoginViewModel extends ChangeNotifier {
   final BuildContext context;
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
+  HttpClient httpClient = GetIt.instance<HttpClient>();
   final UserService userService = GetIt.instance<UserService>();
   final AppPreferences appPreferences = GetIt.instance<AppPreferences>();
   final Duration debounceTime = const Duration(milliseconds: 500);
@@ -91,6 +91,7 @@ class LoginViewModel extends ChangeNotifier {
     await appPreferences.setString('accessToken', authenticationResponse.accessToken);
     await appPreferences.setString('refreshToken', authenticationResponse.refreshToken);
     await appPreferences.setString('accountMode', 'user');
+    httpClient.addHeader('Authorization', 'Bearer ${authenticationResponse.accessToken}');
     _setLoadingLogin(false);
     Navigator.pushReplacementNamed(context, '/');
   }

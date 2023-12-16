@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/forgot_password_viewmodel.dart';
-import 'package:unidy_mobile/widgets/waiting_btn.dart';
+import 'package:unidy_mobile/widgets/button/waiting_btn.dart';
 import 'package:unidy_mobile/widgets/input/otp_input.dart';
 
 class ConfirmOtp extends StatelessWidget {

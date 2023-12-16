@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:unidy_mobile/bloc/network_detect_cubit.dart';
 import 'package:unidy_mobile/config/themes/theme_config.dart';
-import 'package:unidy_mobile/routes/routes.dart';
+import 'package:unidy_mobile/routes.dart';
 
 import 'config/getit_config.dart';
 
@@ -20,11 +22,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Unidy',
-      theme: unidyThemeData,
-      routes: routes,
-      initialRoute: '/placeholder',
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (BuildContext context) => NetworkDetectCubit())
+      ],
+      child: MaterialApp(
+        title: 'Unidy',
+        theme: unidyThemeData,
+        routes: routes,
+        initialRoute: '/placeholder',
+      )
     );
   }
 }

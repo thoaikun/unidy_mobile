@@ -1,32 +1,24 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:unidy_mobile/services/authentication_service.dart';
+import 'package:unidy_mobile/models/user_model.dart';
+import 'package:unidy_mobile/services/user_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
+import 'package:http_parser/http_parser.dart';
 
-enum EUserRole {
-  volunteer,
-  sponsor,
-  organization
-}
-
-class SignUpViewModel extends ChangeNotifier {
-  final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
-
-  static const int MAX_STEP = 4;
+class EditProfileViewModel extends ChangeNotifier {
+  final BuildContext context;
+  final UserService userService = GetIt.instance<UserService>();
   final Duration debounceTime = const Duration(milliseconds: 500);
 
-  int _currentStep = 0;
-  EUserRole? _selectedRole;
-  bool passwordVisible = false;
-  bool loadingSignUp = false;
-  String _email = '';
-  String _password = '';
+  User? _user;
+  String? _previewUploadedImagePath;
+  bool _loading = false;
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _sexController = TextEditingController();
@@ -34,8 +26,6 @@ class SignUpViewModel extends ChangeNotifier {
   final TextEditingController _jobController = TextEditingController();
   final TextEditingController _workplaceController = TextEditingController();
 
-  final BehaviorSubject<String> _emailSubject = BehaviorSubject<String>();
-  final BehaviorSubject<String> _passwordSubject = BehaviorSubject<String>();
   final BehaviorSubject<String> _dobSubject = BehaviorSubject<String>();
   final BehaviorSubject<String> _sexSubject = BehaviorSubject<String>();
   final BehaviorSubject<String> _phoneSubject = BehaviorSubject<String>();
@@ -43,8 +33,6 @@ class SignUpViewModel extends ChangeNotifier {
   final BehaviorSubject<String> _jobSubject = BehaviorSubject<String>();
   final BehaviorSubject<String> _workplaceSubject = BehaviorSubject<String>();
 
-  String? emailError;
-  String? passwordError;
   String? dobError;
   String? sexError;
   String? phoneError;
@@ -52,10 +40,9 @@ class SignUpViewModel extends ChangeNotifier {
   String? jobError;
   String? workplaceError;
 
-  int get step => _currentStep;
-  EUserRole? get selectedRole => _selectedRole;
-  TextEditingController get emailController => _emailController;
-  TextEditingController get passwordController => _passwordController;
+  User? get user => _user;
+  String? get previewUploadedImagePath => _previewUploadedImagePath;
+  bool get loading => _loading;
   TextEditingController get dobController => _dobController;
   TextEditingController get nameController => _nameController;
   TextEditingController get sexController => _sexController;
@@ -63,11 +50,14 @@ class SignUpViewModel extends ChangeNotifier {
   TextEditingController get jobController => _jobController;
   TextEditingController get workPlaceController => _workplaceController;
 
+  EditProfileViewModel(User user, { required this.context }) {
+    _nameController.text = user.fullName ?? '';
+    _phoneController.text = user.phone ?? '';
+    _jobController.text = user.job ?? '';
+    _workplaceController.text = user.workLocation ?? '';
+    String date = DateFormat('dd/MM/yyyy').format(user.dayOfBirth ?? DateTime.now()).toString();
+    _dobController.text = date;
 
-  SignUpViewModel() {
-    _selectedRole = EUserRole.volunteer;
-    _emailController.addListener(() => _setEmailError(null));
-    _passwordController.addListener(() => _setPasswordError(null));
     _dobController.addListener(() => _setDobError(null));
     _sexController.addListener(() => _setSexError(null));
     _phoneController.addListener(() => _setPhoneError(null));
@@ -75,67 +65,23 @@ class SignUpViewModel extends ChangeNotifier {
     _jobController.addListener(() => _setJobError(null));
     _workplaceController.addListener(() => _setWorkplaceError(null));
 
-    _sexController.text = 'Nam';
-    verifyNewAccount();
+    _user = user;
+
     verifyUserInfo();
   }
 
-  void setUserRole(EUserRole role) {
-    _selectedRole = role;
+  void _setUser(User user) {
+    _user = user;
     notifyListeners();
   }
 
-  void setUseSex(String? value) {
-    if (value != null) {
-      _sexController.text = value;
-    }
-  }
-
-  void nextStep() {
-    if (_currentStep == MAX_STEP - 1) {
-      return;
-    }
-    _currentStep += 1;
+  void _setPreviewUploadedImage(String? path) {
+    _previewUploadedImagePath = path;
     notifyListeners();
-  }
-
-  void previousStep() {
-    if (_currentStep == 0) {
-      return;
-    }
-    _currentStep -= 1;
-    notifyListeners();
-  }
-
-  bool showPreviousButton() {
-    return _currentStep > 0 && _currentStep < MAX_STEP - 1;
-  }
-
-  Future<void> selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != DateTime.now()) {
-      String date = DateFormat('dd/MM/yyyy').format(picked).toString();
-      _dobController.text = date;
-    }
   }
 
   void _setLoading(bool value) {
-    loadingSignUp = value;
-    notifyListeners();
-  }
-
-  void _setEmailError(String? error) {
-    emailError = error;
-    notifyListeners();
-  }
-
-  void _setPasswordError(String? error) {
-    passwordError = error;
+    _loading = value;
     notifyListeners();
   }
 
@@ -169,27 +115,6 @@ class SignUpViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void verifyNewAccount() {
-    Stream<String> emailStream = _emailSubject.stream;
-    Stream<String> passwordStream = _passwordSubject.stream;
-
-    CombineLatestStream.combine2(
-      emailStream.transform(EmailValidationTransformer()),
-      passwordStream,
-      (email, password) => {
-        'email': email,
-        'password': password
-      }
-    )
-      .debounceTime(debounceTime)
-      .listen((payload) {
-        _email = payload['email'] ?? '';
-        _password = payload['password'] ?? '';
-        nextStep();
-      })
-      .onError(handleSignUpError);
-  }
-
   void verifyUserInfo() {
     Stream<String> dobStream = _dobSubject.stream;
     Stream<String> sexStream = _sexSubject.stream;
@@ -198,70 +123,63 @@ class SignUpViewModel extends ChangeNotifier {
     Stream<String> jobStream = _jobSubject.stream;
     Stream<String> workplaceStream = _workplaceSubject.stream;
 
-    CombineLatestStream.combine6(
+    CombineLatestStream.combine5(
       nameStream.transform(ValidationTransformer(validationType: 'name')),
       dobStream.transform(ValidationTransformer(validationType: 'dob')),
       phoneStream.transform(PhoneValidationTransformer()),
-      sexStream.transform(ValidationTransformer()),
       jobStream.transform(ValidationTransformer(validationType: 'job')),
       workplaceStream.transform(ValidationTransformer(validationType: 'workplace')),
-      (name, dob, phone, sex, job, workplace) {
+      (name, dob, phone, job, workplace) {
         DateTime dateTime = DateFormat('dd/MM/yyyy').parse(dob);
 
-        return <String, String>{
+        _user?.fullName = name;
+        _user?.dayOfBirth = dateTime;
+        _user?.phone = phone;
+        _user?.job = job;
+        _user?.workLocation = workplace;
+        _user?.image = _previewUploadedImagePath;
+
+        return <String, dynamic>{
           "fullName" : name,
           "dayOfBirth" : DateFormat('yyyy-MM-dd').format(dateTime).toString(),
           "phone" : phone,
-          "email": _email,
           "job": job,
           "workLocation": workplace,
-          "password": _password,
-          "role": _selectedRole == EUserRole.volunteer
-            ? 'VOLUNTEER' :
-            _selectedRole == EUserRole.sponsor
-            ? 'SPONSOR' :
-            'ORGANIZATION'
         };
       }
     )
       .debounceTime(debounceTime)
       .listen((payload) {
         _setLoading(true);
-        authenticationService.signUp(payload)
+        Future.delayed(const Duration(seconds: 1))
+          .then((_) => userService.updateProfile(payload))
           .then((_) {
             _setLoading(false);
-            nextStep();
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Thành công'),
+                  content: const Text('Thông tin tài khoản của bạn đã được cập nhật'),
+                  actions: <Widget>[
+                    TextButton(
+                        child: const Text('Đồng ý'),
+                        onPressed: () => Navigator.of(context).pop()
+                    ),
+                  ],
+                );
+              },
+            );
           })
           .catchError((error) {
-            print(error);
+            _setLoading(false);
+            handleUpdateProfileError(error);
           });
       })
-      .onError(handleSignUpError);
+      .onError(handleUpdateProfileError);
   }
 
-  void pickNextStepFunction() {
-    switch (_currentStep) {
-      case 0:
-        nextStep();
-        return;
-      case 1:
-        handleCreateAccount();
-        return;
-      case 2:
-        handleUpdateInfo();
-        return;
-    }
-  }
-
-  void handleCreateAccount() {
-    Sink<String> emailSink = _emailSubject.sink;
-    Sink<String> passwordSink = _passwordSubject.sink;
-
-    emailSink.add(_emailController.text);
-    passwordSink.add(_passwordController.text);
-  }
-
-  void handleUpdateInfo() {
+  void handleUpdateProfile() {
     Sink<String> dobSink = _dobSubject.sink;
     Sink<String> sexSink = _sexSubject.sink;
     Sink<String> phoneSink = _phoneSubject.sink;
@@ -269,23 +187,17 @@ class SignUpViewModel extends ChangeNotifier {
     Sink<String> jobSink = _jobSubject.sink;
     Sink<String> workplaceSink = _workplaceSubject.sink;
 
-    dobSink.add(_dobController.text); // Replace with your dob controller
-    sexSink.add(_sexController.text); // Replace with your sex controller
-    phoneSink.add(_phoneController.text); // Replace with your phone controller
-    nameSink.add(_nameController.text); // Replace with your name controller
-    jobSink.add(_jobController.text); // Replace with your job controller
-    workplaceSink.add(_workplaceController.text); // Replace with your workplace controller
+    dobSink.add(_dobController.text);
+    sexSink.add(_sexController.text);
+    phoneSink.add(_phoneController.text);
+    nameSink.add(_nameController.text);
+    jobSink.add(_jobController.text);
+    workplaceSink.add(_workplaceController.text);
   }
 
-  void handleSignUpError(Object error) {
+  void handleUpdateProfileError(Object error) {
     if (error is ValidationException) {
       switch (error.errorCode) {
-        case ExceptionErrorCode.invalidEmail:
-          _setEmailError(error.message);
-          break;
-        case ExceptionErrorCode.invalidPassword:
-          _setPasswordError(error.message);
-          break;
         case ExceptionErrorCode.invalidPhone:
           _setPhoneError(error.message);
           break;
@@ -306,19 +218,58 @@ class SignUpViewModel extends ChangeNotifier {
       }
     }
     else if (error is ResponseException) {
-      print(error.message);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Có lỗi xảy ra'),
+            content: Text(error.message),
+            actions: <Widget>[
+              TextButton(
+                  child: const Text('Đồng ý'),
+                  onPressed: () => Navigator.of(context).pop()
+              ),
+            ],
+          );
+        },
+      );
+    }
+    else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Hệ thống đang bận'),
+            content: const Text('Vui lòng thử lại sau'),
+            actions: <Widget>[
+              TextButton(
+                  child: const Text('Đồng ý'),
+                  onPressed: () => Navigator.of(context).pop()
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
-  void togglePasswordVisible() {
-    passwordVisible = !passwordVisible;
-    notifyListeners();
+  void handleAddImage() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      String imagePath = result.paths[0]!;
+      MultipartFile profileImageFile = await MultipartFile.fromPath(
+        'profileImage',
+        imagePath,
+        contentType: MediaType('image', imagePath.substring(imagePath.lastIndexOf('.') + 1))
+      );
+      userService.updateProfileImage(profileImageFile)
+        .then((imageUrl) => _setPreviewUploadedImage('https://unidy.s3.ap-southeast-1.amazonaws.com/profile-images$imageUrl'))
+        .catchError(handleUpdateProfileError);
+    }
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
     _dobController.dispose();
     _nameController.dispose();
     _sexController.dispose();

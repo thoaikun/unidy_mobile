@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/viewmodel/edit_campaign_viewmodel.dart';
 import 'package:unidy_mobile/widgets/image/image_preview.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
-import 'package:unidy_mobile/widgets/upload_btn.dart';
+import 'package:unidy_mobile/widgets/button/upload_btn.dart';
 
 class EditCampaignScreen extends StatefulWidget {
   const EditCampaignScreen({super.key});
