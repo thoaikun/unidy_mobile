@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -263,7 +265,7 @@ class EditProfileViewModel extends ChangeNotifier {
         contentType: MediaType('image', imagePath.substring(imagePath.lastIndexOf('.') + 1))
       );
       userService.updateProfileImage(profileImageFile)
-        .then((imageUrl) => _setPreviewUploadedImage('https://unidy.s3.ap-southeast-1.amazonaws.com/profile-images$imageUrl'))
+        .then((imageUrl) => _setPreviewUploadedImage(getImageUrl('/profile-images$previewUploadedImagePath')))
         .catchError(handleUpdateProfileError);
     }
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:unidy_mobile/bloc/profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
@@ -19,22 +21,16 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  final ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        print('hihihihi');
+        Provider.of<ProfileViewModel>(context, listen: false).loadMorePosts();
       }
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    Provider.of<ProfileViewModel>(context, listen: false).initData();
   }
   
   SliverToBoxAdapter _buildProfileHeader(User user) {
@@ -51,17 +47,7 @@ class _ProfileState extends State<Profile> {
                     height: 180,
                     child: Image.network(
                       'https://ispe.org/sites/default/files/styles/hero_banner_large/public/banner-images/volunteer-page-hero-1900x600.png.webp?itok=JwOK6xl2',
-                      fit: BoxFit.cover,
-                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const Center(
-                          child: SizedBox(
-                              width: 25,
-                              height: 25,
-                              child: CircularProgressIndicator()
-                          ),
-                        );
-                      },
+                      fit: BoxFit.cover
                     ),
                   ),
                   Positioned(
@@ -110,7 +96,9 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  SliverToBoxAdapter _buildProfileInfo(User user, ProfileViewModel profileViewModel) {
+  SliverToBoxAdapter _buildProfileInfo() {
+    User user = context.watch<ProfileCubit>().state;
+
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -128,10 +116,9 @@ class _ProfileState extends State<Profile> {
                       ),
                       IconButton(
                           onPressed: () async {
-                            User editedUser = await Navigator.push(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(builder: (BuildContext context) => EditProfileScreen(user: user)));
-                            profileViewModel.setUser(editedUser);
                           },
                           icon: const Icon(
                             Icons.edit,
@@ -148,7 +135,7 @@ class _ProfileState extends State<Profile> {
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       Text(
-                        Formatter.formatTime(user.dayOfBirth).toString(),
+                        Formatter.formatTime(user.dayOfBirth, 'dd/MM/yyyy - HH:mm').toString(),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),
                       )
                     ],
@@ -197,10 +184,24 @@ class _ProfileState extends State<Profile> {
   SliverList _buildRecentPost(List<Post> postList, User user) {
     return SliverList.separated(
       itemBuilder: (BuildContext context, int index) {
-        return PostCard(post: postList[index], userName: user.fullName, avatarUrl: user.image);
+        if (index < postList.length) {
+          return PostCard(post: postList[index], userName: user.fullName, avatarUrl: user.image);
+        }
+        else if (index == postList.length && context.watch<ProfileViewModel>().isLoadMoreLoading) {
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: const Center(
+              child: SizedBox(
+                width: 30,
+                height: 30,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        }
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
-      itemCount: postList.length,
+      itemCount: postList.length + 1,
     );
   }
 
@@ -211,10 +212,10 @@ class _ProfileState extends State<Profile> {
         return Skeletonizer(
           enabled: profileViewModel.loading,
           child: CustomScrollView(
-            controller: profileViewModel.scrollController,
+            controller: _scrollController,
             slivers: [
               _buildProfileHeader(profileViewModel.user),
-              _buildProfileInfo(profileViewModel.user, profileViewModel),
+              _buildProfileInfo(),
               _buildProfileAchievement(),
               SliverToBoxAdapter(
                 child: Padding(
@@ -228,11 +229,5 @@ class _ProfileState extends State<Profile> {
         );
       }
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _scrollController.dispose();
   }
 }

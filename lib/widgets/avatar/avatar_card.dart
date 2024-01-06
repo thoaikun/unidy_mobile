@@ -50,6 +50,7 @@ class AvatarCard extends StatelessWidget {
                 const SizedBox(width: 5),
                 Text(
                   Formatter.calculateTimeDifference(createdAt),
+                  // '1 giờ trước',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w300),
                 )
               ],

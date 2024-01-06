@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:readmore/readmore.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
@@ -34,9 +38,9 @@ class PostCard extends StatelessWidget {
               child: AvatarCard(
                 showTime: true,
                 userName: userName,
-                avatarUrl: avatarUrl != null ? 'https://unidy.s3.ap-southeast-1.amazonaws.com/profile-images${avatarUrl}' : null,
+                avatarUrl: avatarUrl != null ? getImageUrl('$avatarUrl') : null,
                 createdAt: post?.createDate,
-                description: 'Đang cảm thấy ${post?.status}'
+                description: 'Đang cảm thấy ${post?.status.toLowerCase()}'
               ),
             ),
             Padding(
@@ -112,7 +116,7 @@ class PostCard extends StatelessWidget {
               onPressed: () {},
               icon: const Icon(Icons.favorite_border_rounded)
             ),
-            Text('4 lượt thích', style: Theme.of(context).textTheme.bodySmall)
+            Text('${post?.likeCount ?? 0} lượt thích', style: Theme.of(context).textTheme.bodySmall)
           ],
         ),
         IconButton(
@@ -181,7 +185,16 @@ class PostCard extends StatelessWidget {
   }
 
   Widget _buildImageSlide() {
-    return ImageSlider(imageUrls: [post?.linkImage ?? 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Vilnius_Marathon_2015_volunteers_by_Augustas_Didzgalvis.jpg']);
+    List<dynamic> imageUrls = [];
+    if (post?.linkImage != "") {
+      imageUrls = List<String>.from(jsonDecode(post?.linkImage ?? '[]'));
+      List<String> result = [];
+      for (String image in imageUrls) {
+        result.add(getImageUrl('/post-images$image'));
+      }
+      return ImageSlider(imageUrls: result);
+    }
+    return const SizedBox();
   }
 
   Widget _buildImageList(BuildContext context) {

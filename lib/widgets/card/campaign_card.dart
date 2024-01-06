@@ -58,7 +58,7 @@ class CampaignJoinedCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300),
                 ),
                 Text(
-                  Formatter.formatTime(DateTime.now()).toString(),
+                  Formatter.formatTime(DateTime.now(), 'dd/MM/yyyy - HH:mm').toString(),
                 )
               ],
             ),
@@ -158,7 +158,7 @@ class CampaignDonationCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300),
                 ),
                 Text(
-                  Formatter.formatTime(DateTime.now()).toString(),
+                  Formatter.formatTime(DateTime.now(), 'dd/MM/yyyy - HH:mm').toString(),
                 )
               ],
             ),

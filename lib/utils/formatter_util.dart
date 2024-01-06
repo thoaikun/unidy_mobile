@@ -1,16 +1,19 @@
+import 'dart:ffi';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 
 class Formatter {
-  static String? formatTime(DateTime? dateTime) {
+  static String? formatTime(DateTime? dateTime, String format) {
     if (dateTime == null) return null;
-    final formatter = DateFormat('dd/MM/yyyy - HH:mm');
+    final formatter = DateFormat(format);
     return formatter.format(dateTime);
   }
 
   static String calculateTimeDifference(String? time) {
     if (time == null) return '';
 
-    DateFormat format = DateFormat('dd-MM-yyyy');
+    DateFormat format = DateFormat('yyyy-MM-ddTHH:mm:ss', Intl.systemLocale);
     DateTime parameterTime = format.parseStrict(time);
     DateTime currentTime = DateTime.now();
 
@@ -41,4 +44,9 @@ class Formatter {
     }
   }
 
+}
+
+String getImageUrl(String path) {
+  if (path.contains(dotenv.env['S3_BASE_URL']!)) return path;
+  return '${dotenv.env['S3_BASE_URL']}$path';
 }

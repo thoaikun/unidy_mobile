@@ -104,6 +104,12 @@ flutter:
     - assets/imgs/icon/blue_medal.png
     - assets/imgs/icon/people.png
     - assets/imgs/icon/calendar.png
+    - assets/imgs/emotional_emoji/amazing.png
+    - assets/imgs/emotional_emoji/admire.png
+    - assets/imgs/emotional_emoji/happy.png
+    - assets/imgs/emotional_emoji/relax.png
+    - assets/imgs/emotional_emoji/excited.png
+    - assets/imgs/emotional_emoji/wonderful.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

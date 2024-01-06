@@ -13,10 +13,24 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        Provider.of<DashboardViewModel>(context, listen: false).setIsLoadMoreLoading(true);
+        Provider.of<DashboardViewModel>(context, listen: false).getPosts();
+      }
+    });
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Provider.of<DashboardViewModel>(context, listen: false).initData();
+    DashboardViewModel dashboardViewModel = Provider.of<DashboardViewModel>(context, listen: false);
+    dashboardViewModel.getPosts();
   }
 
   @override
@@ -25,21 +39,36 @@ class _DashboardState extends State<Dashboard> {
       builder: (BuildContext context, DashboardViewModel dashboardViewModel, Widget? child) {
         return RefreshIndicator(
           onRefresh: () async {
-            dashboardViewModel.initData();
+            dashboardViewModel.getPosts();
           },
           child: Skeletonizer(
-            enabled: dashboardViewModel.loading,
+            enabled: dashboardViewModel.isFirstLoading,
             child: ListView.separated(
+              controller: _scrollController,
               itemBuilder: (BuildContext context, int index) {
-                Post post = dashboardViewModel.postList[index];
-                return PostCard(
-                  post: post,
-                  userName: post.userNodes?.fullName,
-                  avatarUrl: post.userNodes?.profileImageLink
-                );
+                if (index < dashboardViewModel.postList.length) {
+                  Post post = dashboardViewModel.postList[index];
+                  return PostCard(
+                    post: post,
+                    userName: post.userNodes?.fullName,
+                    avatarUrl: post.userNodes?.profileImageLink
+                  );
+                }
+                else if (index == dashboardViewModel.postList.length && dashboardViewModel.isLoadMoreLoading) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: const Center(
+                      child: SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  );
+                }
               },
               separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
-              itemCount: dashboardViewModel.postList.length,
+              itemCount: dashboardViewModel.postList.length + 1,
             ),
           ),
         );

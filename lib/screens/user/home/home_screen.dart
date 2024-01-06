@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unidy_mobile/bloc/profile_cubit.dart';
+import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/viewmodel/add_post_viewmodel.dart';
 import 'package:unidy_mobile/viewmodel/dashboard_viewmodel.dart';
 import 'package:unidy_mobile/viewmodel/navigation_viewmodel.dart';
@@ -30,24 +32,29 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    User user = context.watch<ProfileCubit>().state;
+    if (user.fullName == null) {
+      ProfileViewModel profileViewModel = Provider.of<ProfileViewModel>(context, listen: true);
+      profileViewModel.getUserProfile();
+      // profileViewModel.getMyOwnPost();
+      context.read<ProfileCubit>().setProfile(profileViewModel.user);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => NavigationViewModel()),
-        ChangeNotifierProvider(create: (_) => AddPostViewModel()),
-        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
-        ChangeNotifierProvider(create: (_) => DashboardViewModel())
-      ],
-      child: Consumer<NavigationViewModel>(
-        builder: (BuildContext context, NavigationViewModel navigationViewModal, Widget? child) => Scaffold(
-          resizeToAvoidBottomInset: true,
-          appBar: const PreferredSize(
-              preferredSize: Size.fromHeight(55),
-              child: UnidyMainAppBar()
-          ),
-          bottomNavigationBar: const UnidyMainBottomNavigationBar(),
-          body: _screenOptions[navigationViewModal.currentScreen]
+    return Consumer<NavigationViewModel>(
+      builder: (BuildContext context, NavigationViewModel navigationViewModal, Widget? child) => Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: const PreferredSize(
+            preferredSize: Size.fromHeight(55),
+            child: UnidyMainAppBar()
         ),
+        bottomNavigationBar: const UnidyMainBottomNavigationBar(),
+        body: _screenOptions[navigationViewModal.currentScreen]
       ),
     );
   }

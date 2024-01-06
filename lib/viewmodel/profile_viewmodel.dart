@@ -9,39 +9,23 @@ import 'package:unidy_mobile/services/user_service.dart';
 class ProfileViewModel extends ChangeNotifier {
   final UserService userService = GetIt.instance<UserService>();
   final PostService postService = GetIt.instance<PostService>();
-  final ScrollController _scrollController = ScrollController();
 
+  String? _lastPostOffset;
   bool loading = true;
-  User _user = User(
-    userId: 0,
-    fullName: 'Không rõ',
-    address: 'Không rõ',
-    phone: '',
-    sex: '',
-    job: '',
-    role: '',
-    dayOfBirth: DateTime.now(),
-    workLocation: ''
-  );
+  bool isLoadMoreLoading = true;
+  User _user = User(userId: 0);
   List<Post> _postList = [];
 
-  ScrollController get scrollController => _scrollController;
   User get user => _user;
   List<Post> get postList => _postList;
 
-  ProfileViewModel() {
-    initData();
-    _scrollController.addListener(onScroll);
-  }
-
-  void onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      print('hiii');
-    }
-  }
-
   void setLoading(bool value) {
     loading = value;
+    notifyListeners();
+  }
+
+  void setIsLoadMoreLoading(bool value) {
+    isLoadMoreLoading = value;
     notifyListeners();
   }
 
@@ -51,29 +35,53 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void setPostList(List<Post> value) {
-    _postList = value;
+    _postList = _postList + value;
     notifyListeners();
   }
 
-  void initData() {
+  void getUserProfile() {
     userService.whoAmI()
       .then((user) {
         setUser(user);
-        return postService.getUserPosts(user.userId);
-      })
-      .then((postList) {
-        setPostList(postList);
-        setLoading(false);
       })
       .catchError((error) {
         print(error);
-        setLoading(false);
-      });
+      })
+      .whenComplete(() => setLoading(false));
+  }
+
+  void getMyOwnPost() {
+    postService.getUserPosts(_lastPostOffset)
+      .then((postList) {
+        if (postList.isNotEmpty) {
+          Post lastPost = postList[postList.length - 1];
+          _lastPostOffset = lastPost.createDate;
+        }
+        setPostList(postList);
+      })
+      .catchError((error) {
+        print(error);
+      })
+      .whenComplete(() => setLoading(false));
+  }
+
+  void loadMorePosts() {
+    setIsLoadMoreLoading(true);
+    postService.getUserPosts(_lastPostOffset)
+      .then((postList) {
+        if (postList.isNotEmpty) {
+          Post lastPost = postList[postList.length - 1];
+          _lastPostOffset = lastPost.createDate;
+        }
+        setPostList(postList);
+      })
+        .whenComplete(() {
+          setIsLoadMoreLoading(false);
+        });
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     super.dispose();
   }
 }

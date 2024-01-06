@@ -38,7 +38,7 @@ class ProfileOrganizationInfo extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               Text(
-                Formatter.formatTime(DateTime.now()).toString(),
+                Formatter.formatTime(DateTime.now(), 'dd/MM/yyyy - HH:mm').toString(),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),
               )
             ],

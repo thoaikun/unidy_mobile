@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unidy_mobile/bloc/profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/viewmodel/edit_profile_viewmodel.dart';
@@ -21,40 +22,48 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       create: (_) => EditProfileViewModel(widget.user, context: context),
       child: Consumer<EditProfileViewModel>(
           builder: (BuildContext context, EditProfileViewModel editProfileViewModel, Widget? child) {
-          return WillPopScope(
-            onWillPop: () async {
-              Navigator.pop(context, editProfileViewModel.user);
-              return true;
-            },
-            child: Scaffold(
-              appBar: AppBar(
-                title: const Text('Chỉnh sửa tài khoản'),
-                actions: [
-                  TextButton.icon(
-                    onPressed: () => editProfileViewModel.handleUpdateProfile(),
-                    icon: const Icon(Icons.check_rounded, color: PrimaryColor.primary500),
-                    label: const Text('Lưu'),
-                  )
-                ],
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(10),
-                  child: Visibility(
-                    visible: editProfileViewModel.loading,
-                    child: LinearProgressIndicator(),
-                  ),
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Chỉnh sửa tài khoản'),
+              actions: [
+                TextButton.icon(
+                  onPressed: () {
+                      editProfileViewModel.handleUpdateProfile();
+
+                      Map<String, dynamic> payload = {
+                        'fullName': editProfileViewModel.user?.fullName,
+                        'address': editProfileViewModel.user?.address,
+                        'phone': editProfileViewModel.user?.phone,
+                        'sex': editProfileViewModel.user?.sex,
+                        'job': editProfileViewModel.user?.job,
+                        'role': editProfileViewModel.user?.role,
+                        'dayOfBirth': editProfileViewModel.user?.dayOfBirth,
+                        'workLocation': editProfileViewModel.user?.workLocation,
+                      };
+                      context.read<ProfileCubit>().changeProfile(payload);
+                    },
+                  icon: const Icon(Icons.check_rounded, color: PrimaryColor.primary500),
+                  label: const Text('Lưu'),
                 )
-              ),
-              body: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomScrollView(
-                  slivers: [
-                    _buildAvatarForm(),
-                    _buildWallpaperForm(),
-                    _buildInformationForm()
-                  ],
+              ],
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(10),
+                child: Visibility(
+                  visible: editProfileViewModel.loading,
+                  child: LinearProgressIndicator(),
                 ),
               )
             ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: CustomScrollView(
+                slivers: [
+                  _buildAvatarForm(),
+                  _buildWallpaperForm(),
+                  _buildInformationForm()
+                ],
+              ),
+            )
           );
         }
       ),
@@ -143,7 +152,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       style: Theme.of(context).textTheme.bodyLarge
                     ),
                     TextButton.icon(
-                      onPressed: () => editProfileViewModel.handleAddImage(),
+                      onPressed: () {
+                        editProfileViewModel.handleAddImage();
+                        context.read<ProfileCubit>().changeProfileImage(editProfileViewModel.previewUploadedImagePath!);
+                      },
                       icon: const Icon(Icons.edit, size: 18,),
                       label: const Text('Thay đổi'),
                       style: ButtonStyle(

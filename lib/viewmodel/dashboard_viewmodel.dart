@@ -9,26 +9,40 @@ class DashboardViewModel extends ChangeNotifier {
   PostService postService = GetIt.instance<PostService>();
   AppPreferences appPreferences = GetIt.instance<AppPreferences>();
 
-  bool loading = true;
+  String? _lastPostOffset;
+  bool isFirstLoading = true;
+  bool isLoadMoreLoading = false;
   List<Post> _postList = [];
 
   List<Post> get postList => _postList;
 
   void setPostList(List<Post> value) {
-    _postList = value;
+    _postList = _postList + value;
     notifyListeners();
   }
 
-  void setLoading(bool value) {
-    loading = value;
+  void setIsFirstLoading(bool value) {
+    isFirstLoading = value;
     notifyListeners();
   }
 
-  void initData() {
-    postService.getRecommendationPosts()
+  void setIsLoadMoreLoading(bool value) {
+    isLoadMoreLoading = value;
+    notifyListeners();
+  }
+
+  void getPosts() {
+    postService.getRecommendationPosts(_lastPostOffset)
       .then((postList) {
+        if (postList.isNotEmpty) {
+          Post lastPost = postList[postList.length - 1];
+          _lastPostOffset = lastPost.createDate;
+        }
         setPostList(postList);
-        setLoading(false);
+      })
+      .whenComplete(() {
+        setIsFirstLoading(false);
+        setIsLoadMoreLoading(false);
       });
   }
 }

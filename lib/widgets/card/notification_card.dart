@@ -35,7 +35,7 @@ class NotificationCard extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           subtitle: Text(
-            Formatter.formatTime(date) ?? Formatter.formatTime(DateTime.now()).toString(),
+            Formatter.formatTime(date, 'dd/MM/yyyy - HH:mm') ?? Formatter.formatTime(DateTime.now(), 'dd/MM/yyyy - HH:mm').toString(),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300)
           ),
           trailing: const CircleAvatar(

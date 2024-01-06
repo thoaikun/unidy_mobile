@@ -1,24 +1,25 @@
-import 'dart:convert';
+// To parse this JSON data, do
+//
+//     final post = postFromJson(jsonString);
 
-import 'package:unidy_mobile/models/user_model.dart';
+import 'dart:convert';
 
 List<Post> postListFromJson(String str) => List<Post>.from(json.decode(str).map((x) => Post.fromJson(x)));
 
-String postListToJson(List<Post> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
 Post postFromJson(String str) => Post.fromJson(json.decode(str));
 
-String postToJson(Post data) => json.encode(data.toJson());
+String postToJson(List<Post> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Post {
   String postId;
   String content;
   String status;
   String createDate;
-  String updateDate;
+  String? updateDate;
   bool isBlock;
   String linkImage;
-  UserNode? userNodes;
+  UserNodes? userNodes;
+  int? likeCount;
 
   Post({
     required this.postId,
@@ -28,7 +29,8 @@ class Post {
     required this.updateDate,
     required this.isBlock,
     required this.linkImage,
-    this.userNodes,
+    required this.userNodes,
+    required this.likeCount,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
@@ -39,7 +41,8 @@ class Post {
     updateDate: json["updateDate"],
     isBlock: json["isBlock"],
     linkImage: json["linkImage"],
-    userNodes: UserNode.fromJson(json["userNodes"]),
+    userNodes: UserNodes.fromJson(json["userNodes"]),
+    likeCount: json["likeCount"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -50,28 +53,29 @@ class Post {
     "updateDate": updateDate,
     "isBlock": isBlock,
     "linkImage": linkImage,
-    "userNode": userNodes?.toJson(),
+    "userNodes": userNodes?.toJson(),
+    "likeCount": likeCount,
   };
 }
 
-class UserNode {
+class UserNodes {
   int userId;
   String fullName;
   bool isBlock;
-  String? profileImageLink;
+  dynamic profileImageLink;
 
-  UserNode({
+  UserNodes({
     required this.userId,
     required this.fullName,
     required this.isBlock,
     required this.profileImageLink,
   });
 
-  static UserNode? fromJson(Map<String, dynamic>? json) {
+  static UserNodes? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return UserNode(
+    return UserNodes(
       userId: json["userId"],
       fullName: json["fullName"],
       isBlock: json["isBlock"],
@@ -86,4 +90,3 @@ class UserNode {
     "profileImageLink": profileImageLink,
   };
 }
-
