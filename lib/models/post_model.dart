@@ -19,7 +19,8 @@ class Post {
   bool isBlock;
   String linkImage;
   UserNodes? userNodes;
-  int? likeCount;
+  int likeCount;
+  bool isLiked;
 
   Post({
     required this.postId,
@@ -31,6 +32,7 @@ class Post {
     required this.linkImage,
     required this.userNodes,
     required this.likeCount,
+    required this.isLiked
   });
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
@@ -43,6 +45,7 @@ class Post {
     linkImage: json["linkImage"],
     userNodes: UserNodes.fromJson(json["userNodes"]),
     likeCount: json["likeCount"],
+    isLiked: json["isLiked"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -55,6 +58,7 @@ class Post {
     "linkImage": linkImage,
     "userNodes": userNodes?.toJson(),
     "likeCount": likeCount,
+    "isLiked": isLiked
   };
 }
 

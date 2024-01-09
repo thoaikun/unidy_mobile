@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/models/post_model.dart';
+import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/dashboard_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
 
@@ -12,7 +13,7 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -24,6 +25,7 @@ class _DashboardState extends State<Dashboard> {
         Provider.of<DashboardViewModel>(context, listen: false).getPosts();
       }
     });
+
   }
 
   @override
@@ -51,7 +53,8 @@ class _DashboardState extends State<Dashboard> {
                   return PostCard(
                     post: post,
                     userName: post.userNodes?.fullName,
-                    avatarUrl: post.userNodes?.profileImageLink
+                    avatarUrl: post.userNodes?.profileImageLink,
+                    onLikePost: () => debounce(() => dashboardViewModel.handleLikePost(post), 500).call()
                   );
                 }
                 else if (index == dashboardViewModel.postList.length && dashboardViewModel.isLoadMoreLoading) {

@@ -10,6 +10,10 @@ class UserService {
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
   Future<User> whoAmI() async {
+    if (httpClient.headers?.containsKey('Authorization') == false) {
+      return User(userId: 0);
+    }
+
     try {
       Response response = await httpClient.get('api/v1/users/profile');
 
