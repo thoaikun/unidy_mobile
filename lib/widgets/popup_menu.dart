@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen.dart';
+import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
 
 enum EPopupMenuOption {
   logout,
@@ -41,7 +43,7 @@ class _UnidyPopupMenuState extends State<UnidyPopupMenu> {
         while(Navigator.canPop(context)) {
           Navigator.pop(context);
         }
-        Navigator.pushReplacementNamed(context, '/authentication/login');
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
         break;
       case EPopupMenuOption.organizationMode:
         appPreferences.setString('accountMode', 'organization');
@@ -50,7 +52,7 @@ class _UnidyPopupMenuState extends State<UnidyPopupMenu> {
       case EPopupMenuOption.sponsorMode:
       case EPopupMenuOption.volunteerMode:
         appPreferences.setString('accountMode', 'user');
-        Navigator.push(context, MaterialPageRoute(builder: (context) => WillPopScope(child: const HomeScreen(), onWillPop: () async => false )));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => WillPopScope(child: const HomeScreenContainer(), onWillPop: () async => false )));
         break;
     }
   }

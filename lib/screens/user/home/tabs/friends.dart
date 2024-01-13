@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:unidy_mobile/screens/user/friends_list/friends_list_screen.dart';
+import 'package:unidy_mobile/screens/user/friends_list/request_friends_list_screen.dart';
+import 'package:unidy_mobile/screens/user/friends_list/suggestion_friend_list_screen.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 
 class Friends extends StatefulWidget {
@@ -17,7 +20,7 @@ class _FriendsState extends State<Friends> {
         child: Column(
           children: [
             GestureDetector(
-              onTap: () => Navigator.pushNamed(context, 'friends/request'),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestFriendListScreen())),
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Row(
@@ -54,7 +57,7 @@ class _FriendsState extends State<Friends> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: () => Navigator.pushNamed(context, 'friends/suggestion'),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SuggestionFriendListScreen())),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -88,7 +91,7 @@ class _FriendsState extends State<Friends> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: () => Navigator.pushNamed(context, 'friends/list'),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FriendListScreen())),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

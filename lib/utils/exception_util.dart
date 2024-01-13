@@ -44,4 +44,5 @@ enum ExceptionErrorCode {
   invalidToken,
   invalidImageExtension,
   invalidUserId,
+  invalidFriendRequest,
 }

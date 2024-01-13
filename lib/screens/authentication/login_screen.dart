@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/screens/authentication/forgot_password/forgot_password_screen.dart';
+import 'package:unidy_mobile/screens/authentication/signup/signup_screen.dart';
 import 'package:unidy_mobile/viewmodel/login_viewmodel.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
@@ -92,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Text('Chưa có tài khoản?', style: Theme.of(context).textTheme.bodySmall),
                                 const SizedBox(width: 8),
                                 TextButton(
-                                  onPressed: ()  => Navigator.pushNamed(context, '/authentication/signup'),
+                                  onPressed: ()  => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen())),
                                   style: const ButtonStyle(
                                       fixedSize: MaterialStatePropertyAll<Size>(Size.fromHeight(20)),
                                       padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.zero)
@@ -116,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             Center(
                                 child: TextButton(
-                                  onPressed: () => Navigator.pushNamed(context, '/authentication/forgot_password'),
+                                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPasswordScreen())),
                                   child: const Text('Quên mật khẩu')
                                 )
                               )

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/screens/user/notification/notification_screen.dart';
 import 'package:unidy_mobile/viewmodel/notification_viewmodel.dart';
 import 'package:unidy_mobile/widgets/popup_menu.dart';
 import 'package:unidy_mobile/widgets/search/search_delegate.dart';
@@ -33,7 +34,7 @@ class _UnidyMainAppBarState extends State<UnidyMainAppBar> {
           Consumer<NotificationViewModel>(
             builder: (BuildContext context, NotificationViewModel notificationViewModel, Widget? child) {
               return IconButton(
-                onPressed: () => Navigator.pushNamed(context, '/notification'),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationScreen())),
                 icon: const Badge(
                   label: Text('1'),
                   alignment: Alignment.topRight,

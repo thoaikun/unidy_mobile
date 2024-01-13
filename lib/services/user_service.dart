@@ -10,10 +10,6 @@ class UserService {
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
   Future<User> whoAmI() async {
-    if (httpClient.headers?.containsKey('Authorization') == false) {
-      return User(userId: 0);
-    }
-
     try {
       Response response = await httpClient.get('api/v1/users/profile');
 
@@ -82,6 +78,86 @@ class UserService {
         case 400:
           ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidResetPassword);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> sendFriendRequest(int userId) async {
+    try {
+      Response response = await httpClient.post('api/v1/users/add-friend?friendId=$userId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Lời mời kết bạn không hợp lệ', code: ExceptionErrorCode.invalidFriendRequest);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> acceptFriendRequest(int userId) async {
+    try {
+      Response response = await httpClient.post('api/v1/users/accept-friend?friendId=$userId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Không thể chấp nhận lời mời kết bạn', code: ExceptionErrorCode.invalidFriendRequest);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> declineFriendRequest(int userId) async {
+    try {
+      Response response = await httpClient.post('api/v1/users/decline-friend?friendId=$userId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Không thể từ chối lời mời kết bạn', code: ExceptionErrorCode.invalidFriendRequest);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> unfriend(int userId) async {
+    try {
+      Response response = await httpClient.post('api/v1/users/unfriend?friendId=$userId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Không thể xóa bạn bè', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:

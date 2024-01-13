@@ -9,6 +9,7 @@ import 'package:unidy_mobile/models/account_mode_model.dart';
 import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen.dart';
+import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
 
 class PlaceholderScreen extends StatefulWidget {
   const PlaceholderScreen({super.key});
@@ -41,7 +42,7 @@ class _PlaceholderScreenState extends State<PlaceholderScreen> {
         switch (snapshot.data) {
           case AccountMode.user:
           case AccountMode.sponsor:
-            return WillPopScope(child: const HomeScreen(), onWillPop: () async => false );
+            return WillPopScope(child: const HomeScreenContainer(), onWillPop: () async => false );
           case AccountMode.organization:
             return WillPopScope(child: const OrganizationHomeScreen(), onWillPop: () async => false );
           case AccountMode.none:

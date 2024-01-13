@@ -12,10 +12,6 @@ class PostService {
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
   Future<List<Post>> getUserPosts(String? cursor) async {
-    if (httpClient.headers?.containsKey('Authorization') == false) {
-      return [];
-    }
-
     Map<String, dynamic> payload = {
       'cursor': cursor ?? Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss'),
       'limit': POST_LIMIT
@@ -42,10 +38,6 @@ class PostService {
   }
 
   Future<List<Post>> getRecommendationPosts(String? cursor) async {
-    if (httpClient.headers?.containsKey('Authorization') == false) {
-      return [];
-    }
-
     Map<String, dynamic> payload = {
       'cursor': cursor ?? Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss'),
       'limit': POST_LIMIT

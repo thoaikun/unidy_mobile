@@ -44,8 +44,8 @@ class Post {
     isBlock: json["isBlock"],
     linkImage: json["linkImage"],
     userNodes: UserNodes.fromJson(json["userNodes"]),
-    likeCount: json["likeCount"],
-    isLiked: json["isLiked"]
+    likeCount: json["likeCount"] ?? 0,
+    isLiked: json["isLiked"] ?? false
   );
 
   Map<String, dynamic> toJson() => {
