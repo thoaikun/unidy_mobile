@@ -4,10 +4,11 @@ import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/services/post_service.dart';
+import 'package:unidy_mobile/utils/index.dart';
 
 class DashboardViewModel extends ChangeNotifier {
-  PostService postService = GetIt.instance<PostService>();
-  AppPreferences appPreferences = GetIt.instance<AppPreferences>();
+  final PostService _postService = GetIt.instance<PostService>();
+  final AppPreferences _appPreferences = GetIt.instance<AppPreferences>();
 
   String? _lastPostOffset;
   bool isFirstLoading = true;
@@ -32,7 +33,7 @@ class DashboardViewModel extends ChangeNotifier {
   }
 
   void getPosts() {
-    postService.getRecommendationPosts(_lastPostOffset)
+    _postService.getRecommendationPosts(_lastPostOffset)
       .then((postList) {
         if (postList.isNotEmpty) {
           Post lastPost = postList[postList.length - 1];
@@ -44,5 +45,21 @@ class DashboardViewModel extends ChangeNotifier {
         setIsFirstLoading(false);
         setIsLoadMoreLoading(false);
       });
+  }
+
+  void handleLikePost(Post post) {
+    print('like post');
+    if (post.isLiked == true) {
+      post.isLiked = false;
+      post.likeCount = post.likeCount - 1;
+      notifyListeners();
+      _postService.unlike(post.postId);
+    }
+    else {
+      post.isLiked = true;
+      post.likeCount = post.likeCount + 1;
+      notifyListeners();
+      _postService.like(post.postId);
+    }
   }
 }

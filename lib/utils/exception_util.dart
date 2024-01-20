@@ -16,6 +16,15 @@ class ResponseException implements Exception {
   ExceptionErrorCode get errorCode => code;
 
   ResponseException({ required this.value, required this.code });
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return {
+      'value': value,
+      'code': code
+    }.toString();
+  }
 }
 
 enum ExceptionErrorCode {
@@ -35,4 +44,5 @@ enum ExceptionErrorCode {
   invalidToken,
   invalidImageExtension,
   invalidUserId,
+  invalidFriendRequest,
 }

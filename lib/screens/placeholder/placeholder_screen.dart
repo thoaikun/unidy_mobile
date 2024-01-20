@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -5,10 +7,11 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/bloc/network_detect_cubit.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/http_client.dart';
-import 'package:unidy_mobile/models/account_mode_model.dart';
+import 'package:unidy_mobile/models/local_data_model.dart';
 import 'package:unidy_mobile/screens/authentication/login_screen.dart';
+import 'package:unidy_mobile/screens/onboarding/onboarding_screen.dart';
 import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
-import 'package:unidy_mobile/screens/user/home/home_screen.dart';
+import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
 
 class PlaceholderScreen extends StatefulWidget {
   const PlaceholderScreen({super.key});
@@ -38,14 +41,18 @@ class _PlaceholderScreenState extends State<PlaceholderScreen> {
     return FutureBuilder(
       future: _isLogin(),
       builder: (context, snapshot) {
-        switch (snapshot.data) {
+        if (snapshot.data?.isFirstTimeOpenApp == true) {
+          return const OnboardingScreen();
+        }
+
+        switch (snapshot.data?.accountMode) {
           case AccountMode.user:
           case AccountMode.sponsor:
-            return WillPopScope(child: const HomeScreen(), onWillPop: () async => false );
+            return const PopScope(canPop: false, child: HomeScreenContainer());
           case AccountMode.organization:
-            return WillPopScope(child: const OrganizationHomeScreen(), onWillPop: () async => false );
+            return const PopScope(canPop: false, child: OrganizationHomeScreen() );
           case AccountMode.none:
-            return WillPopScope(child: const LoginScreen(), onWillPop: () async => false );
+            return const PopScope(canPop: false, child: LoginScreen() );
           default:
             return _buildPlaceHolder();
         }
@@ -139,14 +146,19 @@ class _PlaceholderScreenState extends State<PlaceholderScreen> {
     );
   }
   
-  Future<AccountMode> _isLogin() async {
+  Future<LocalData> _isLogin() async {
     await Future.delayed(const Duration(seconds: 1));
-    String? accessToken = appPreferences.getString('accessToken');
-    AccountMode accountMode = accountModeFromString(appPreferences.getString('accountMode')) ?? AccountMode.none;
-    if (accessToken != null) {
-      httpClient.addHeader('Authorization', 'Bearer $accessToken');
+    String? data = appPreferences.getString('localData');
+
+    if (data != null) {
+      Map<String, dynamic> json = jsonDecode(data);
+      LocalData localData = LocalData.fromJson(json);
+      if (localData.accessToken != null) {
+        httpClient.addHeader('Authorization', 'Bearer ${localData.accessToken}');
+      }
+      return localData;
     }
-    return accountMode;
+    return LocalData(null, null, true, 'none');
   }
 
   void _checkNetwork() {

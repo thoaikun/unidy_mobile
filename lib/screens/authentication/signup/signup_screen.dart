@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/screens/authentication/signup/step/complete_signup.dart';
 import 'package:unidy_mobile/screens/authentication/signup/step/create_account.dart';
 import 'package:unidy_mobile/screens/authentication/signup/step/information.dart';
@@ -70,7 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                               Text('Đã có tài khoản?', style: Theme.of(context).textTheme.bodySmall),
                               const SizedBox(width: 8),
                               TextButton(
-                                onPressed: ()  => Navigator.pushNamed(context, '/authentication/login'),
+                                onPressed: ()  => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
                                 style: const ButtonStyle(
                                     fixedSize: MaterialStatePropertyAll<Size>(Size.fromHeight(20)),
                                     padding: MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.zero)
@@ -113,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
                                         signUpViewModel.pickNextStepFunction();
                                       }
                                       else {
-                                        Navigator.pushNamed(context, '/authentication/login');
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
                                       }
                                     },
                                     child: Text(signUpViewModel.step != 3 ? 'Tiếp tục' : 'Đăng nhập')

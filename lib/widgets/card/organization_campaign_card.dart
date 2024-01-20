@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/screens/organization/organization_campaign_detail/organization_campaign_detail.dart';
 import 'package:unidy_mobile/widgets/status_tag.dart';
 
 class OrganizationCampaignCard extends StatelessWidget {
@@ -8,7 +9,7 @@ class OrganizationCampaignCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/organization/campaign'),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const OrganizationCampaignDetailScreen())),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(

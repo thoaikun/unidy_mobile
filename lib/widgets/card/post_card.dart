@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:readmore/readmore.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/post_model.dart';
-import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
@@ -16,17 +14,20 @@ class PostCard extends StatelessWidget {
   final Post? post;
   final String? userName;
   final String? avatarUrl;
+  final void Function()? onLikePost;
 
   const PostCard({
     super.key,
     this.post,
     this.userName,
-    this.avatarUrl
+    this.avatarUrl,
+    this.onLikePost
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onDoubleTap: () => onLikePost?.call(),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
         child: Column(
@@ -95,28 +96,32 @@ class PostCard extends StatelessWidget {
           trimExpandedText: '',
           moreStyle: Theme.of(context).textTheme.labelLarge?.copyWith(color: TextColor.textColor300),
         ),
-        const SizedBox(height: 5),
-        Text(
-          '#dieforone #gogo',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(color: PrimaryColor.primary500),
-        )
       ],
     );
   }
 
   Widget _buildPostInteraction(BuildContext context) {
+    int totalLike = 0;
+    if (post?.isLiked == true) {
+      totalLike = (post?.likeCount ?? 0) + 1;
+    }
+    else if (post?.isLiked == false) {
+      totalLike = post?.likeCount ?? 0;
+    }
+    else {
+      totalLike = 0;
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Row(
           children: [
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.favorite_border_rounded)
+              onPressed: () => onLikePost?.call(),
+              icon: post?.isLiked ?? false ? const Icon(Icons.favorite_rounded, color: ErrorColor.error500) : const Icon(Icons.favorite_border_rounded)
             ),
-            Text('${post?.likeCount ?? 0} lượt thích', style: Theme.of(context).textTheme.bodySmall)
+            Text('$totalLike lượt thích', style: Theme.of(context).textTheme.bodySmall)
           ],
         ),
         IconButton(
@@ -192,7 +197,14 @@ class PostCard extends StatelessWidget {
       for (String image in imageUrls) {
         result.add(getImageUrl('/post-images$image'));
       }
-      return ImageSlider(imageUrls: result);
+      return Skeleton.replace(
+        replacement: Container(
+          width: double.infinity,
+          height: 200,
+          color: TextColor.textColor200
+        ),
+        child: ImageSlider(imageUrls: result)
+      );
     }
     return const SizedBox();
   }

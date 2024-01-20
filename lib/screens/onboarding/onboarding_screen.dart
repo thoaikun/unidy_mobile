@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_1.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_2.dart';
 import 'package:unidy_mobile/widgets/onboarding/onboarding_3.dart';
@@ -28,7 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _handleSkip() {
-    Navigator.pushNamed(context, '/authentication/login');
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 
   void _handleNextStep() {
@@ -44,7 +45,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       });
     }
     else {
-      Navigator.pushNamed(context, '/authentication/login');
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
     }
   }
 

@@ -8,10 +8,9 @@ import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/screens/user/edit_profile/edit_profile_screen.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
-import 'package:unidy_mobile/viewmodel/profile_viewmodel.dart';
+import 'package:unidy_mobile/viewmodel/user/home/profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
 import 'package:unidy_mobile/widgets/profile/profile_archievement.dart';
-import 'package:unidy_mobile/widgets/profile/profile_recent_post.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});

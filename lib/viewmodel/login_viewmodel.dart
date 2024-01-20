@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/http_client.dart';
+import 'package:unidy_mobile/models/local_data_model.dart';
 import 'package:unidy_mobile/services/authentication_service.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
@@ -10,7 +13,10 @@ import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  final BuildContext context;
+  void Function() navigateToHomeScreen;
+  void Function() navigateToOnboardingScreen;
+  void Function() showErrorDialog;
+
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
   HttpClient httpClient = GetIt.instance<HttpClient>();
   final UserService userService = GetIt.instance<UserService>();
@@ -31,7 +37,11 @@ class LoginViewModel extends ChangeNotifier {
   bool passwordVisible = false;
   bool loadingLogin = false;
 
-  LoginViewModel({ required this.context }) {
+  LoginViewModel({
+    required this.navigateToHomeScreen,
+    required this.navigateToOnboardingScreen,
+    required this.showErrorDialog
+  }) {
     _emailController.addListener(() => _setEmailError(null));
     _passwordController.addListener(() => _setPasswordError(null));
     _setupLoginStream();
@@ -88,12 +98,23 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   void _handleLoginSuccess(Authenticate authenticationResponse) async {
-    await appPreferences.setString('accessToken', authenticationResponse.accessToken);
-    await appPreferences.setString('refreshToken', authenticationResponse.refreshToken);
-    await appPreferences.setString('accountMode', 'user');
+    String? data = appPreferences.getString('localData');
+
+    if (data == null) {
+      LocalData localData = LocalData(authenticationResponse.accessToken, authenticationResponse.refreshToken, true, 'user');
+      await appPreferences.setString('localData', jsonEncode(localData.toJson()));
+    }
+    else {
+      LocalData localData = LocalData.fromJson(jsonDecode(data));
+      localData.accessToken = authenticationResponse.accessToken;
+      localData.refreshToken = authenticationResponse.refreshToken;
+      localData.accountMode = AccountMode.user;
+      localData.isFirstTimeOpenApp = false;
+      await appPreferences.setString('localData', jsonEncode(localData.toJson()));
+    }
     httpClient.addHeader('Authorization', 'Bearer ${authenticationResponse.accessToken}');
     _setLoadingLogin(false);
-    Navigator.pushReplacementNamed(context, '/');
+    navigateToHomeScreen();
   }
 
   void _handleLoginError(Object error) {
@@ -108,21 +129,7 @@ class LoginViewModel extends ChangeNotifier {
     }
     else {
       _setLoadingLogin(false);
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Hệ thống đang bận'),
-            content: const Text('Vui lòng đợi trong giây lát và thử lại'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Đồng ý'),
-                onPressed: () => Navigator.of(context).pop()
-              ),
-            ],
-          );
-        },
-      );
+      showErrorDialog();
     }
   }
 

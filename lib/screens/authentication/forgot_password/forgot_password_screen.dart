@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/screens/authentication/forgot_password/step/confirm_email.dart';
 import 'package:unidy_mobile/screens/authentication/forgot_password/step/confirm_otp.dart';
 import 'package:unidy_mobile/screens/authentication/forgot_password/step/enter_new_password.dart';

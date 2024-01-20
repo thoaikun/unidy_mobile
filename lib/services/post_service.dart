@@ -9,7 +9,6 @@ import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class PostService {
   final String POST_LIMIT = '5';
-
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
   Future<List<Post>> getUserPosts(String? cursor) async {
@@ -89,5 +88,41 @@ class PostService {
 
   Future<void> delete() {
     throw UnimplementedError();
+  }
+
+  Future<void> like(String postId) async {
+    try {
+      Response response = await httpClient.patch('api/v1/posts/like?postId=$postId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> unlike(String postId) async {
+    try {
+      Response response = await httpClient.patch('api/v1/posts/unlike?postId=$postId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
   }
 }

@@ -3,16 +3,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:unidy_mobile/models/post_emotional_model.dart';
 import 'package:unidy_mobile/services/post_service.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
-import 'package:unidy_mobile/utils/stream_transformer.dart';
 import 'package:unidy_mobile/utils/validation_util.dart';
 
 class AddPostViewModel extends ChangeNotifier {
-  PostService postService = GetIt.instance<PostService>();
+  final PostService _postService = GetIt.instance<PostService>();
 
   final List<File> _files = [];
   final TextEditingController _contentController = TextEditingController();
@@ -84,7 +82,7 @@ class AddPostViewModel extends ChangeNotifier {
       };
 
       List<MultipartFile> files = await _convertToMultipartFiles(_files);
-      return postService.create(payload, files);
+      return _postService.create(payload, files);
     }
     catch (error) {
       if (error is ValidationException) {

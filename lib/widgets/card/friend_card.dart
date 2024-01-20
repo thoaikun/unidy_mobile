@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/friend_request_model.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class FriendCard extends StatelessWidget {
   const FriendCard({super.key});
@@ -27,17 +29,30 @@ class FriendCard extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
     );
   }
+}
 
-  Widget request(BuildContext context) {
+class RequestFriendCard extends StatelessWidget {
+  final FriendRequest? friendRequest;
+  final Future<bool> Function(FriendRequest? friendRequest)? onAccept;
+  final Future<bool> Function(FriendRequest? friendRequest)? onDecline;
+  const RequestFriendCard({
+    super.key,
+    this.friendRequest,
+    this.onAccept,
+    this.onDecline
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
-      leading: const CircleAvatar(
+      leading: CircleAvatar(
         radius: 20,
         backgroundImage: NetworkImage(
-          'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
+          friendRequest?.profileImageLink != null ? getImageUrl('profiles/${friendRequest?.profileImageLink}') : 'https://api.dicebear.com/7.x/initials/png?seed=${friendRequest?.fullName}',
         ),
       ),
       title: Text(
-        'Trương Huy Thái',
+        friendRequest?.fullName ?? '',
         style: Theme.of(context).textTheme.bodyMedium,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
@@ -46,7 +61,10 @@ class FriendCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           OutlinedButton(
-            onPressed: () {},
+            onPressed: () {
+              onDecline?.call(friendRequest)
+                  .then((value) => ScaffoldMessenger.of(context).showSnackBar(_buildSnakeBar(value ? 'Đã xóa lời mời' : 'Có lỗi xảy ra')));
+            },
             style: const ButtonStyle(
                 padding: MaterialStatePropertyAll(EdgeInsets.all(5))
             ),
@@ -54,7 +72,10 @@ class FriendCard extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           FilledButton(
-              onPressed: () {},
+              onPressed: () {
+                onAccept?.call(friendRequest)
+                    .then((value) => ScaffoldMessenger.of(context).showSnackBar(_buildSnakeBar(value ? 'Đã xóa lời mời' : 'Có lỗi xảy ra')));
+              },
               style: const ButtonStyle(
                   padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 8, vertical: 5))
               ),
@@ -66,7 +87,24 @@ class FriendCard extends StatelessWidget {
     );
   }
 
-  Widget addFriend(BuildContext context) {
+  SnackBar _buildSnakeBar(String content) {
+    return SnackBar(
+      content:Text(content),
+      duration: const Duration(seconds: 2),
+    );
+  }
+}
+
+class AddFriendCard extends StatelessWidget {
+  final bool isSentRequest;
+
+  const AddFriendCard({
+    super.key,
+    this.isSentRequest = false
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
       leading: const CircleAvatar(
         radius: 20,
@@ -82,17 +120,18 @@ class FriendCard extends StatelessWidget {
       ),
       trailing: TextButton.icon(
           onPressed: () {},
-          icon: const Icon(
-              Icons.add_circle_outline,
-              color: TextColor.textColor300,
+          icon: Icon(
+              isSentRequest == true ? Icons.check_rounded : Icons.add_circle_outline,
+              color:  isSentRequest == true ? PrimaryColor.primary500 : TextColor.textColor300,
               size: 18
           ),
           label: Text(
-              'Kết bạn',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: TextColor.textColor300)
+              isSentRequest == true ? 'Đã gửi' : 'Kết bạn',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(color: isSentRequest == true ? PrimaryColor.primary500 : TextColor.textColor300)
           )
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
     );
   }
 }
+

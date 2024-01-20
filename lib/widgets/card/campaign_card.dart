@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/screens/user/campaign_detail/campaign_detail.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/widgets/status_tag.dart';
 
@@ -9,7 +10,7 @@ class CampaignJoinedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/campaign'),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CampaignDetailScreen())),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
@@ -97,7 +98,7 @@ class CampaignDonationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/campaign'),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CampaignDetailScreen())),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
