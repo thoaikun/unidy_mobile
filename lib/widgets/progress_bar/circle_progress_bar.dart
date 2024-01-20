@@ -31,13 +31,11 @@ class CircleProgressBar extends StatelessWidget {
           ),
         ),
         Positioned.fill(
-          child: Container(
-            child: Center(
-              child: Text(
-                '$value',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: color),
-              ),
-            ),// Adjust opacity as needed
+          child: Center(
+            child: Text(
+              '$value',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: color),
+            ),
           ),
         ),
       ],

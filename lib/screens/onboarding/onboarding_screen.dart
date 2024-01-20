@@ -29,7 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _handleSkip() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: LoginScreen())));
   }
 
   void _handleNextStep() {
@@ -45,7 +45,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       });
     }
     else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: LoginScreen())));
     }
   }
 

@@ -47,10 +47,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 )
               ],
               bottom: PreferredSize(
-                preferredSize: Size.fromHeight(10),
+                preferredSize: const Size.fromHeight(10),
                 child: Visibility(
                   visible: editProfileViewModel.loading,
-                  child: LinearProgressIndicator(),
+                  child: const LinearProgressIndicator(),
                 ),
               )
             ),

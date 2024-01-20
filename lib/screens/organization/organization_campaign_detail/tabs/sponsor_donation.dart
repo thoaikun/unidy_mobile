@@ -43,7 +43,7 @@ class _SponsorDonationState extends State<SponsorDonation> {
                     const SizedBox(height: 3),
                     Row(
                       children: [
-                        Text('Số tiền ủng hộ: '),
+                        const Text('Số tiền ủng hộ: '),
                         Expanded(
                           child: Text(
                             '10 triệu đồng',

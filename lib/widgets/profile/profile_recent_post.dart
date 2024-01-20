@@ -13,7 +13,7 @@ class _ProfileRecentPostState extends State<ProfileRecentPost> {
   Widget build(BuildContext context) {
     return SliverList.separated(
       itemBuilder: (BuildContext context, int index) {
-        return PostCard();
+        return const PostCard();
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemCount: 5,

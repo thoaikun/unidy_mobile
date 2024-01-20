@@ -14,7 +14,6 @@ import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class LoginViewModel extends ChangeNotifier {
   void Function() navigateToHomeScreen;
-  void Function() navigateToOnboardingScreen;
   void Function() showErrorDialog;
 
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
@@ -39,7 +38,6 @@ class LoginViewModel extends ChangeNotifier {
 
   LoginViewModel({
     required this.navigateToHomeScreen,
-    required this.navigateToOnboardingScreen,
     required this.showErrorDialog
   }) {
     _emailController.addListener(() => _setEmailError(null));

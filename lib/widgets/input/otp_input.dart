@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/foundation/change_notifier.dart';
 
 class OtpInput extends StatefulWidget {
   final int numberOfDigit;

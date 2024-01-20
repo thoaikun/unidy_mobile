@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class VolunteerAccepted extends StatefulWidget {
   const VolunteerAccepted({super.key});

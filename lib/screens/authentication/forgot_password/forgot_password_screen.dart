@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/screens/authentication/forgot_password/step/confirm_email.dart';
 import 'package:unidy_mobile/screens/authentication/forgot_password/step/confirm_otp.dart';
 import 'package:unidy_mobile/screens/authentication/forgot_password/step/enter_new_password.dart';
+import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/viewmodel/forgot_password_viewmodel.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -27,7 +28,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: ChangeNotifierProvider(
-        create: (_) => ForgotPasswordViewModel(context: context),
+        create: (_) => ForgotPasswordViewModel(
+          showForgotPasswordDialog: _showForgotPasswordDialog,
+        ),
         child: SafeArea(
           child: Consumer<ForgotPasswordViewModel>(
             builder: (BuildContext context, ForgotPasswordViewModel forgotPasswordViewModel, Widget? child) {
@@ -67,6 +70,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           )
         ),
       ),
+    );
+  }
+
+  void _showForgotPasswordDialog(String title, String content) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Đồng ý'),
+              onPressed: () {
+                if (title == 'Thất bại') {
+                  Navigator.of(context).pop();
+                }
+                else {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

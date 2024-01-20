@@ -11,8 +11,8 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   static const int MAX_STEP = 3;
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
   final UserService userService = GetIt.instance<UserService>();
+  void Function(String title, String message) showForgotPasswordDialog;
 
-  final BuildContext context;
   int _currentStep = 0;
   bool showPassword = false;
   String otpValue = '';
@@ -41,7 +41,7 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   TextEditingController get newPasswordController => _newPasswordController;
   TextEditingController get confirmNewPasswordController => _confirmNewPasswordController;
 
-  ForgotPasswordViewModel({ required this.context }) {
+  ForgotPasswordViewModel({ required this.showForgotPasswordDialog }) {
     emailController.addListener(() { _setEmailError(null); });
     newPasswordController.addListener(() { _setPasswordError(null); });
     confirmNewPasswordController.addListener(() { _setConfirmPasswordError(null); });
@@ -89,30 +89,6 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   void toggleShowPassword(bool? value) {
     showPassword = value ?? false;
     notifyListeners();
-  }
-
-  Future<void> showForgotPasswordDialog(String title, String content) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Đồng ý'),
-              onPressed: () {
-                if (title == 'Thất bại')
-                  Navigator.of(context).pop();
-                else
-                  Navigator.pushReplacementNamed(context, '/authentication/login');
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void onClickConfirmEmail() {

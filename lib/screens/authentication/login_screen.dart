@@ -25,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return ChangeNotifierProvider(
       create: (_) => LoginViewModel(
         navigateToHomeScreen: navigateToHomeScreen,
-        navigateToOnboardingScreen: navigateToOnboardingScreen,
         showErrorDialog: showErrorDialog
       ),
       child: Scaffold(
@@ -148,11 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void navigateToHomeScreen() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreenContainer()));
-  }
-
-  void navigateToOnboardingScreen() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const OnboardingScreen()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: HomeScreenContainer())));
   }
 
   void showErrorDialog() {
