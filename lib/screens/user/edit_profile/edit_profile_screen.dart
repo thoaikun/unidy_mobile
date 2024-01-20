@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/bloc/profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/user_model.dart';
-import 'package:unidy_mobile/viewmodel/edit_profile_viewmodel.dart';
+import 'package:unidy_mobile/viewmodel/user/edit_profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
 class EditProfileScreen extends StatefulWidget {

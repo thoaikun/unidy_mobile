@@ -14,7 +14,7 @@ import 'package:http_parser/http_parser.dart';
 
 class EditProfileViewModel extends ChangeNotifier {
   final BuildContext context;
-  final UserService userService = GetIt.instance<UserService>();
+  final UserService _userService = GetIt.instance<UserService>();
   final Duration debounceTime = const Duration(milliseconds: 500);
 
   User? _user;
@@ -154,7 +154,7 @@ class EditProfileViewModel extends ChangeNotifier {
       .listen((payload) {
         _setLoading(true);
         Future.delayed(const Duration(seconds: 1))
-          .then((_) => userService.updateProfile(payload))
+          .then((_) => _userService.updateProfile(payload))
           .then((_) {
             _setLoading(false);
             showDialog(
@@ -264,7 +264,7 @@ class EditProfileViewModel extends ChangeNotifier {
         imagePath,
         contentType: MediaType('image', imagePath.substring(imagePath.lastIndexOf('.') + 1))
       );
-      userService.updateProfileImage(profileImageFile)
+      _userService.updateProfileImage(profileImageFile)
         .then((imageUrl) => _setPreviewUploadedImage(getImageUrl('/profile-images$previewUploadedImagePath')))
         .catchError(handleUpdateProfileError);
     }

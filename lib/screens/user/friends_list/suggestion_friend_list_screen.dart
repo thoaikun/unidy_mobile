@@ -13,7 +13,7 @@ class _SuggestionFriendListScreenState extends State<SuggestionFriendListScreen>
   SliverFillRemaining _buildList() {
     return SliverFillRemaining(
       child: ListView.separated(
-          itemBuilder: (BuildContext context, int index) => const FriendCard().addFriend(context),
+          itemBuilder: (BuildContext context, int index) => const AddFriendCard(),
           separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5,),
           itemCount: 10
       ),

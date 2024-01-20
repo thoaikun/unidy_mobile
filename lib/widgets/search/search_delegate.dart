@@ -142,13 +142,13 @@ import 'package:unidy_mobile/widgets/card/post_card.dart';
                     ],
                   ),
                 ),
-                Column(
+                const Column(
                   children: [
-                    const FriendCard().addFriend(context),
-                    const Divider(height: 0.5),
-                    const FriendCard().addFriend(context),
-                    const Divider(height: 0.5),
-                    const FriendCard().addFriend(context)
+                    AddFriendCard(),
+                    Divider(height: 0.5),
+                    AddFriendCard(),
+                    Divider(height: 0.5),
+                    AddFriendCard()
                   ],
                 )
               ],

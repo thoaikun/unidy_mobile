@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
@@ -8,7 +6,6 @@ import 'package:unidy_mobile/screens/organization/organization_campaign_detail/t
 import 'package:unidy_mobile/screens/organization/organization_campaign_detail/tabs/volunteer_request.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
-import 'package:unidy_mobile/widgets/popup_menu.dart';
 import 'package:unidy_mobile/widgets/progress_bar/circle_progress_bar.dart';
 import 'package:unidy_mobile/widgets/status_tag.dart';
 

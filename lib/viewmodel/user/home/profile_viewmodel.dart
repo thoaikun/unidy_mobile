@@ -7,8 +7,8 @@ import 'package:unidy_mobile/services/post_service.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 
 class ProfileViewModel extends ChangeNotifier {
-  final UserService userService = GetIt.instance<UserService>();
-  final PostService postService = GetIt.instance<PostService>();
+  final UserService _userService = GetIt.instance<UserService>();
+  final PostService _postService = GetIt.instance<PostService>();
 
   String? _lastPostOffset;
   bool loading = true;
@@ -40,7 +40,7 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void getUserProfile() {
-    userService.whoAmI()
+    _userService.whoAmI()
       .then((user) {
         setUser(user);
       })
@@ -51,7 +51,7 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void getMyOwnPost() {
-    postService.getUserPosts(_lastPostOffset)
+    _postService.getUserPosts(_lastPostOffset)
       .then((postList) {
         if (postList.isNotEmpty) {
           Post lastPost = postList[postList.length - 1];
@@ -67,7 +67,7 @@ class ProfileViewModel extends ChangeNotifier {
 
   void loadMorePosts() {
     setIsLoadMoreLoading(true);
-    postService.getUserPosts(_lastPostOffset)
+    _postService.getUserPosts(_lastPostOffset)
       .then((postList) {
         if (postList.isNotEmpty) {
           Post lastPost = postList[postList.length - 1];

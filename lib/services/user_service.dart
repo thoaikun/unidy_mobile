@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
+import 'package:unidy_mobile/models/friend_request_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
@@ -91,7 +92,7 @@ class UserService {
 
   Future<void> sendFriendRequest(int userId) async {
     try {
-      Response response = await httpClient.post('api/v1/users/add-friend?friendId=$userId');
+      Response response = await httpClient.patch('api/v1/users/add-friend?friendId=$userId');
 
       switch(response.statusCode) {
         case 200:
@@ -111,7 +112,7 @@ class UserService {
 
   Future<void> acceptFriendRequest(int userId) async {
     try {
-      Response response = await httpClient.post('api/v1/users/accept-friend?friendId=$userId');
+      Response response = await httpClient.patch('api/v1/users/accept-friend?friendId=$userId');
 
       switch(response.statusCode) {
         case 200:
@@ -131,7 +132,7 @@ class UserService {
 
   Future<void> declineFriendRequest(int userId) async {
     try {
-      Response response = await httpClient.post('api/v1/users/decline-friend?friendId=$userId');
+      Response response = await httpClient.patch('api/v1/users/delete-friend?friendId=$userId');
 
       switch(response.statusCode) {
         case 200:
@@ -165,6 +166,68 @@ class UserService {
       }
     }
     catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<FriendRequest>> getFriendRequests() async {
+    try {
+      Response response = await httpClient.get('api/v1/users/list-invite');
+
+      switch(response.statusCode) {
+        case 200:
+          return [];
+        case 400:
+          throw ResponseException(value: 'Không thể lấy danh sách lời mời kết bạn', code: ExceptionErrorCode.invalidFriendRequest);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch(error) {
+      rethrow;
+    }
+  }
+
+  Future<List<FriendRequest>> getFriends() async {
+    try {
+      Response response = await httpClient.get('api/v1/users/list-friend');
+
+      switch(response.statusCode) {
+        case 200:
+          return [];
+        case 400:
+          throw ResponseException(value: 'Không thể lấy danh sách bạn bè', code: ExceptionErrorCode.invalidFriendRequest);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          print(response.body);
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch(error) {
+      rethrow;
+    }
+  }
+
+  Future<List<FriendRequest>> getRecommendations() async {
+    try {
+      Response response = await httpClient.get('api/v1/users/list-recommend');
+
+      switch(response.statusCode) {
+        case 200:
+          return [];
+        case 400:
+          throw ResponseException(value: 'Không thể lấy danh sách gợi ý', code: ExceptionErrorCode.invalidFriendRequest);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          print(response.body);
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch(error) {
       rethrow;
     }
   }

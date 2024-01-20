@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_sticky_widgets/flutter_sticky_widgets.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 
 class VolunteerRequest extends StatefulWidget {

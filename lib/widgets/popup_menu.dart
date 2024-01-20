@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/local_data_model.dart';
 import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen.dart';
@@ -39,21 +42,34 @@ class _UnidyPopupMenuState extends State<UnidyPopupMenu> {
   void _handleSelect(IPopupMenuItem item) {
     switch(item.value) {
       case EPopupMenuOption.logout:
-        appPreferences.clean();
-        while(Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+        _handleCleanCache()
+          .then((_) {
+            while(Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+          });
         break;
       case EPopupMenuOption.organizationMode:
         appPreferences.setString('accountMode', 'organization');
-        Navigator.push(context, MaterialPageRoute(builder: (context) => WillPopScope(child: const OrganizationHomeScreen(), onWillPop: () async => false )));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: OrganizationHomeScreen())));
         break;
       case EPopupMenuOption.sponsorMode:
       case EPopupMenuOption.volunteerMode:
         appPreferences.setString('accountMode', 'user');
-        Navigator.push(context, MaterialPageRoute(builder: (context) => WillPopScope(child: const HomeScreenContainer(), onWillPop: () async => false )));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: HomeScreenContainer())));
         break;
+    }
+  }
+
+  Future<void> _handleCleanCache() async {
+    String? data = appPreferences.getString('localData');
+    if (data != null) {
+      LocalData localData = LocalData.fromJson(jsonDecode(data));
+      localData.accessToken = null;
+      localData.refreshToken = null;
+      localData.accountMode = AccountMode.none;
+      await appPreferences.setString('localData', jsonEncode(localData.toJson()));
     }
   }
 

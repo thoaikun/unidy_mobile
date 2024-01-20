@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
@@ -196,7 +197,14 @@ class PostCard extends StatelessWidget {
       for (String image in imageUrls) {
         result.add(getImageUrl('/post-images$image'));
       }
-      return ImageSlider(imageUrls: result);
+      return Skeleton.replace(
+        replacement: Container(
+          width: double.infinity,
+          height: 200,
+          color: TextColor.textColor200
+        ),
+        child: ImageSlider(imageUrls: result)
+      );
     }
     return const SizedBox();
   }

@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/screens/authentication/forgot_password/forgot_password_screen.dart';
 import 'package:unidy_mobile/screens/authentication/signup/signup_screen.dart';
+import 'package:unidy_mobile/screens/onboarding/onboarding_screen.dart';
+import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
 import 'package:unidy_mobile/viewmodel/login_viewmodel.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
@@ -21,7 +23,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => LoginViewModel(context: context),
+      create: (_) => LoginViewModel(
+        navigateToHomeScreen: navigateToHomeScreen,
+        navigateToOnboardingScreen: navigateToOnboardingScreen,
+        showErrorDialog: showErrorDialog
+      ),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
@@ -138,6 +144,32 @@ class _LoginScreenState extends State<LoginScreen> {
           )
         ),
       ),
+    );
+  }
+
+  void navigateToHomeScreen() {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreenContainer()));
+  }
+
+  void navigateToOnboardingScreen() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const OnboardingScreen()));
+  }
+
+  void showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Hệ thống đang bận'),
+          content: const Text('Vui lòng đợi trong giây lát và thử lại'),
+          actions: <Widget>[
+            TextButton(
+                child: const Text('Đồng ý'),
+                onPressed: () => Navigator.of(context).pop()
+            ),
+          ],
+        );
+      },
     );
   }
 }

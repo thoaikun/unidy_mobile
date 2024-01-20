@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/post_emotional_model.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
-import 'package:unidy_mobile/viewmodel/add_post_viewmodel.dart';
+import 'package:unidy_mobile/viewmodel/user/home/add_post_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/image/image_preview.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
