@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
-import 'package:unidy_mobile/models/friend_request_model.dart';
+import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
@@ -211,13 +211,14 @@ class UserService {
     }
   }
 
-  Future<List<FriendRequest>> getRecommendations() async {
+  Future<List<FriendSuggestion>> getRecommendations(Map<String, String> payload) async {
     try {
-      Response response = await httpClient.get('api/v1/users/list-recommend');
+      Response response = await httpClient.get('api/v1/users/get-recommend-friend', payload);
 
       switch(response.statusCode) {
         case 200:
-          return [];
+          List<FriendSuggestion> friendSuggestions = friendSuggestionListFromJson(utf8.decode(response.bodyBytes));
+          return friendSuggestions;
         case 400:
           throw ResponseException(value: 'Không thể lấy danh sách gợi ý', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:

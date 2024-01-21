@@ -25,11 +25,6 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         Provider.of<DashboardViewModel>(context, listen: false).getPosts();
       }
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     DashboardViewModel dashboardViewModel = Provider.of<DashboardViewModel>(context, listen: false);
     dashboardViewModel.getPosts();
   }

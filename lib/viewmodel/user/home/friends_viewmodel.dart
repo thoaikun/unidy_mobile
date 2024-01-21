@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:unidy_mobile/models/friend_request_model.dart';
+import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 
 class FriendsViewModel extends ChangeNotifier {
@@ -8,11 +8,12 @@ class FriendsViewModel extends ChangeNotifier {
 
   List<FriendRequest> _requestList = [];
   List<FriendRequest> _friendList = [];
-  List<FriendRequest> _recommendationList = [];
+  List<FriendSuggestion> _recommendationList = [];
+  bool isLoading = true;
 
   List<FriendRequest> get requestList => _requestList;
   List<FriendRequest> get friendList => _friendList;
-  List<FriendRequest> get recommendationList => _recommendationList;
+  List<FriendSuggestion> get recommendationList => _recommendationList;
 
   void setRequestList(List<FriendRequest> value) {
     _requestList = value;
@@ -24,8 +25,13 @@ class FriendsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setRecommendationList(List<FriendRequest> value) {
+  void setRecommendationList(List<FriendSuggestion> value) {
     _recommendationList = value;
+    notifyListeners();
+  }
+
+  void setLoading(bool value) {
+    isLoading = value;
     notifyListeners();
   }
 
@@ -33,11 +39,16 @@ class FriendsViewModel extends ChangeNotifier {
     try {
         List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests();
         // List<Friend> friendResponse = await _userService.getFriends();
-        // List<Friend> recommendationResponse = await _userService.getRecommendations();
+        List<FriendSuggestion> recommendationResponse = await _userService.getRecommendations({
+          'limit': '4',
+          'skip': '0',
+          'rangeEnd': '4'
+        });
 
         setRequestList(friendRequestResponse);
         // setFriendList(friendResponse);
-        // setRecommendationList(recommendationResponse);
+        setRecommendationList(recommendationResponse);
+        setLoading(false);
     }
     catch (error) {
       print(error);
@@ -69,6 +80,16 @@ class FriendsViewModel extends ChangeNotifier {
     }
     catch (error) {
       return false;
+    }
+  }
+
+  void getRecommendation(Map<String, String> payload) async {
+    try {
+      List<FriendSuggestion> recommendationResponse = await _userService.getRecommendations(payload);
+      setRecommendationList(recommendationResponse);
+    }
+    catch (error) {
+      print(error);
     }
   }
 }

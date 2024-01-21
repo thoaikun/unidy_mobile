@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
-import 'package:unidy_mobile/models/friend_request_model.dart';
+import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class FriendCard extends StatelessWidget {
@@ -96,24 +96,26 @@ class RequestFriendCard extends StatelessWidget {
 }
 
 class AddFriendCard extends StatelessWidget {
+  final FriendSuggestion? friendSuggestion;
   final bool isSentRequest;
 
   const AddFriendCard({
     super.key,
+    this.friendSuggestion,
     this.isSentRequest = false
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const CircleAvatar(
+      leading: CircleAvatar(
         radius: 20,
         backgroundImage: NetworkImage(
-          'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
+          friendSuggestion?.fiendSuggest.profileImageLink ?? 'https://api.dicebear.com/7.x/initials/png?seed=${friendSuggestion?.fiendSuggest.fullName}',
         ),
       ),
       title: Text(
-        'Trương Huy Thái',
+        friendSuggestion?.fiendSuggest.fullName ?? '',
         style: Theme.of(context).textTheme.bodyMedium,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
