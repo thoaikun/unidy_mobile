@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:provider/provider.dart';
 import 'package:unidy_mobile/bloc/network_detect_cubit.dart';
 import 'package:unidy_mobile/bloc/profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/theme_config.dart';
 import 'package:unidy_mobile/screens/placeholder/placeholder_screen.dart';
-import 'package:unidy_mobile/viewmodel/user/friends_list/suggestion_friend_list_viewmodel.dart';
+
 import 'config/getit_config.dart';
 
 void main() async {

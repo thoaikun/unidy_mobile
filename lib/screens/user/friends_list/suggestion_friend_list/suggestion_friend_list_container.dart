@@ -4,7 +4,12 @@ import 'package:unidy_mobile/screens/user/friends_list/suggestion_friend_list/su
 import 'package:unidy_mobile/viewmodel/user/friends_list/suggestion_friend_list_viewmodel.dart';
 
 class SuggestionFriendListContainer extends StatefulWidget {
-  const SuggestionFriendListContainer({super.key});
+  // final List<int>? sentFriendRequestListOnPreviousScreen;
+
+  const SuggestionFriendListContainer({
+    super.key,
+    // this.sentFriendRequestListOnPreviousScreen
+  });
 
   @override
   State<SuggestionFriendListContainer> createState() => _SuggestionFriendListContainerState();

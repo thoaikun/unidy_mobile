@@ -74,7 +74,7 @@ class RequestFriendCard extends StatelessWidget {
           FilledButton(
               onPressed: () {
                 onAccept?.call(friendRequest)
-                    .then((value) => ScaffoldMessenger.of(context).showSnackBar(_buildSnakeBar(value ? 'Đã xóa lời mời' : 'Có lỗi xảy ra')));
+                    .then((value) => ScaffoldMessenger.of(context).showSnackBar(_buildSnakeBar(value ? 'Đã chập nhận lời mời' : 'Có lỗi xảy ra')));
               },
               style: const ButtonStyle(
                   padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 8, vertical: 5))
@@ -95,15 +95,22 @@ class RequestFriendCard extends StatelessWidget {
   }
 }
 
-class AddFriendCard extends StatelessWidget {
+class AddFriendCard extends StatefulWidget {
   final FriendSuggestion? friendSuggestion;
-  final bool isSentRequest;
+  final Future<void> Function(int? userId)? onSendFriendRequest;
 
   const AddFriendCard({
     super.key,
     this.friendSuggestion,
-    this.isSentRequest = false
+    this.onSendFriendRequest,
   });
+
+  @override
+  State<AddFriendCard> createState() => _AddFriendCardState();
+}
+
+class _AddFriendCardState extends State<AddFriendCard> {
+  bool? isSentRequest;
 
   @override
   Widget build(BuildContext context) {
@@ -111,17 +118,20 @@ class AddFriendCard extends StatelessWidget {
       leading: CircleAvatar(
         radius: 20,
         backgroundImage: NetworkImage(
-          friendSuggestion?.fiendSuggest.profileImageLink ?? 'https://api.dicebear.com/7.x/initials/png?seed=${friendSuggestion?.fiendSuggest.fullName}',
+          widget.friendSuggestion?.fiendSuggest.profileImageLink ?? 'https://api.dicebear.com/7.x/initials/png?seed=${widget.friendSuggestion?.fiendSuggest.fullName}',
         ),
       ),
       title: Text(
-        friendSuggestion?.fiendSuggest.fullName ?? '',
+        widget.friendSuggestion?.fiendSuggest.fullName ?? '',
         style: Theme.of(context).textTheme.bodyMedium,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: TextButton.icon(
-          onPressed: () {},
+          onPressed: () {
+            widget.onSendFriendRequest?.call(widget.friendSuggestion?.fiendSuggest.userId)
+                .then((_) => setState(() => isSentRequest = true));
+          },
           icon: Icon(
               isSentRequest == true ? Icons.check_rounded : Icons.add_circle_outline,
               color:  isSentRequest == true ? PrimaryColor.primary500 : TextColor.textColor300,

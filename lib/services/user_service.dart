@@ -132,7 +132,7 @@ class UserService {
 
   Future<void> declineFriendRequest(int userId) async {
     try {
-      Response response = await httpClient.patch('api/v1/users/delete-friend?friendId=$userId');
+      Response response = await httpClient.patch('api/v1/users/delete-invite?friendId=$userId');
 
       switch(response.statusCode) {
         case 200:
@@ -176,7 +176,8 @@ class UserService {
 
       switch(response.statusCode) {
         case 200:
-          return [];
+          List<FriendRequest> friendRequestResponse = friendRequestListFromJson(utf8.decode(response.bodyBytes));
+          return friendRequestResponse;
         case 400:
           throw ResponseException(value: 'Không thể lấy danh sách lời mời kết bạn', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:

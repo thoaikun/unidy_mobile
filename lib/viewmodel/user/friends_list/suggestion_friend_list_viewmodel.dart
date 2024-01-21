@@ -4,7 +4,7 @@ import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 
 class SuggestionFriendListViewModel extends ChangeNotifier {
-  UserService userService = GetIt.instance<UserService>();
+  final UserService _userService = GetIt.instance<UserService>();
 
   bool isFirstLoading = true;
   bool isLoading = false;
@@ -43,7 +43,7 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
     _rangeEnd = 4;
     _skip = 0;
     try {
-      List<FriendSuggestion> friendSuggestionResponse = await userService.getRecommendations({
+      List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations({
         'limit': '10',
         'skip': _skip.toString(),
         'rangeEnd': _rangeEnd.toString()
@@ -61,7 +61,7 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
   void loadMore() async {
     setLoading(true);
     try {
-      List<FriendSuggestion> friendSuggestionResponse = await userService.getRecommendations({
+      List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations({
         'limit': '10',
         'skip': _skip.toString(),
         'rangeEnd': _rangeEnd.toString()
@@ -73,6 +73,18 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
     }
     catch (error) {
       print(error);
+    }
+  }
+
+  Future<bool> sendFriendRequest(int? userId) async {
+    if (userId == null) return false;
+
+    try {
+      await _userService.sendFriendRequest(userId);
+      return true;
+    }
+    catch (error) {
+      return false;
     }
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+List<FriendRequest> friendRequestListFromJson(String str) => List<FriendRequest>.from(json.decode(str).map((x) => FriendRequest.fromJson(x)));
+
 FriendRequest friendRequestFromJson(String str) => FriendRequest.fromJson(json.decode(str));
 
 String friendRequestToJson(FriendRequest data) => json.encode(data.toJson());

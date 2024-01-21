@@ -78,7 +78,8 @@ class _FriendsState extends State<Friends> {
   }
 
   SliverToBoxAdapter _buildSuggestionList() {
-    List<FriendSuggestion> recommendationList = Provider.of<FriendsViewModel>(context, listen: true).recommendationList;
+    FriendsViewModel friendsViewModel = Provider.of<FriendsViewModel>(context, listen: true);
+    List<FriendSuggestion> recommendationList = friendsViewModel.recommendationList;
     List<Widget> recommendationWidgetList = [];
 
     if (recommendationList.isEmpty) {
@@ -90,6 +91,7 @@ class _FriendsState extends State<Friends> {
       recommendationWidgetList.add(
         AddFriendCard(
           friendSuggestion: friendSuggestion,
+          onSendFriendRequest: friendsViewModel.sendFriendRequest
         )
       );
       if (i < recommendationList.length - 1) {
@@ -103,7 +105,9 @@ class _FriendsState extends State<Friends> {
         child: Column(
           children: [
             GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SuggestionFriendListContainer())),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SuggestionFriendListContainer()));
+              },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

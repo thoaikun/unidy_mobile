@@ -5,7 +5,9 @@ import 'package:unidy_mobile/viewmodel/user/friends_list/suggestion_friend_list_
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 
 class SuggestionFriendListScreen extends StatefulWidget {
-  const SuggestionFriendListScreen({super.key});
+  const SuggestionFriendListScreen({
+    super.key
+  });
 
   @override
   State<SuggestionFriendListScreen> createState() => _SuggestionFriendListScreenState();
@@ -17,16 +19,18 @@ class _SuggestionFriendListScreenState extends State<SuggestionFriendListScreen>
   @override
   void initState() {
     super.initState();
+    SuggestionFriendListViewModel suggestionFriendListViewModel = Provider.of<SuggestionFriendListViewModel>(context, listen: false);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        Provider.of<SuggestionFriendListViewModel>(context, listen: false).loadMore();
+        suggestionFriendListViewModel.loadMore();
       }
     });
-    Provider.of<SuggestionFriendListViewModel>(context, listen: false).initData();
+    suggestionFriendListViewModel.initData();
   }
 
   SliverFillRemaining _buildList() {
-    List<FriendSuggestion> friendSuggestionList = Provider.of<SuggestionFriendListViewModel>(context, listen: true).friendSuggestionList;
+    SuggestionFriendListViewModel suggestionFriendListViewModel = Provider.of<SuggestionFriendListViewModel>(context, listen: true);
+    List<FriendSuggestion> friendSuggestionList = suggestionFriendListViewModel.friendSuggestionList;
 
     return SliverFillRemaining(
       child: ListView.separated(
@@ -34,6 +38,7 @@ class _SuggestionFriendListScreenState extends State<SuggestionFriendListScreen>
             if (index < friendSuggestionList.length) {
               return AddFriendCard(
                 friendSuggestion: friendSuggestionList[index],
+                onSendFriendRequest: suggestionFriendListViewModel.sendFriendRequest,
               );
             }
             else if (index == friendSuggestionList.length && context.watch<SuggestionFriendListViewModel>().isLoading) {

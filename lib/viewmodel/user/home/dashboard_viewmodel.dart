@@ -18,7 +18,7 @@ class DashboardViewModel extends ChangeNotifier {
   List<Post> get postList => _postList;
 
   void setPostList(List<Post> value) {
-    _postList = _postList + value;
+    _postList = value;
     notifyListeners();
   }
 
@@ -39,7 +39,7 @@ class DashboardViewModel extends ChangeNotifier {
           Post lastPost = postList[postList.length - 1];
           _lastPostOffset = lastPost.createDate;
         }
-        setPostList(postList);
+        setPostList([..._postList , ...postList]);
       })
       .whenComplete(() {
         setIsFirstLoading(false);

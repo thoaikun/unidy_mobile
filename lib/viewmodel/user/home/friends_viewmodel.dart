@@ -36,6 +36,7 @@ class FriendsViewModel extends ChangeNotifier {
   }
 
   void initData() async {
+    isLoading = true;
     try {
         List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests();
         // List<Friend> friendResponse = await _userService.getFriends();
@@ -90,6 +91,18 @@ class FriendsViewModel extends ChangeNotifier {
     }
     catch (error) {
       print(error);
+    }
+  }
+
+  Future<bool> sendFriendRequest(int? userId) async {
+    if (userId == null) return false;
+
+    try {
+      await _userService.sendFriendRequest(userId);
+      return true;
+    }
+    catch (error) {
+      return false;
     }
   }
 }
