@@ -29,15 +29,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (BuildContext context) => NetworkDetectCubit()),
         BlocProvider(create: (BuildContext context) => ProfileCubit())
       ],
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => SuggestionFriendListViewModel())
-        ],
-        child: MaterialApp(
-          title: 'Unidy',
-          theme: unidyThemeData,
-          home: const PlaceholderScreen(),
-        ),
+      child: MaterialApp(
+        title: 'Unidy',
+        theme: unidyThemeData,
+        home: const PlaceholderScreen(),
       )
     );
   }

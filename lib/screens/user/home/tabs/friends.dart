@@ -4,7 +4,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/screens/user/friends_list/friends_list_screen.dart';
 import 'package:unidy_mobile/screens/user/friends_list/request_friends_list_screen.dart';
-import 'package:unidy_mobile/screens/user/friends_list/suggestion_friend_list_screen.dart';
+import 'package:unidy_mobile/screens/user/friends_list/suggestion_friend_list/suggestion_friend_list_container.dart';
 import 'package:unidy_mobile/viewmodel/user/home/friends_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 
@@ -103,7 +103,7 @@ class _FriendsState extends State<Friends> {
         child: Column(
           children: [
             GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SuggestionFriendListScreen())),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SuggestionFriendListContainer())),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

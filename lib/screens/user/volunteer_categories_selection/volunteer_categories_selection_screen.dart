@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/volunteer_category_model.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
 import 'package:unidy_mobile/viewmodel/user/volunteer_categories_selection_viewmodel.dart';
 
-class VolunteerCategoriesSelection extends StatefulWidget {
-  const VolunteerCategoriesSelection({super.key});
+class VolunteerCategoriesSelectionScreen extends StatefulWidget {
+  const VolunteerCategoriesSelectionScreen({super.key});
 
   @override
-  State<VolunteerCategoriesSelection> createState() => _VolunteerCategoriesSelectionState();
+  State<VolunteerCategoriesSelectionScreen> createState() => _VolunteerCategoriesSelectionScreenState();
 }
 
-class _VolunteerCategoriesSelectionState extends State<VolunteerCategoriesSelection> {
+class _VolunteerCategoriesSelectionScreenState extends State<VolunteerCategoriesSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -41,8 +42,13 @@ class _VolunteerCategoriesSelectionState extends State<VolunteerCategoriesSelect
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Select categories you are interested in',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 18),
+              'Lựa chọn hoạt động yêu thích của bạn',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              'Lựa chọn này sẽ giúp chúng tôi đưa ra những gợi ý tốt hơn cho bạn',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300),
             ),
             const SizedBox(height: 15),
             Wrap(
