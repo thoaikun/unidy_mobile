@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/services/user_service.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class FriendsViewModel extends ChangeNotifier {
   final UserService _userService = GetIt.instance<UserService>();
 
   List<FriendRequest> _requestList = [];
-  List<FriendRequest> _friendList = [];
+  List<Friend> _friendList = [];
   List<FriendSuggestion> _recommendationList = [];
   bool isLoading = true;
 
   List<FriendRequest> get requestList => _requestList;
-  List<FriendRequest> get friendList => _friendList;
+  List<Friend> get friendList => _friendList;
   List<FriendSuggestion> get recommendationList => _recommendationList;
 
   void setRequestList(List<FriendRequest> value) {
@@ -20,7 +21,7 @@ class FriendsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setFriendList(List<FriendRequest> value) {
+  void setFriendList(List<Friend> value) {
     _friendList = value;
     notifyListeners();
   }
@@ -38,18 +39,26 @@ class FriendsViewModel extends ChangeNotifier {
   void initData() async {
     isLoading = true;
     try {
-        List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests();
-        // List<Friend> friendResponse = await _userService.getFriends();
-        List<FriendSuggestion> recommendationResponse = await _userService.getRecommendations({
+      var values = await Future.wait([
+        _userService.getFriendRequests({
+          'limit': '4',
+          'cursor': Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss')!
+        }),
+        _userService.getFriends({
+          'limit': '4',
+          'cursor': '0'
+        }),
+        _userService.getRecommendations({
           'limit': '4',
           'skip': '0',
           'rangeEnd': '4'
-        });
+        })
+      ]);
 
-        setRequestList(friendRequestResponse);
-        // setFriendList(friendResponse);
-        setRecommendationList(recommendationResponse);
-        setLoading(false);
+      setRequestList(values[0] as List<FriendRequest>);
+      setFriendList(values[1] as List<Friend>);
+      setRecommendationList(values[2] as List<FriendSuggestion>);
+      setLoading(false);
     }
     catch (error) {
       print(error);
@@ -60,8 +69,8 @@ class FriendsViewModel extends ChangeNotifier {
     if (friendRequest == null) return false;
 
     try {
-      await _userService.acceptFriendRequest(friendRequest.userId);
-      List<FriendRequest> result = _requestList.where((element) => element.userId != friendRequest.userId).toList();
+      await _userService.acceptFriendRequest(friendRequest.userRequest.userId);
+      List<FriendRequest> result = _requestList.where((element) => element.userRequest.userId != friendRequest.userRequest.userId).toList();
       setRequestList(result);
       return true;
     }
@@ -74,8 +83,8 @@ class FriendsViewModel extends ChangeNotifier {
     if (friendRequest == null) return false;
 
     try {
-      await _userService.declineFriendRequest(friendRequest.userId);
-      List<FriendRequest> result = _requestList.where((element) => element.userId != friendRequest.userId).toList();
+      await _userService.declineFriendRequest(friendRequest.userRequest.userId);
+      List<FriendRequest> result = _requestList.where((element) => element.userRequest.userId != friendRequest.userRequest.userId).toList();
       setRequestList(result);
       return true;
     }
@@ -99,6 +108,20 @@ class FriendsViewModel extends ChangeNotifier {
 
     try {
       await _userService.sendFriendRequest(userId);
+      return true;
+    }
+    catch (error) {
+      return false;
+    }
+  }
+
+  Future<bool> unfriend(int? userId) async {
+    if (userId == null) return false;
+
+    try {
+      await _userService.unfriend(userId);
+      List<Friend> result = _friendList.where((element) => element.userId != userId).toList();
+      setFriendList(result);
       return true;
     }
     catch (error) {

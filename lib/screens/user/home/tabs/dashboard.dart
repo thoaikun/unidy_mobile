@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/user/home/dashboard_viewmodel.dart';
@@ -25,8 +26,6 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         Provider.of<DashboardViewModel>(context, listen: false).getPosts();
       }
     });
-    DashboardViewModel dashboardViewModel = Provider.of<DashboardViewModel>(context, listen: false);
-    dashboardViewModel.getPosts();
   }
 
   @override
@@ -35,7 +34,13 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
       builder: (BuildContext context, DashboardViewModel dashboardViewModel, Widget? child) {
         return RefreshIndicator(
           onRefresh: () async {
-            dashboardViewModel.getPosts();
+            return Future.delayed(const Duration(seconds: 1))
+              .then((value) => dashboardViewModel.getPosts());
+          },
+          backgroundColor: Colors.white,
+          strokeWidth: 2,
+          notificationPredicate: (ScrollNotification notification) {
+            return notification.depth == 0;
           },
           child: Skeletonizer(
             enabled: dashboardViewModel.isFirstLoading,
@@ -53,6 +58,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
       builder: (BuildContext context, DashboardViewModel dashboardViewModel, Widget? child) {
         return ListView.separated(
           controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             if (index < dashboardViewModel.postList.length) {
               Post post = dashboardViewModel.postList[index];

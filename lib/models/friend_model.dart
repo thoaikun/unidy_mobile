@@ -1,25 +1,25 @@
 import 'dart:convert';
 
-List<FriendRequest> friendRequestListFromJson(String str) => List<FriendRequest>.from(json.decode(str).map((x) => FriendRequest.fromJson(x)));
+List<Friend> friendListFromJson(String str) => List<Friend>.from(json.decode(str).map((x) => Friend.fromJson(x)));
 
-FriendRequest friendRequestFromJson(String str) => FriendRequest.fromJson(json.decode(str));
+Friend friendFromJson(String str) => Friend.fromJson(json.decode(str));
 
-String friendRequestToJson(FriendRequest data) => json.encode(data.toJson());
+String friendToJson(Friend data) => json.encode(data.toJson());
 
-class FriendRequest {
+class Friend {
   int userId;
   String fullName;
   bool isBlock;
   String? profileImageLink;
 
-  FriendRequest({
+  Friend({
     required this.userId,
     required this.fullName,
     required this.isBlock,
     this.profileImageLink,
   });
 
-  factory FriendRequest.fromJson(Map<String, dynamic> json) => FriendRequest(
+  factory Friend.fromJson(Map<String, dynamic> json) => Friend(
     userId: json["userId"],
     fullName: json["fullName"],
     isBlock: json["isBlock"],
@@ -33,6 +33,63 @@ class FriendRequest {
     "profileImageLink": profileImageLink,
   };
 }
+
+
+List<FriendRequest> friendRequestListFromJson(String str) => List<FriendRequest>.from(json.decode(str).map((x) => FriendRequest.fromJson(x)));
+
+FriendRequest friendRequestFromJson(String str) => FriendRequest.fromJson(json.decode(str));
+
+String friendRequestToJson(FriendRequest data) => json.encode(data.toJson());
+
+class FriendRequest {
+  UserRequest userRequest;
+  DateTime requestAt;
+
+  FriendRequest({
+    required this.userRequest,
+    required this.requestAt,
+  });
+
+  factory FriendRequest.fromJson(Map<String, dynamic> json) => FriendRequest(
+    userRequest: UserRequest.fromJson(json["userRequest"]),
+    requestAt: DateTime.parse(json["requestAt"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "userRequest": userRequest.toJson(),
+    "requestAt": requestAt.toIso8601String(),
+  };
+}
+
+class UserRequest {
+  int userId;
+  String fullName;
+  bool isBlock;
+  dynamic profileImageLink;
+
+  UserRequest({
+    required this.userId,
+    required this.fullName,
+    required this.isBlock,
+    required this.profileImageLink,
+  });
+
+  factory UserRequest.fromJson(Map<String, dynamic> json) => UserRequest(
+    userId: json["userId"],
+    fullName: json["fullName"],
+    isBlock: json["isBlock"],
+    profileImageLink: json["profileImageLink"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "userId": userId,
+    "fullName": fullName,
+    "isBlock": isBlock,
+    "profileImageLink": profileImageLink,
+  };
+}
+
+
 
 List<FriendSuggestion> friendSuggestionListFromJson(String str) => List<FriendSuggestion>.from(json.decode(str).map((x) => FriendSuggestion.fromJson(x)));
 

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
-import 'package:unidy_mobile/screens/user/friends_list/friends_list_screen.dart';
-import 'package:unidy_mobile/screens/user/friends_list/request_friends_list_screen.dart';
+import 'package:unidy_mobile/screens/user/friends_list/friend_list/friend_list_container.dart';
+import 'package:unidy_mobile/screens/user/friends_list/friend_list/friend_list_screen.dart';
+import 'package:unidy_mobile/screens/user/friends_list/request_friend_list/request_friend_list_container.dart';
+import 'package:unidy_mobile/screens/user/friends_list/request_friend_list/request_friend_list_screen.dart';
 import 'package:unidy_mobile/screens/user/friends_list/suggestion_friend_list/suggestion_friend_list_container.dart';
 import 'package:unidy_mobile/viewmodel/user/home/friends_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
@@ -20,7 +22,7 @@ class _FriendsState extends State<Friends> {
   @override
   void initState() {
     super.initState();
-    Provider.of<FriendsViewModel>(context, listen: false).initData();
+
   }
 
   SliverToBoxAdapter _buildRequestList() {
@@ -53,7 +55,7 @@ class _FriendsState extends State<Friends> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestFriendListScreen())),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestFriendListContainer())),
                   child: Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: Row(
@@ -127,6 +129,27 @@ class _FriendsState extends State<Friends> {
   }
 
   SliverToBoxAdapter _buildFriendList() {
+    FriendsViewModel friendsViewModel = Provider.of<FriendsViewModel>(context, listen: true);
+    List<Friend> friendList = friendsViewModel.friendList;
+    List<Widget> friendWidgetList = [];
+
+    if (friendList.isEmpty) {
+      return const SliverToBoxAdapter(child: SizedBox(height: 25));
+    }
+
+    for (int i=0; i < friendList.length; i++) {
+      Friend friend = friendList[i];
+      friendWidgetList.add(
+        FriendCard(
+          friend: friend,
+          onUnfriend: friendsViewModel.unfriend
+        )
+      );
+      if (i < friendList.length - 1) {
+        friendWidgetList.add(const Divider(height: 0.5));
+      }
+    }
+
     return SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.only(bottom: 25),
@@ -143,16 +166,8 @@ class _FriendsState extends State<Friends> {
                   ],
                 ),
               ),
-              const Column(
-                children: [
-                  FriendCard(),
-                  Divider(height: 0.5),
-                  FriendCard(),
-                  Divider(height: 0.5),
-                  FriendCard(),
-                  Divider(height: 0.5),
-                  FriendCard(),
-                ],
+              Column(
+                children: friendWidgetList,
               )
             ],
           ),
@@ -196,7 +211,7 @@ class _FriendsState extends State<Friends> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FriendListScreen())),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FriendListContainer())),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -228,17 +243,25 @@ class _FriendsState extends State<Friends> {
   Widget build(BuildContext context) {
     return Consumer<FriendsViewModel>(
       builder: (BuildContext context, FriendsViewModel friendsViewModel, Widget? child) {
-        return Skeletonizer(
-          enabled: friendsViewModel.isLoading,
-          child: Container(
-            margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: !friendsViewModel.isLoading ? CustomScrollView(
-              slivers: [
-                _buildRequestList(),
-                _buildSuggestionList(),
-                _buildFriendList()
-              ],
-            ) : _buildSkeleton(),
+        return RefreshIndicator(
+          strokeWidth: 2,
+          backgroundColor: Colors.white,
+          onRefresh: () async {
+            return Future.delayed(const Duration(seconds: 1))
+              .then((value) => friendsViewModel.initData());
+          },
+          child: Skeletonizer(
+            enabled: friendsViewModel.isLoading,
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: !friendsViewModel.isLoading ? CustomScrollView(
+                slivers: [
+                  _buildRequestList(),
+                  _buildSuggestionList(),
+                  _buildFriendList()
+                ],
+              ) : _buildSkeleton(),
+            ),
           ),
         );
       }

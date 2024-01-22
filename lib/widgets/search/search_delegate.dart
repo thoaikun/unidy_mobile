@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/config/themes/font_config.dart';
-import 'package:unidy_mobile/screens/user/friends_list/request_friends_list_screen.dart';
+import 'package:unidy_mobile/screens/user/friends_list/request_friend_list/request_friend_list_screen.dart';
 import 'package:unidy_mobile/utils/font_builder_util.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 import 'package:unidy_mobile/widgets/card/organization_card.dart';

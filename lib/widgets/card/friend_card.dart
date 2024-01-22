@@ -4,29 +4,61 @@ import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class FriendCard extends StatelessWidget {
-  const FriendCard({super.key});
+  final Friend? friend;
+  final void Function(int? userId)? onUnfriend;
+
+  const FriendCard({
+    super.key,
+    this.friend,
+    this.onUnfriend,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const CircleAvatar(
+      leading: CircleAvatar(
         radius: 20,
         backgroundImage: NetworkImage(
-          'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
+          friend?.profileImageLink != null ? getImageUrl('/profile-images${friend?.profileImageLink}') : 'https://api.dicebear.com/7.x/initials/png?seed=${friend?.fullName}',
         ),
       ),
       title: Text(
-        'Trương Huy Thái',
+        friend?.fullName ?? '',
         style: Theme.of(context).textTheme.bodyMedium,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: TextButton.icon(
-          onPressed: () {},
+          onPressed: () => showAlertDialog(context),
           icon: const Icon(Icons.people_alt, size: 18),
           label: const Text('Bạn bè')
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+    );
+  }
+
+  void showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Xác nhận'),
+          content: const Text('Bạn có chắc chắn muốn xóa bạn bè này?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Hủy'),
+            ),
+            TextButton(
+              onPressed: () {
+                onUnfriend?.call(friend?.userId);
+                Navigator.pop(context);
+              },
+              child: const Text('Xóa'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -48,11 +80,11 @@ class RequestFriendCard extends StatelessWidget {
       leading: CircleAvatar(
         radius: 20,
         backgroundImage: NetworkImage(
-          friendRequest?.profileImageLink != null ? getImageUrl('profiles/${friendRequest?.profileImageLink}') : 'https://api.dicebear.com/7.x/initials/png?seed=${friendRequest?.fullName}',
+          friendRequest?.userRequest.profileImageLink != null ? getImageUrl('/profile-images${friendRequest?.userRequest.profileImageLink}') : 'https://api.dicebear.com/7.x/initials/png?seed=${friendRequest?.userRequest.fullName}',
         ),
       ),
       title: Text(
-        friendRequest?.fullName ?? '',
+        friendRequest?.userRequest.fullName ?? '',
         style: Theme.of(context).textTheme.bodyMedium,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
@@ -118,7 +150,7 @@ class _AddFriendCardState extends State<AddFriendCard> {
       leading: CircleAvatar(
         radius: 20,
         backgroundImage: NetworkImage(
-          widget.friendSuggestion?.fiendSuggest.profileImageLink ?? 'https://api.dicebear.com/7.x/initials/png?seed=${widget.friendSuggestion?.fiendSuggest.fullName}',
+          widget.friendSuggestion?.fiendSuggest.profileImageLink != null ? getImageUrl('/profile-images${widget.friendSuggestion?.fiendSuggest.profileImageLink}') : 'https://api.dicebear.com/7.x/initials/png?seed=${widget.friendSuggestion?.fiendSuggest.fullName}',
         ),
       ),
       title: Text(

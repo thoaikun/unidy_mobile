@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/viewmodel/user/friends_list/suggestion_friend_list_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
+import 'package:unidy_mobile/widgets/empty.dart';
 
 class SuggestionFriendListScreen extends StatefulWidget {
   const SuggestionFriendListScreen({
@@ -31,6 +32,14 @@ class _SuggestionFriendListScreenState extends State<SuggestionFriendListScreen>
   SliverFillRemaining _buildList() {
     SuggestionFriendListViewModel suggestionFriendListViewModel = Provider.of<SuggestionFriendListViewModel>(context, listen: true);
     List<FriendSuggestion> friendSuggestionList = suggestionFriendListViewModel.friendSuggestionList;
+
+    if (friendSuggestionList.isEmpty) {
+      return const SliverFillRemaining(
+        child: Center(
+          child: Empty(description: 'Không có người nào được đề xuất')
+        ),
+      );
+    }
 
     return SliverFillRemaining(
       child: ListView.separated(

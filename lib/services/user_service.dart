@@ -152,7 +152,7 @@ class UserService {
 
   Future<void> unfriend(int userId) async {
     try {
-      Response response = await httpClient.post('api/v1/users/unfriend?friendId=$userId');
+      Response response = await httpClient.patch('api/v1/users/unfriend?friendId=$userId');
 
       switch(response.statusCode) {
         case 200:
@@ -170,9 +170,9 @@ class UserService {
     }
   }
 
-  Future<List<FriendRequest>> getFriendRequests() async {
+  Future<List<FriendRequest>> getFriendRequests(Map<String, String> payload) async {
     try {
-      Response response = await httpClient.get('api/v1/users/list-invite');
+      Response response = await httpClient.get('api/v1/users/list-invite', payload);
 
       switch(response.statusCode) {
         case 200:
@@ -191,13 +191,14 @@ class UserService {
     }
   }
 
-  Future<List<FriendRequest>> getFriends() async {
+  Future<List<Friend>> getFriends(Map<String, String> payload) async {
     try {
-      Response response = await httpClient.get('api/v1/users/list-friend');
+      Response response = await httpClient.get('api/v1/users/get-list-friend', payload);
 
       switch(response.statusCode) {
         case 200:
-          return [];
+          List<Friend> friends = friendListFromJson(utf8.decode(response.bodyBytes));
+          return friends;
         case 400:
           throw ResponseException(value: 'Không thể lấy danh sách bạn bè', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:
