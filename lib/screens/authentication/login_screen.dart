@@ -5,6 +5,7 @@ import 'package:unidy_mobile/screens/authentication/forgot_password/forgot_passw
 import 'package:unidy_mobile/screens/authentication/signup/signup_screen.dart';
 import 'package:unidy_mobile/screens/onboarding/onboarding_screen.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
+import 'package:unidy_mobile/screens/user/volunteer_categories_selection/volunteer_categories_selection_screen.dart';
 import 'package:unidy_mobile/viewmodel/login_viewmodel.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
@@ -25,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return ChangeNotifierProvider(
       create: (_) => LoginViewModel(
         navigateToHomeScreen: navigateToHomeScreen,
+        navigateToVolunteerCategoriesSelectionScreen: navigateToCategoriesSelectionScreen,
         showErrorDialog: showErrorDialog
       ),
       child: Scaffold(
@@ -148,6 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void navigateToHomeScreen() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: HomeScreenContainer())));
+  }
+
+  void navigateToCategoriesSelectionScreen() {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: VolunteerCategoriesSelectionScreen())));
   }
 
   void showErrorDialog() {

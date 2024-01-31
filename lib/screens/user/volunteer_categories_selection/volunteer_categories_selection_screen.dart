@@ -17,18 +17,35 @@ class _VolunteerCategoriesSelectionScreenState extends State<VolunteerCategories
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => VolunteerCategoriesSelectionViewModel(
-        handleNavigateToHomeScreen: _handleNavigateToHomeScreen
+        handleNavigateToHomeScreen: _handleNavigateToHomeScreen,
+        showAlertDialog: showAlertDialog
       ),
       child: Scaffold(
         body: SafeArea(
-          minimum: const EdgeInsets.fromLTRB(15, 70, 15, 15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              _buildCategoryList(),
-              _buildButton(),
-            ]
+              Positioned(
+                child: Consumer<VolunteerCategoriesSelectionViewModel>(
+                  builder: (BuildContext context, VolunteerCategoriesSelectionViewModel volunteerCategoriesSelectionViewModel, Widget? child) {
+                    return Visibility(
+                      visible: volunteerCategoriesSelectionViewModel.isLoading,
+                      child: const LinearProgressIndicator()
+                    );
+                  }
+                )
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCategoryList(),
+                    _buildButton(),
+                  ]
+                ),
+              )
+            ],
           ),
         )
       ),
@@ -74,8 +91,9 @@ class _VolunteerCategoriesSelectionScreenState extends State<VolunteerCategories
   Widget _buildButton() {
     return Consumer<VolunteerCategoriesSelectionViewModel>(
       builder: (BuildContext context, VolunteerCategoriesSelectionViewModel volunteerCategoriesSelectionViewModel, Widget? child) {
-        return SizedBox(
+        return Container(
           width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 20),
           child: FilledButton(
             onPressed: volunteerCategoriesSelectionViewModel.handleConfirm,
             child: const Text('Tiếp tục'),
@@ -87,5 +105,24 @@ class _VolunteerCategoriesSelectionScreenState extends State<VolunteerCategories
 
   void _handleNavigateToHomeScreen() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: HomeScreenContainer())));
+  }
+
+  void showAlertDialog(String title, String content) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title, style: Theme.of(context).textTheme.titleMedium),
+          content: Text(content, style: Theme.of(context).textTheme.bodyMedium),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Đồng ý'),
+              onPressed: () => Navigator.of(context).pop()
+            ),
+          ],
+        );
+      },
+    );
   }
 }

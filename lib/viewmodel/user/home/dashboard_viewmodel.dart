@@ -2,23 +2,26 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/http_client.dart';
+import 'package:unidy_mobile/models/campaign_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
+import 'package:unidy_mobile/services/campaign_service.dart';
 import 'package:unidy_mobile/services/post_service.dart';
 import 'package:unidy_mobile/utils/index.dart';
 
 class DashboardViewModel extends ChangeNotifier {
   final PostService _postService = GetIt.instance<PostService>();
+  final CampaignService _campaignService = GetIt.instance<CampaignService>();
   final AppPreferences _appPreferences = GetIt.instance<AppPreferences>();
 
   String? _lastPostOffset;
   bool isFirstLoading = true;
   bool isLoadMoreLoading = false;
-  List<Post> _postList = [];
+  List<dynamic> _recommendationList = [];
 
-  List<Post> get postList => _postList;
+  List<dynamic> get recommendationList => _recommendationList;
 
-  void setPostList(List<Post> value) {
-    _postList = value;
+  void setRecommendationList(List<dynamic> value) {
+    _recommendationList = [..._recommendationList,...value];
     notifyListeners();
   }
 
@@ -32,6 +35,25 @@ class DashboardViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void initData() {
+    Future.wait([
+      _postService.getRecommendationPosts(_lastPostOffset),
+      _campaignService.getRecommendCampaign()
+    ])
+      .then((value) {
+        List<Post> postList = value[0] as List<Post>;
+        // List<Campaign> campaignList = value[1] as List<Campaign>;
+        if (postList.isNotEmpty) {
+          Post lastPost = postList[postList.length - 1];
+          _lastPostOffset = lastPost.createDate;
+        }
+        setRecommendationList([...postList]);
+      })
+      .whenComplete(() {
+        setIsFirstLoading(false);
+      });
+  }
+
   void getPosts() {
     _postService.getRecommendationPosts(_lastPostOffset)
       .then((postList) {
@@ -39,10 +61,19 @@ class DashboardViewModel extends ChangeNotifier {
           Post lastPost = postList[postList.length - 1];
           _lastPostOffset = lastPost.createDate;
         }
-        setPostList([..._postList , ...postList]);
+        setRecommendationList(postList);
       })
       .whenComplete(() {
-        setIsFirstLoading(false);
+        setIsLoadMoreLoading(false);
+      });
+  }
+
+  void getCampaigns() {
+    _campaignService.getRecommendCampaign()
+      .then((campaignList) {
+        setRecommendationList(campaignList);
+      })
+      .whenComplete(() {
         setIsLoadMoreLoading(false);
       });
   }

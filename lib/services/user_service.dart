@@ -90,6 +90,29 @@ class UserService {
     }
   }
 
+  Future<void> initFavoriteCategoryList(Map<String, dynamic> payload) async {
+    try {
+      Response response = await httpClient.post('api/v1/users/choose-favorite-activities', jsonEncode(payload));
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
+          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalid);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+
   Future<void> sendFriendRequest(int userId) async {
     try {
       Response response = await httpClient.patch('api/v1/users/add-friend?friendId=$userId');

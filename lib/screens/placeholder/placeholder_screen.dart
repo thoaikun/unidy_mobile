@@ -159,7 +159,7 @@ class _PlaceholderScreenState extends State<PlaceholderScreen> {
       }
       return localData;
     }
-    return LocalData(null, null, true, 'none');
+    return LocalData(null, null, true, false, 'none');
   }
 
   void _checkNetwork() {

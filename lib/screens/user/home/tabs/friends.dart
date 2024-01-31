@@ -5,7 +5,6 @@ import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/screens/user/friends_list/friend_list/friend_list_container.dart';
 import 'package:unidy_mobile/screens/user/friends_list/friend_list/friend_list_screen.dart';
 import 'package:unidy_mobile/screens/user/friends_list/request_friend_list/request_friend_list_container.dart';
-import 'package:unidy_mobile/screens/user/friends_list/request_friend_list/request_friend_list_screen.dart';
 import 'package:unidy_mobile/screens/user/friends_list/suggestion_friend_list/suggestion_friend_list_container.dart';
 import 'package:unidy_mobile/viewmodel/user/home/friends_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';

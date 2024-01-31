@@ -1,8 +1,19 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:unidy_mobile/config/app_preferences.dart';
+import 'package:unidy_mobile/models/local_data_model.dart';
 import 'package:unidy_mobile/models/volunteer_category_model.dart';
+import 'package:unidy_mobile/services/user_service.dart';
 
 class VolunteerCategoriesSelectionViewModel extends ChangeNotifier {
+  final UserService _userService = GetIt.instance<UserService>();
+  final AppPreferences appPreferences = GetIt.instance<AppPreferences>();
+
   void Function() handleNavigateToHomeScreen;
+  void Function(String title, String content) showAlertDialog;
 
   List<VolunteerCategory> categories = [
     VolunteerCategory.education,
@@ -10,11 +21,21 @@ class VolunteerCategoriesSelectionViewModel extends ChangeNotifier {
     VolunteerCategory.environment,
     VolunteerCategory.emergencyPreparedness,
     VolunteerCategory.health,
-    VolunteerCategory.helpingNeighbours
+    VolunteerCategory.helpingNeighbours,
+    VolunteerCategory.researchWritingEditing,
   ];
   List<VolunteerCategory> selectedCategories = [];
+  bool isLoading = false;
 
-  VolunteerCategoriesSelectionViewModel({required this.handleNavigateToHomeScreen});
+  VolunteerCategoriesSelectionViewModel({
+    required this.handleNavigateToHomeScreen,
+    required this.showAlertDialog
+  });
+
+  void setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
+  }
 
   void toggleCategory(bool selected, VolunteerCategory category) {
     if (!selected) {
@@ -25,8 +46,68 @@ class VolunteerCategoriesSelectionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void handleConfirm() {
-    print(selectedCategories);
-    handleNavigateToHomeScreen();
+  Future<void> handleConfirm() async {
+    try {
+      setLoading(true);
+      Map<String, double> categoryWeights = initCategoryWeights();
+      await _userService.initFavoriteCategoryList(categoryWeights);
+      await updateLocalData();
+      handleNavigateToHomeScreen();
+    }
+    catch (error) {
+      print(error);
+      showAlertDialog('Không thành công', 'Đã có lỗi xảy ra, vui lòng thử lại sau');
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
+  Map<String, double> initCategoryWeights() {
+    Map<String, double> result = {};
+
+    for (VolunteerCategory category in categories) {
+      double value;
+      if (selectedCategories.contains(category)) {
+        value = Random().nextDouble() * (1 - 0.1) + 0.1;
+      }
+      else {
+        value = 0;
+      }
+
+      switch(category) {
+        case VolunteerCategory.education:
+          result['education_type'] = value;
+          break;
+        case VolunteerCategory.emergencyPreparedness:
+          result['emergency_preparedness'] = value;
+          break;
+        case VolunteerCategory.environment:
+          result['environment'] = value;
+          break;
+        case VolunteerCategory.health:
+          result['healthy'] = value;
+          break;
+        case VolunteerCategory.helpingNeighbours:
+          result['help_other'] = value;
+          break;
+        case VolunteerCategory.strengtheningCommunities:
+          result['community_type'] = value;
+          break;
+        case VolunteerCategory.researchWritingEditing:
+          result['research_writing_editing'] = value;
+          break;
+      }
+    }
+    return result;
+  }
+
+  Future<void> updateLocalData() async {
+    String? data = appPreferences.getString('localData');
+    if (data != null) {
+      LocalData localData = LocalData.fromJson(jsonDecode(data));
+      localData.isChosenFavorite = true;
+      await appPreferences.setString('localData', jsonEncode(localData.toJson()));
+    }
   }
 }
