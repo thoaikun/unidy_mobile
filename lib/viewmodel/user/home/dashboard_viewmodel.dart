@@ -21,7 +21,7 @@ class DashboardViewModel extends ChangeNotifier {
   List<dynamic> get recommendationList => _recommendationList;
 
   void setRecommendationList(List<dynamic> value) {
-    _recommendationList = [..._recommendationList,...value];
+    _recommendationList = value;
     notifyListeners();
   }
 
@@ -42,16 +42,23 @@ class DashboardViewModel extends ChangeNotifier {
     ])
       .then((value) {
         List<Post> postList = value[0] as List<Post>;
-        // List<Campaign> campaignList = value[1] as List<Campaign>;
+        List<Campaign> campaignList = value[1] as List<Campaign>;
         if (postList.isNotEmpty) {
           Post lastPost = postList[postList.length - 1];
           _lastPostOffset = lastPost.createDate;
         }
-        setRecommendationList([...postList]);
+        List<dynamic> recommendationList = [...postList, ...campaignList];
+        recommendationList.shuffle();
+        setRecommendationList(recommendationList);
       })
       .whenComplete(() {
         setIsFirstLoading(false);
       });
+  }
+
+  void refreshData() {
+    _lastPostOffset = null;
+    initData();
   }
 
   void getPosts() {
@@ -61,7 +68,7 @@ class DashboardViewModel extends ChangeNotifier {
           Post lastPost = postList[postList.length - 1];
           _lastPostOffset = lastPost.createDate;
         }
-        setRecommendationList(postList);
+        setRecommendationList([..._recommendationList, ...postList]);
       })
       .whenComplete(() {
         setIsLoadMoreLoading(false);

@@ -18,12 +18,12 @@ class InformationStep extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Đăng ký tài khoản',
+                  'Thông tin cá nhân',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20),
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  'Nhập email và mật khẩu cho tài khoản bạn',
+                  'Hãy cho chúng tôi biết thêm về bạn',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unidy_mobile/models/volunteer_category_model.dart';
 import 'package:unidy_mobile/viewmodel/edit_campaign_viewmodel.dart';
 import 'package:unidy_mobile/widgets/image/image_preview.dart';
+import 'package:unidy_mobile/widgets/input/editable_chip_input.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 import 'package:unidy_mobile/widgets/button/upload_btn.dart';
 
@@ -19,38 +21,46 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
       create: (_) => EditCampaignViewModel(),
       child: WillPopScope(
         onWillPop: _onWillPop,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'Tạo chiến dịch mới',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            actions: [
-              TextButton.icon(onPressed: () {}, icon: const Icon(Icons.done), label: const Text('Hoàn tất'))
-            ],
-          ),
-          body: Consumer<EditCampaignViewModel>(
-            builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: Text(
-                          'Tải hình ảnh',
-                          style: Theme.of(context).textTheme.titleMedium
-                        ),
-                      ),
-                    ),
-                    _buildImageGrid(editCampaignViewModel),
-                    _buildCampaignForm(),
-                  ],
+        child: Consumer<EditCampaignViewModel>(
+          builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  'Tạo chiến dịch mới',
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
-              );
-            }
-          ),
+                actions: [
+                  TextButton.icon(
+                    onPressed: () => editCampaignViewModel.handleConfirm(),
+                    icon: const Icon(Icons.done),
+                    label: const Text('Hoàn tất')
+                  )
+                ],
+              ),
+              body: Consumer<EditCampaignViewModel>(
+                builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Text(
+                              'Tải hình ảnh',
+                              style: Theme.of(context).textTheme.titleMedium
+                            ),
+                          ),
+                        ),
+                        _buildImageGrid(editCampaignViewModel),
+                        _buildCampaignForm(),
+                      ],
+                    ),
+                  );
+                }
+              ),
+            );
+          }
         ),
       ),
     );
@@ -84,60 +94,107 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
 
   SliverToBoxAdapter _buildCampaignForm() {
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Thông tin chung',
-              style: Theme.of(context).textTheme.titleMedium
+      child: Consumer<EditCampaignViewModel>(
+        builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Thông tin chung',
+                  style: Theme.of(context).textTheme.titleMedium
+                ),
+                const SizedBox(height: 10),
+                Input(
+                  controller: editCampaignViewModel.titleController,
+                  label: 'Tên chiến dịch',
+                  error: editCampaignViewModel.titleError,
+                  prefixIcon: Icon(Icons.campaign_rounded),
+                ),
+                const SizedBox(height: 10),
+                Input(
+                  controller: editCampaignViewModel.descriptionController,
+                  label: 'Mô tả',
+                  error: editCampaignViewModel.descriptionError,
+                  prefixIcon: Icon(Icons.description_rounded),
+                ).textarea(),
+                const SizedBox(height: 10),
+                EditableChipInput(
+                  toppings: editCampaignViewModel.hagTags,
+                  onChanged: editCampaignViewModel.handleAddHagTag,
+                  onDeleted: editCampaignViewModel.handleRemoveHagTag,
+                  onSubmitted: editCampaignViewModel.handleSubmitHagTag,
+                ),
+                const SizedBox(height: 10),
+                Input(
+                  controller: editCampaignViewModel.openFormTimeController,
+                  label: 'Thời gian mở đơn',
+                  error: editCampaignViewModel.openFormTimeError,
+                  prefixIcon: const Icon(Icons.calendar_month_rounded),
+                  onTap: () => editCampaignViewModel.selectDate(context, 'openFormTime'),
+                  readOnly: true,
+                ),
+                const SizedBox(height: 10),
+                Input(
+                  controller: editCampaignViewModel.closeFormTimeController,
+                  label: 'Thời gian đóng đơn',
+                  error: editCampaignViewModel.closeFormTimeError,
+                  prefixIcon: const Icon(Icons.calendar_month_rounded),
+                  onTap: () => editCampaignViewModel.selectDate(context, 'closeFormTime'),
+                  readOnly: true,
+                ),
+                const SizedBox(height: 10),
+                Input(
+                  controller: editCampaignViewModel.budgetTargetController,
+                  label: 'Mục tiêu (tùy chọn)',
+                  prefixIcon: Icon(Icons.attach_money_rounded),
+                  numberKeyboard: true,
+                ),
+                const SizedBox(height: 10),
+                Input(
+                  controller: editCampaignViewModel.targetVolunteerController,
+                  label: 'Số lượng tình nguyện viên (tùy chọn)',
+                  prefixIcon: Icon(Icons.volunteer_activism_rounded),
+                  numberKeyboard: true,
+                ),
+                const SizedBox(height: 10),
+                Input(
+                  controller: editCampaignViewModel.startDateController,
+                  label: 'Thời gian diễn ra',
+                  error: editCampaignViewModel.startDateError,
+                  prefixIcon: const Icon(Icons.access_time_rounded),
+                  onTap: () => editCampaignViewModel.selectDate(context, 'startDate'),
+                  readOnly: true,
+                ),
+                const SizedBox(height: 10),
+                Input(
+                  controller: editCampaignViewModel.locationController,
+                  label: 'Địa điểm',
+                  error: editCampaignViewModel.locationError,
+                  prefixIcon: Icon(Icons.location_on_rounded),
+                ),
+                const SizedBox(height: 25),
+                Text('Danh mục', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: editCampaignViewModel.categories.map((category) {
+                    return FilterChip(
+                      label: Text(fromVolunteerCategoryToString(category)),
+                      onSelected: (bool selected) {
+                        editCampaignViewModel.toggleCategory(selected, category);
+                      },
+                      selected: editCampaignViewModel.selectedCategories.contains(category),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            const Input(
-              label: 'Tên chiến dịch',
-              prefixIcon: Icon(Icons.campaign_rounded),
-            ),
-            const SizedBox(height: 10),
-            const Input(
-              label: 'Mô tả',
-              prefixIcon: Icon(Icons.description_rounded),
-            ).textarea(),
-            const SizedBox(height: 10),
-            const Input(
-              label: 'Thời gian mở đơn',
-              prefixIcon: Icon(Icons.calendar_month_rounded),
-              readOnly: true,
-            ),
-            const SizedBox(height: 10),
-            const Input(
-              label: 'Thời gian đóng đơn',
-              prefixIcon: Icon(Icons.calendar_month_rounded),
-              readOnly: true,
-            ),
-            const SizedBox(height: 10),
-            const Input(
-              label: 'Mục tiêu',
-              prefixIcon: Icon(Icons.attach_money_rounded),
-            ),
-            const SizedBox(height: 10),
-            const Input(
-              label: 'Số lượng tình nguyện viên',
-              prefixIcon: Icon(Icons.volunteer_activism_rounded),
-            ),
-            const SizedBox(height: 10),
-            const Input(
-              label: 'Thời gian diễn ra',
-              prefixIcon: Icon(Icons.access_time_rounded),
-            ),
-            const SizedBox(height: 10),
-            const Input(
-              label: 'Thời gian diễn ra',
-              prefixIcon: Icon(Icons.pin_drop_rounded),
-            ),
-          ],
-        ),
+          );
+        }
       ),
     );
   }

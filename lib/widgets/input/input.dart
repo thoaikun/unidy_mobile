@@ -15,6 +15,9 @@ class Input extends StatelessWidget {
   final bool readOnly;
   final bool enableBorder;
   final bool obscureText;
+  final void Function(String)? onChanged;
+  final void Function(String)? onSubmitted;
+
 
   const Input({ 
     Key? key, 
@@ -30,6 +33,8 @@ class Input extends StatelessWidget {
     this.readOnly = false,
     this.enableBorder = false,
     this.obscureText = false,
+    this.onChanged,
+    this.onSubmitted
   }) : super(key: key);
 
   InputDecoration getInputDecoration() {
@@ -82,7 +87,9 @@ class Input extends StatelessWidget {
       autofocus: autoFocus,
       readOnly: readOnly,
       obscureText: obscureText,
-      onTap: onTap
+      onTap: onTap,
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
     );
   }
 

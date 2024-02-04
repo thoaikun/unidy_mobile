@@ -19,7 +19,7 @@ class FriendCard extends StatelessWidget {
       leading: CircleAvatar(
         radius: 20,
         backgroundImage: NetworkImage(
-          friend?.profileImageLink != null ? getImageUrl('/profile-images${friend?.profileImageLink}') : 'https://api.dicebear.com/7.x/initials/png?seed=${friend?.fullName}',
+          friend?.profileImageLink != null ? '${friend?.profileImageLink}' : 'https://api.dicebear.com/7.x/initials/png?seed=${friend?.fullName}',
         ),
       ),
       title: Text(
@@ -80,7 +80,7 @@ class RequestFriendCard extends StatelessWidget {
       leading: CircleAvatar(
         radius: 20,
         backgroundImage: NetworkImage(
-          friendRequest?.userRequest.profileImageLink != null ? getImageUrl('/profile-images${friendRequest?.userRequest.profileImageLink}') : 'https://api.dicebear.com/7.x/initials/png?seed=${friendRequest?.userRequest.fullName}',
+          friendRequest?.userRequest.profileImageLink != null ? '${friendRequest?.userRequest.profileImageLink}' : 'https://api.dicebear.com/7.x/initials/png?seed=${friendRequest?.userRequest.fullName}',
         ),
       ),
       title: Text(
@@ -150,7 +150,7 @@ class _AddFriendCardState extends State<AddFriendCard> {
       leading: CircleAvatar(
         radius: 20,
         backgroundImage: NetworkImage(
-          widget.friendSuggestion?.fiendSuggest.profileImageLink != null ? getImageUrl('/profile-images${widget.friendSuggestion?.fiendSuggest.profileImageLink}') : 'https://api.dicebear.com/7.x/initials/png?seed=${widget.friendSuggestion?.fiendSuggest.fullName}',
+          widget.friendSuggestion?.fiendSuggest.profileImageLink != null ? '${widget.friendSuggestion?.fiendSuggest.profileImageLink}' : 'https://api.dicebear.com/7.x/initials/png?seed=${widget.friendSuggestion?.fiendSuggest.fullName}',
         ),
       ),
       title: Text(

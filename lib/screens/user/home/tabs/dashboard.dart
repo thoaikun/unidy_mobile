@@ -36,7 +36,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         return RefreshIndicator(
           onRefresh: () async {
             return Future.delayed(const Duration(seconds: 1))
-              .then((value) => dashboardViewModel.initData());
+              .then((value) => dashboardViewModel.refreshData());
           },
           backgroundColor: Colors.white,
           strokeWidth: 2,
@@ -64,7 +64,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
             if (index < dashboardViewModel.recommendationList.length) {
               if (dashboardViewModel.recommendationList[index] is Campaign) {
                 Campaign campaign = dashboardViewModel.recommendationList[index];
-                return Placeholder();
+                return CampaignPostCard(campaign: campaign);
               }
               else {
                 Post post = dashboardViewModel.recommendationList[index];
@@ -99,9 +99,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   Widget _buildPostCardListSkeleton() {
     return ListView.separated(
       itemBuilder: (BuildContext context, int index) {
-        return const PostCard(
-
-        );
+        return const PostCard().buildSkeleton(context);
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
       itemCount: 5,

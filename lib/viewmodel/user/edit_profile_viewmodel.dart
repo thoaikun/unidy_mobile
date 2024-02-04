@@ -265,7 +265,7 @@ class EditProfileViewModel extends ChangeNotifier {
         contentType: MediaType('image', imagePath.substring(imagePath.lastIndexOf('.') + 1))
       );
       _userService.updateProfileImage(profileImageFile)
-        .then((imageUrl) => _setPreviewUploadedImage(getImageUrl('/profile-images$previewUploadedImagePath')))
+        .then((imageUrl) => _setPreviewUploadedImage(imageUrl))
         .catchError(handleUpdateProfileError);
     }
   }

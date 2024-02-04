@@ -115,7 +115,7 @@ class LoginViewModel extends ChangeNotifier {
     }
     httpClient.addHeader('Authorization', 'Bearer ${authenticationResponse.accessToken}');
     _setLoadingLogin(false);
-    if (authenticationResponse.isChosenFavorite == null) {
+    if (authenticationResponse.isChosenFavorite == true) {
       navigateToHomeScreen();
     }
     else {

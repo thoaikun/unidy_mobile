@@ -4,7 +4,7 @@ import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/screens/authentication/signup/step/complete_signup.dart';
 import 'package:unidy_mobile/screens/authentication/signup/step/create_account.dart';
-import 'package:unidy_mobile/screens/authentication/signup/step/information.dart';
+import 'package:unidy_mobile/screens/authentication/signup/step/information_for_user_and_sponsor.dart';
 import 'package:unidy_mobile/screens/authentication/signup/step/select_role.dart';
 import 'package:unidy_mobile/viewmodel/signup_viewmodel.dart';
 

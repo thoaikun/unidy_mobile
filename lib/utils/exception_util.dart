@@ -46,4 +46,11 @@ enum ExceptionErrorCode {
   invalidImageExtension,
   invalidUserId,
   invalidFriendRequest,
+
+  invalidCampaignTitle,
+  invalidCampaignDescription,
+  invalidCampaignLocation,
+  invalidCampaignStartDate,
+  invalidCampaignOpenFormDate,
+  invalidCampaignCloseFormDate,
 }

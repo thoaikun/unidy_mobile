@@ -26,4 +26,45 @@ class CampaignService {
       rethrow;
     }
   }
+
+  Future<void> create(Map<String, String> payload, List<MultipartFile> files) async {
+    try {
+      StreamedResponse streamedResponse = await httpClient.uploadImage('api/v1/campaign', files, payload);
+      Response response = await Response.fromStream(streamedResponse);
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Dữ liệu không hợp lệ', code: ExceptionErrorCode.invalidInput);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> registerAsVolunteer(int campaignId) async {
+    try {
+      Response response = await httpClient.post('api/v1/campaign/register-as-volunteer', { 'campaignId': campaignId });
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Dữ liệu không hợp lệ', code: ExceptionErrorCode.invalidInput);
+        case 403:
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
 }

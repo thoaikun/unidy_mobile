@@ -18,6 +18,8 @@ class Campaign {
   int campaignId;
   String title;
   String description;
+  String? hagTag;
+  String? linkImage;
   List<VolunteerCategory> categories;
   int? numberVolunteer;
   int? numberVolunteerRegistered;
@@ -35,6 +37,8 @@ class Campaign {
     required this.campaignId,
     required this.title,
     required this.description,
+    this.hagTag,
+    this.linkImage,
     required this.categories,
     this.numberVolunteer,
     this.numberVolunteerRegistered,
@@ -54,7 +58,9 @@ class Campaign {
     title: json["title"] ?? '',
     description: json["description"] ?? '',
     // categories: List<VolunteerCategory>.from(json["categories"].map((x) => fromStringToVolunteerCategory(x))),
-    categories: [],
+    categories: json['categories'] != null ? List<VolunteerCategory>.from(json['categories'].map((x) => fromStringToVolunteerCategory(x))) : [],
+    hagTag: json["hagTag"],
+    linkImage: json["linkImage"],
     numberVolunteer: json["numberVolunteer"],
     numberVolunteerRegistered: json["numberVolunteerRegistered"],
     donationBudget: json["donationBudget"],
@@ -62,7 +68,7 @@ class Campaign {
     startDate: DateTime.parse(json["startDate"]),
     endDate: DateTime.parse(json["endDate"]),
     location: json["location"],
-    status: CampaignStatus.inProgress,
+    status: mapCampaignStatus(json["status"]),
     createDate: DateTime.parse(json["createDate"]),
     updateDate: json["updateDate"],
     updateBy: json["updateBy"],
@@ -73,6 +79,8 @@ class Campaign {
     "title": title,
     "description": description,
     "categories": List<dynamic>.from(categories.map((x) => fromVolunteerCategoryToString(x))),
+    "hagTag": hagTag,
+    "linkImage": linkImage,
     "numberVolunteer": numberVolunteer,
     "numberVolunteerRegistered": numberVolunteerRegistered,
     "donationBudget": donationBudget,
@@ -85,4 +93,17 @@ class Campaign {
     "updateDate": updateDate,
     "updateBy": updateBy,
   };
+
+  static mapCampaignStatus(String status) {
+    switch (status) {
+      case 'IN_PROGRESS':
+        return CampaignStatus.inProgress;
+      case 'DONE':
+        return CampaignStatus.done;
+      case 'CANCEL':
+        return CampaignStatus.canceled;
+      default:
+        return CampaignStatus.inProgress;
+    }
+  }
 }
