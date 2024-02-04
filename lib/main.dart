@@ -6,6 +6,7 @@ import 'package:unidy_mobile/bloc/network_detect_cubit.dart';
 import 'package:unidy_mobile/bloc/profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/theme_config.dart';
 import 'package:unidy_mobile/screens/placeholder/placeholder_screen.dart';
+
 import 'config/getit_config.dart';
 
 void main() async {

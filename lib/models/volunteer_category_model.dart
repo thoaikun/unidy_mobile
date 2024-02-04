@@ -5,6 +5,7 @@ enum VolunteerCategory {
   health,
   helpingNeighbours,
   strengtheningCommunities,
+  researchWritingEditing,
 }
 
 String fromVolunteerCategoryToString(VolunteerCategory category) {
@@ -21,5 +22,26 @@ String fromVolunteerCategoryToString(VolunteerCategory category) {
       return 'Giúp đỡ hàng xóm';
     case VolunteerCategory.strengtheningCommunities:
       return 'Tăng cường cộng đồng';
+    default:
+      return 'Nghiên cứu, viết bài, biên tập';
+  }
+}
+
+VolunteerCategory fromStringToVolunteerCategory(String category) {
+  switch(category) {
+    case 'education_type':
+      return VolunteerCategory.education;
+    case 'emergency_preparedness':
+      return VolunteerCategory.emergencyPreparedness;
+    case 'environment':
+      return VolunteerCategory.environment;
+    case 'healthy':
+      return VolunteerCategory.health;
+    case 'help_other':
+      return VolunteerCategory.helpingNeighbours;
+    case 'community_type':
+      return VolunteerCategory.strengtheningCommunities;
+    default:
+      return VolunteerCategory.researchWritingEditing;
   }
 }

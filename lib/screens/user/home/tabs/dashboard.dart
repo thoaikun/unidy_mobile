@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/campaign_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/user/home/dashboard_viewmodel.dart';
@@ -28,19 +30,18 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    DashboardViewModel dashboardViewModel = Provider.of<DashboardViewModel>(context, listen: false);
-    dashboardViewModel.getPosts();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Consumer<DashboardViewModel>(
       builder: (BuildContext context, DashboardViewModel dashboardViewModel, Widget? child) {
         return RefreshIndicator(
           onRefresh: () async {
-            dashboardViewModel.getPosts();
+            return Future.delayed(const Duration(seconds: 1))
+              .then((value) => dashboardViewModel.initData());
+          },
+          backgroundColor: Colors.white,
+          strokeWidth: 2,
+          notificationPredicate: (ScrollNotification notification) {
+            return notification.depth == 0;
           },
           child: Skeletonizer(
             enabled: dashboardViewModel.isFirstLoading,
@@ -58,17 +59,24 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
       builder: (BuildContext context, DashboardViewModel dashboardViewModel, Widget? child) {
         return ListView.separated(
           controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
-            if (index < dashboardViewModel.postList.length) {
-              Post post = dashboardViewModel.postList[index];
-              return PostCard(
-                  post: post,
-                  userName: post.userNodes?.fullName,
-                  avatarUrl: post.userNodes?.profileImageLink,
-                  onLikePost: () => debounce(() => dashboardViewModel.handleLikePost(post), 500).call()
-              );
+            if (index < dashboardViewModel.recommendationList.length) {
+              if (dashboardViewModel.recommendationList[index] is Campaign) {
+                Campaign campaign = dashboardViewModel.recommendationList[index];
+                return Placeholder();
+              }
+              else {
+                Post post = dashboardViewModel.recommendationList[index];
+                return PostCard(
+                    post: post,
+                    userName: post.userNodes?.fullName,
+                    avatarUrl: post.userNodes?.profileImageLink,
+                    onLikePost: () => debounce(() => dashboardViewModel.handleLikePost(post), 500).call()
+                );
+              }
             }
-            else if (index == dashboardViewModel.postList.length && dashboardViewModel.isLoadMoreLoading) {
+            else if (index == dashboardViewModel.recommendationList.length && dashboardViewModel.isLoadMoreLoading) {
               return Container(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: const Center(
@@ -82,7 +90,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
             }
           },
           separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
-          itemCount: dashboardViewModel.postList.length + 1,
+          itemCount: dashboardViewModel.recommendationList.length + 1,
         );
       }
     );

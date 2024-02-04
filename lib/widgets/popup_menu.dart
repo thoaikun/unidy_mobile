@@ -63,14 +63,17 @@ class _UnidyPopupMenuState extends State<UnidyPopupMenu> {
   }
 
   Future<void> _handleCleanCache() async {
-    String? data = appPreferences.getString('localData');
-    if (data != null) {
-      LocalData localData = LocalData.fromJson(jsonDecode(data));
-      localData.accessToken = null;
-      localData.refreshToken = null;
-      localData.accountMode = AccountMode.none;
-      await appPreferences.setString('localData', jsonEncode(localData.toJson()));
-    }
+    // String? data = appPreferences.getString('localData');
+    // if (data != null) {
+    //   LocalData localData = LocalData.fromJson(jsonDecode(data));
+    //   localData.accessToken = null;
+    //   localData.refreshToken = null;
+    //   localData.accountMode = AccountMode.none;
+    //   localData.isFirstTimeOpenApp = false;
+    //   localData.isChosenFavorite = true;
+    //   await appPreferences.setString('localData', jsonEncode(localData.toJson()));
+    // }
+    appPreferences.clean();
   }
 
   List<PopupMenuItem<IPopupMenuItem>> _buildItems() {

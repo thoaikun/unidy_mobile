@@ -12,6 +12,7 @@ import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/screens/onboarding/onboarding_screen.dart';
 import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
+import 'package:unidy_mobile/screens/user/volunteer_categories_selection/volunteer_categories_selection_screen.dart';
 
 class PlaceholderScreen extends StatefulWidget {
   const PlaceholderScreen({super.key});
@@ -158,7 +159,7 @@ class _PlaceholderScreenState extends State<PlaceholderScreen> {
       }
       return localData;
     }
-    return LocalData(null, null, true, 'none');
+    return LocalData(null, null, true, false, 'none');
   }
 
   void _checkNetwork() {

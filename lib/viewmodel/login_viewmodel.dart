@@ -14,6 +14,7 @@ import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class LoginViewModel extends ChangeNotifier {
   void Function() navigateToHomeScreen;
+  void Function() navigateToVolunteerCategoriesSelectionScreen;
   void Function() showErrorDialog;
 
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
@@ -38,6 +39,7 @@ class LoginViewModel extends ChangeNotifier {
 
   LoginViewModel({
     required this.navigateToHomeScreen,
+    required this.navigateToVolunteerCategoriesSelectionScreen,
     required this.showErrorDialog
   }) {
     _emailController.addListener(() => _setEmailError(null));
@@ -99,7 +101,7 @@ class LoginViewModel extends ChangeNotifier {
     String? data = appPreferences.getString('localData');
 
     if (data == null) {
-      LocalData localData = LocalData(authenticationResponse.accessToken, authenticationResponse.refreshToken, true, 'user');
+      LocalData localData = LocalData(authenticationResponse.accessToken, authenticationResponse.refreshToken, true, authenticationResponse.isChosenFavorite ?? true, 'user');
       await appPreferences.setString('localData', jsonEncode(localData.toJson()));
     }
     else {
@@ -108,11 +110,17 @@ class LoginViewModel extends ChangeNotifier {
       localData.refreshToken = authenticationResponse.refreshToken;
       localData.accountMode = AccountMode.user;
       localData.isFirstTimeOpenApp = false;
+      localData.isChosenFavorite = authenticationResponse.isChosenFavorite ?? true;
       await appPreferences.setString('localData', jsonEncode(localData.toJson()));
     }
     httpClient.addHeader('Authorization', 'Bearer ${authenticationResponse.accessToken}');
     _setLoadingLogin(false);
-    navigateToHomeScreen();
+    if (authenticationResponse.isChosenFavorite == null) {
+      navigateToHomeScreen();
+    }
+    else {
+      navigateToVolunteerCategoriesSelectionScreen();
+    }
   }
 
   void _handleLoginError(Object error) {

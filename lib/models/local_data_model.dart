@@ -10,8 +10,9 @@ class LocalData {
   String? refreshToken;
   AccountMode? accountMode;
   bool isFirstTimeOpenApp;
+  bool isChosenFavorite;
 
-  LocalData(this.accessToken, this.refreshToken, this.isFirstTimeOpenApp, String value) :
+  LocalData(this.accessToken, this.refreshToken, this.isFirstTimeOpenApp, this.isChosenFavorite, String value) :
       accountMode = accountModeFromString(value);
 
   factory LocalData.fromJson(Map<String, dynamic> json) {
@@ -19,7 +20,8 @@ class LocalData {
       json['accessToken'],
       json['refreshToken'],
       json['isFirstTimeOpenApp'],
-      json['accountMode']
+      json['isChosenFavorite'],
+      json['accountMode'],
     );
   }
 
@@ -27,7 +29,8 @@ class LocalData {
     'accessToken': accessToken,
     'refreshToken': refreshToken,
     'isFirstTimeOpenApp': isFirstTimeOpenApp,
-    'accountMode': accountModeToString(accountMode)
+    'accountMode': accountModeToString(accountMode),
+    'isChosenFavorite': isChosenFavorite,
   };
 
   static AccountMode? accountModeFromString(String? value) {

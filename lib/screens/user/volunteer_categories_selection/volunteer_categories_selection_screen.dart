@@ -1,33 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/volunteer_category_model.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
 import 'package:unidy_mobile/viewmodel/user/volunteer_categories_selection_viewmodel.dart';
 
-class VolunteerCategoriesSelection extends StatefulWidget {
-  const VolunteerCategoriesSelection({super.key});
+class VolunteerCategoriesSelectionScreen extends StatefulWidget {
+  const VolunteerCategoriesSelectionScreen({super.key});
 
   @override
-  State<VolunteerCategoriesSelection> createState() => _VolunteerCategoriesSelectionState();
+  State<VolunteerCategoriesSelectionScreen> createState() => _VolunteerCategoriesSelectionScreenState();
 }
 
-class _VolunteerCategoriesSelectionState extends State<VolunteerCategoriesSelection> {
+class _VolunteerCategoriesSelectionScreenState extends State<VolunteerCategoriesSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => VolunteerCategoriesSelectionViewModel(
-        handleNavigateToHomeScreen: _handleNavigateToHomeScreen
+        handleNavigateToHomeScreen: _handleNavigateToHomeScreen,
+        showAlertDialog: showAlertDialog
       ),
       child: Scaffold(
         body: SafeArea(
-          minimum: const EdgeInsets.fromLTRB(15, 70, 15, 15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              _buildCategoryList(),
-              _buildButton(),
-            ]
+              Positioned(
+                child: Consumer<VolunteerCategoriesSelectionViewModel>(
+                  builder: (BuildContext context, VolunteerCategoriesSelectionViewModel volunteerCategoriesSelectionViewModel, Widget? child) {
+                    return Visibility(
+                      visible: volunteerCategoriesSelectionViewModel.isLoading,
+                      child: const LinearProgressIndicator()
+                    );
+                  }
+                )
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCategoryList(),
+                    _buildButton(),
+                  ]
+                ),
+              )
+            ],
           ),
         )
       ),
@@ -41,8 +59,13 @@ class _VolunteerCategoriesSelectionState extends State<VolunteerCategoriesSelect
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Select categories you are interested in',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 18),
+              'Lựa chọn hoạt động yêu thích của bạn',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              'Lựa chọn này sẽ giúp chúng tôi đưa ra những gợi ý tốt hơn cho bạn',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300),
             ),
             const SizedBox(height: 15),
             Wrap(
@@ -68,8 +91,9 @@ class _VolunteerCategoriesSelectionState extends State<VolunteerCategoriesSelect
   Widget _buildButton() {
     return Consumer<VolunteerCategoriesSelectionViewModel>(
       builder: (BuildContext context, VolunteerCategoriesSelectionViewModel volunteerCategoriesSelectionViewModel, Widget? child) {
-        return SizedBox(
+        return Container(
           width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 20),
           child: FilledButton(
             onPressed: volunteerCategoriesSelectionViewModel.handleConfirm,
             child: const Text('Tiếp tục'),
@@ -81,5 +105,24 @@ class _VolunteerCategoriesSelectionState extends State<VolunteerCategoriesSelect
 
   void _handleNavigateToHomeScreen() {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: HomeScreenContainer())));
+  }
+
+  void showAlertDialog(String title, String content) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title, style: Theme.of(context).textTheme.titleMedium),
+          content: Text(content, style: Theme.of(context).textTheme.bodyMedium),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Đồng ý'),
+              onPressed: () => Navigator.of(context).pop()
+            ),
+          ],
+        );
+      },
+    );
   }
 }

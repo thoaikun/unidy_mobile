@@ -104,6 +104,7 @@ flutter:
     - assets/imgs/icon/blue_medal.png
     - assets/imgs/icon/people.png
     - assets/imgs/icon/calendar.png
+    - assets/imgs/icon/empty-box.png
     - assets/imgs/emotional_emoji/amazing.png
     - assets/imgs/emotional_emoji/admire.png
     - assets/imgs/emotional_emoji/happy.png
