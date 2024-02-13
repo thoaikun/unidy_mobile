@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Unidy',
         theme: unidyThemeData,
-        home: const EditCampaignScreen(),
+        home: const PlaceholderScreen(),
       )
     );
   }

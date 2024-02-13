@@ -50,7 +50,7 @@ class CreateAccountStep extends StatelessWidget {
                 onPressed: signUpViewModel.togglePasswordVisible,
                 icon: signUpViewModel.passwordVisible ? const Icon(Icons.visibility_off_rounded) : const Icon(Icons.visibility_rounded),
               ),
-              obscureText: signUpViewModel.passwordVisible,
+              obscureText: !signUpViewModel.passwordVisible,
             ),
             const SizedBox(height: 20),
             Text(

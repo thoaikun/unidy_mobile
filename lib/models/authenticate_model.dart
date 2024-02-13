@@ -27,3 +27,9 @@ class Authenticate {
     "isChosedFavorite": isChosenFavorite,
   };
 }
+
+enum ERole {
+  volunteer,
+  sponsor,
+  organization
+}
