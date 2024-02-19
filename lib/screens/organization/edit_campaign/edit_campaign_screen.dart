@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/models/volunteer_category_model.dart';
+import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
 import 'package:unidy_mobile/viewmodel/edit_campaign_viewmodel.dart';
 import 'package:unidy_mobile/widgets/image/image_preview.dart';
 import 'package:unidy_mobile/widgets/input/editable_chip_input.dart';
@@ -18,9 +19,24 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => EditCampaignViewModel(),
-      child: WillPopScope(
-        onWillPop: _onWillPop,
+      create: (_) => EditCampaignViewModel(
+        showSnackBar: (String content) => ScaffoldMessenger.of(context).showSnackBar(_buildSnakeBar(content)),
+      ),
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (bool didPop) async {
+          if (didPop) {
+            return;
+          }
+          final NavigatorState navigatorState = Navigator.of(context);
+          final bool shouldPop = await _onWillPop();
+          if (shouldPop == true) {
+            navigatorState.pop();
+          }
+          else {
+            return;
+          }
+        },
         child: Consumer<EditCampaignViewModel>(
           builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
             return Scaffold(
@@ -39,23 +55,31 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
               ),
               body: Consumer<EditCampaignViewModel>(
                 builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: Text(
-                              'Tải hình ảnh',
-                              style: Theme.of(context).textTheme.titleMedium
+                  return Stack(
+                    children: [
+                      Visibility(
+                        visible: editCampaignViewModel.isLoading,
+                        child: const LinearProgressIndicator(),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: Text(
+                                    'Tải hình ảnh',
+                                    style: Theme.of(context).textTheme.titleMedium
+                                ),
+                              ),
                             ),
-                          ),
+                            _buildImageGrid(editCampaignViewModel),
+                            _buildCampaignForm(),
+                          ],
                         ),
-                        _buildImageGrid(editCampaignViewModel),
-                        _buildCampaignForm(),
-                      ],
-                    ),
+                      ),
+                    ],
                   );
                 }
               ),
@@ -173,7 +197,7 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
                   controller: editCampaignViewModel.locationController,
                   label: 'Địa điểm',
                   error: editCampaignViewModel.locationError,
-                  prefixIcon: Icon(Icons.location_on_rounded),
+                  prefixIcon: const Icon(Icons.location_on_rounded),
                 ),
                 const SizedBox(height: 25),
                 Text('Danh mục', style: Theme.of(context).textTheme.titleMedium),
@@ -181,9 +205,9 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: editCampaignViewModel.categories.map((category) {
+                  children: VolunteerCategory.categories.map((category) {
                     return FilterChip(
-                      label: Text(fromVolunteerCategoryToString(category)),
+                      label: Text(category.toString()),
                       onSelected: (bool selected) {
                         editCampaignViewModel.toggleCategory(selected, category);
                       },
@@ -211,11 +235,18 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
             child: const Text('Hủy'),
           ),
           TextButton(
-            onPressed: () => Navigator.popAndPushNamed(context, '/organization'),
+            onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Đồng ý'),
           ),
         ],
       ),
     )) ?? false;
+  }
+
+  SnackBar _buildSnakeBar(String message) {
+    return SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 2),
+    );
   }
 }

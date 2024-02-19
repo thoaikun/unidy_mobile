@@ -7,7 +7,7 @@ class FriendListViewModel extends ChangeNotifier {
   final UserService _userService = GetIt.instance<UserService>();
 
   bool isFirstLoading = true;
-  bool isLoading = true;
+  bool isLoading = false;
   final int LIMIT = 10;
   String cursor = '0';
 
@@ -29,7 +29,7 @@ class FriendListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getFriends() async {
+  void initData() async {
     try {
       List<Friend> friendListResponse = await _userService.getFriends({
         'limit': LIMIT.toString(),
@@ -67,6 +67,38 @@ class FriendListViewModel extends ChangeNotifier {
     }
     finally  {
       setIsLoading(true);
+    }
+  }
+
+  void refreshData() async {
+    try {
+      cursor = '0';
+      List<Friend> friendListResponse = await _userService.getFriends({
+        'limit': LIMIT.toString(),
+        'cursor': cursor
+      });
+      // if (friendListResponse.isNotEmpty) {
+      //   Friend lastFriend = friendListResponse[friendListResponse.length - 1];
+      //   cursor = lastFriend.createDate;
+      // }
+      setFriendList(friendListResponse);
+    }
+    catch (error) {
+      print(error);
+    }
+  }
+
+  Future<bool> unfriend(int? userId) async {
+    if (userId == null) return false;
+
+    try {
+      await _userService.unfriend(userId);
+      _friendList.removeWhere((friend) => friend.userId == userId);
+      setFriendList(_friendList);
+      return true;
+    }
+    catch (error) {
+      return false;
     }
   }
 }

@@ -155,11 +155,11 @@ class _FriendsState extends State<Friends> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FriendListScreen())),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FriendListContainer())),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Bạn bè của bạn', style: Theme.of(context).textTheme.bodyMedium),
+                    Text('Bạn bè của tôi', style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(width: 5),
                     const Icon(Icons.arrow_forward_ios_rounded, size: 12),
                   ],

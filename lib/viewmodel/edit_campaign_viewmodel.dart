@@ -1,27 +1,26 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:unidy_mobile/models/volunteer_category_model.dart';
+import 'package:unidy_mobile/services/campaign_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class EditCampaignViewModel extends ChangeNotifier {
-  final List<VolunteerCategory> categories = [
-    VolunteerCategory.education,
-    VolunteerCategory.strengtheningCommunities,
-    VolunteerCategory.environment,
-    VolunteerCategory.emergencyPreparedness,
-    VolunteerCategory.health,
-    VolunteerCategory.helpingNeighbours,
-    VolunteerCategory.researchWritingEditing,
-  ];
+  final CampaignService _campaignService = GetIt.instance<CampaignService>();
+  final void Function(String content) showSnackBar;
+
   final List<File> _files = [];
   List<VolunteerCategory> _selectedCategories = [];
   List<String> _hagTags = [];
+  bool isLoading = false;
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -60,7 +59,9 @@ class EditCampaignViewModel extends ChangeNotifier {
   TextEditingController get targetVolunteerController => _targetVolunteerController;
   TextEditingController get startDateController => _startDateController;
 
-  EditCampaignViewModel() {
+  EditCampaignViewModel({
+    required this.showSnackBar
+  }) {
     titleController.addListener(() => _setTitleError(null));
     descriptionController.addListener(() => _setDescriptionError(null));
     openFormTimeController.addListener(() => _setOpenFormTimeError(null));
@@ -69,6 +70,11 @@ class EditCampaignViewModel extends ChangeNotifier {
     startDateController.addListener(() => _setStartDateError(null));
 
     verifyForm();
+  }
+
+  void setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
   }
 
   void _setTitleError(String? value) {
@@ -134,7 +140,7 @@ class EditCampaignViewModel extends ChangeNotifier {
   Map<String, double> initCategoryWeights() {
     Map<String, double> result = {};
 
-    for (VolunteerCategory category in categories) {
+    for (VolunteerCategory category in VolunteerCategory.categories) {
       double value;
       if (selectedCategories.contains(category)) {
         value = Random().nextDouble() * (1 - 0.1) + 0.1;
@@ -143,26 +149,26 @@ class EditCampaignViewModel extends ChangeNotifier {
         value = 0;
       }
 
-      switch(category) {
-        case VolunteerCategory.education:
+      switch(category.key) {
+        case VolunteerCategoryKey.education:
           result['education_type'] = value;
           break;
-        case VolunteerCategory.emergencyPreparedness:
+        case VolunteerCategoryKey.emergencyPreparedness:
           result['emergency_preparedness'] = value;
           break;
-        case VolunteerCategory.environment:
+        case VolunteerCategoryKey.environment:
           result['environment'] = value;
           break;
-        case VolunteerCategory.health:
+        case VolunteerCategoryKey.health:
           result['healthy'] = value;
           break;
-        case VolunteerCategory.helpingNeighbours:
+        case VolunteerCategoryKey.helpingNeighbours:
           result['help_other'] = value;
           break;
-        case VolunteerCategory.strengtheningCommunities:
+        case VolunteerCategoryKey.strengtheningCommunities:
           result['community_type'] = value;
           break;
-        case VolunteerCategory.researchWritingEditing:
+        case VolunteerCategoryKey.researchWritingEditing:
           result['research_writing_editing'] = value;
           break;
       }
@@ -253,18 +259,31 @@ class EditCampaignViewModel extends ChangeNotifier {
         return <String, String>{
           'title': title,
           'description': description,
-          'openFormTime': openFormTime,
-          'closeFormTime': closeFormTime,
+          'categories': jsonEncode(initCategoryWeights()),
+          'status': 'IN_PROGRESS',
+          'startDate': openFormTime,
+          'endDate': closeFormTime,
+          'timeTakePlace': startDate,
           'location': location,
           'budgetTarget': budgetTarget,
-          'targetVolunteer': targetVolunteer,
-          'startDate': startDate,
+          'numberOfVolunteer': targetVolunteer,
+          'hagTags': _hagTags.map((hagTag) => '#$hagTag').join(' ')
         };
       }
     )
       .debounceTime(const Duration(milliseconds: 500))
-      .listen((event) {
-        print(event);
+      .listen((payload) {
+        setLoading(true);
+        _convertToMultipartFiles()
+          .then((images) {
+            // return _campaignService.create(payload, images);
+            return Future.delayed(const Duration(seconds: 2));
+          })
+          .then((_) {
+            showSnackBar.call('Tạo chiến dịch thành công');
+          })
+          .catchError(() => showSnackBar.call('Có lỗi xảy ra'))
+          .whenComplete(() => setLoading(false));
       })
       .onError(_handleError);
   }
@@ -294,6 +313,19 @@ class EditCampaignViewModel extends ChangeNotifier {
           break;
       }
     }
+  }
+
+  Future<List<MultipartFile>> _convertToMultipartFiles() async {
+    List<MultipartFile> multipartFiles = [];
+    for (File file in _files) {
+      MultipartFile multipartFile = await MultipartFile.fromPath(
+          'listImageFile',
+          file.path,
+          contentType: MediaType('image', file.path.substring(file.path.lastIndexOf('.') + 1))
+      );
+      multipartFiles.add(multipartFile);
+    }
+    return multipartFiles;
   }
 
   @override
