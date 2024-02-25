@@ -239,7 +239,6 @@ class UserService extends Service {
           catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
-          print(response.body);
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
     }
@@ -262,7 +261,6 @@ class UserService extends Service {
           catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
-          print(response.body);
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
     }
