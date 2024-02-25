@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:unidy_mobile/config/themes/color_config.dart';
-import 'package:unidy_mobile/models/campaign_model.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/user/home/dashboard_viewmodel.dart';
@@ -62,9 +61,9 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
           physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             if (index < dashboardViewModel.recommendationList.length) {
-              if (dashboardViewModel.recommendationList[index] is Campaign) {
-                Campaign campaign = dashboardViewModel.recommendationList[index];
-                return CampaignPostCard(campaign: campaign);
+              if (dashboardViewModel.recommendationList[index] is CampaignPostCard) {
+                CampaignPost campaign = dashboardViewModel.recommendationList[index];
+                return CampaignPostCard(campaignPost: campaign);
               }
               else {
                 Post post = dashboardViewModel.recommendationList[index];

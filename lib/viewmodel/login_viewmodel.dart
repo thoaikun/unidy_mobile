@@ -13,9 +13,9 @@ import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  void Function() navigateToHomeScreen;
+  void Function(ERole role) navigateToHomeScreen;
   void Function() navigateToVolunteerCategoriesSelectionScreen;
-  void Function() showErrorDialog;
+  void Function([String? title, String? content]) showErrorDialog;
 
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
   HttpClient httpClient = GetIt.instance<HttpClient>();
@@ -101,25 +101,30 @@ class LoginViewModel extends ChangeNotifier {
     String? data = appPreferences.getString('localData');
 
     if (data == null) {
-      LocalData localData = LocalData(authenticationResponse.accessToken, authenticationResponse.refreshToken, true, authenticationResponse.isChosenFavorite ?? true, 'user');
+      LocalData localData = LocalData(authenticationResponse.accessToken, authenticationResponse.refreshToken, false, authenticationResponse.isChosenFavorite ?? true, authenticationResponse.role);
       await appPreferences.setString('localData', jsonEncode(localData.toJson()));
     }
     else {
       LocalData localData = LocalData.fromJson(jsonDecode(data));
       localData.accessToken = authenticationResponse.accessToken;
       localData.refreshToken = authenticationResponse.refreshToken;
-      localData.accountMode = AccountMode.user;
+      localData.accountMode = LocalData.accountModeFromString(authenticationResponse.role);
       localData.isFirstTimeOpenApp = false;
       localData.isChosenFavorite = authenticationResponse.isChosenFavorite ?? true;
       await appPreferences.setString('localData', jsonEncode(localData.toJson()));
     }
     httpClient.addHeader('Authorization', 'Bearer ${authenticationResponse.accessToken}');
     _setLoadingLogin(false);
-    if (authenticationResponse.isChosenFavorite == true) {
-      navigateToHomeScreen();
+    if (authenticationResponse.role == 'VOLUNTEER') {
+      if (authenticationResponse.isChosenFavorite == true) {
+        navigateToHomeScreen(ERole.volunteer);
+      }
+      else {
+        navigateToVolunteerCategoriesSelectionScreen();
+      }
     }
-    else {
-      navigateToVolunteerCategoriesSelectionScreen();
+    else if (authenticationResponse.role == 'ORGANIZATION') {
+      navigateToHomeScreen(ERole.organization);
     }
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
-import 'package:unidy_mobile/models/campaign_model.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
@@ -334,11 +334,11 @@ class PostCard extends StatelessWidget {
 }
 
 class CampaignPostCard extends StatelessWidget {
-  final Campaign campaign;
+  final CampaignPost campaignPost;
 
   const CampaignPostCard({
     super.key,
-    required this.campaign
+    required this.campaignPost
   });
 
   @override
@@ -355,9 +355,9 @@ class CampaignPostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: AvatarCard(
                   showTime: true,
-                  userName: 'Tạm để',
-                  avatarUrl: null,
-                  createdAt: '2021-09-01T00:00:00',
+                  userName: campaignPost.organizationNode.fullName,
+                  avatarUrl: campaignPost.organizationNode.profileImageLink,
+                  createdAt: campaignPost.campaign.createDate,
               ),
             ),
             Padding(
@@ -366,7 +366,7 @@ class CampaignPostCard extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             Visibility(
-              visible: campaign.linkImage != null,
+              visible: campaignPost.campaign.linkImage != null,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: _buildImageSlide(),
@@ -396,9 +396,9 @@ class CampaignPostCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(campaign.title ?? 'Không có tiêu đề', style: Theme.of(context).textTheme.titleMedium),
+        Text(campaignPost.campaign.title, style: Theme.of(context).textTheme.titleMedium),
         ReadMoreText(
-          campaign.description ?? 'Không có nội dung',
+          campaignPost.campaign.description,
           trimLines: 3,
           trimMode: TrimMode.Line,
           trimCollapsedText: 'Đọc thêm',
@@ -407,8 +407,8 @@ class CampaignPostCard extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         Visibility(
-          visible: campaign.hagTag != null,
-          child: Text(campaign.hagTag ?? '', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: PrimaryColor.primary500)),
+          visible: campaignPost.campaign.hashTag != null,
+          child: Text(campaignPost.campaign.hashTag ?? '', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: PrimaryColor.primary500)),
         )
       ],
     );
@@ -505,8 +505,8 @@ class CampaignPostCard extends StatelessWidget {
 
   Widget _buildImageSlide() {
     List<dynamic> imageUrls = [];
-    if (campaign.linkImage != "") {
-      imageUrls = List<String>.from(jsonDecode(campaign.linkImage ?? '[]'));
+    if (campaignPost.campaign.linkImage != "") {
+      imageUrls = List<String>.from(jsonDecode(campaignPost.campaign.linkImage ?? '[]'));
       List<String> result = [];
       for (String image in imageUrls) {
         result.add(image);

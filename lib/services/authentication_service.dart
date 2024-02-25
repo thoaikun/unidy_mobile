@@ -5,9 +5,10 @@ import 'package:http/http.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
+import 'package:unidy_mobile/services/base_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
-class AuthenticationService {
+class AuthenticationService extends Service {
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
   Future<Authenticate> login(Map<String, String> payload) async {
@@ -21,6 +22,9 @@ class AuthenticationService {
         case 404:
           ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
@@ -40,6 +44,9 @@ class AuthenticationService {
         case 400:
           ErrorResponse errorResponse = errorFromJson(response.body);
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
@@ -73,6 +80,9 @@ class AuthenticationService {
         case 400:
           ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidEmail);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
@@ -93,6 +103,9 @@ class AuthenticationService {
         case 400:
           ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidOtp);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }

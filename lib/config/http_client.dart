@@ -1,10 +1,11 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
+import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 
 class HttpClient {
   final Client client = Client();
   final Duration timeLimit = const Duration(seconds: 10);
-  String baseUri = 'http://192.168.88.138:8080';
+  String baseUri = dotenv.env['MAIN_SERVER_URL'] ??  'http://192.168.88.138:8080';
   Map<String, String>? headers;
 
   HttpClient({ this.headers });

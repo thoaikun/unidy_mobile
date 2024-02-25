@@ -10,6 +10,8 @@ import 'package:unidy_mobile/screens/placeholder/placeholder_screen.dart';
 
 import 'config/getit_config.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   await dotenv.load(fileName: ".env");
   configGetIt();
@@ -33,6 +35,7 @@ class MyApp extends StatelessWidget {
         title: 'Unidy',
         theme: unidyThemeData,
         home: const PlaceholderScreen(),
+        navigatorKey: navigatorKey,
       )
     );
   }

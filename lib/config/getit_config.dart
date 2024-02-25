@@ -3,6 +3,7 @@ import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/services/authentication_service.dart';
 import 'package:unidy_mobile/services/campaign_service.dart';
+import 'package:unidy_mobile/services/organization_service.dart';
 import 'package:unidy_mobile/services/post_service.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 
@@ -23,4 +24,5 @@ void configGetIt() async {
   getIt.registerSingleton<UserService>(UserService());
   getIt.registerSingleton<PostService>(PostService());
   getIt.registerSingleton<CampaignService>(CampaignService());
+  getIt.registerSingleton<OrganizationService>(OrganizationService());
 }

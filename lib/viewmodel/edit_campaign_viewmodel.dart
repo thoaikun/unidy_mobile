@@ -151,10 +151,10 @@ class EditCampaignViewModel extends ChangeNotifier {
 
       switch(category.key) {
         case VolunteerCategoryKey.education:
-          result['education_type'] = value;
+          result['education'] = value;
           break;
         case VolunteerCategoryKey.emergencyPreparedness:
-          result['emergency_preparedness'] = value;
+          result['emergencyPreparedness'] = value;
           break;
         case VolunteerCategoryKey.environment:
           result['environment'] = value;
@@ -163,13 +163,13 @@ class EditCampaignViewModel extends ChangeNotifier {
           result['healthy'] = value;
           break;
         case VolunteerCategoryKey.helpingNeighbours:
-          result['help_other'] = value;
+          result['helpOther'] = value;
           break;
         case VolunteerCategoryKey.strengtheningCommunities:
-          result['community_type'] = value;
+          result['communityType'] = value;
           break;
         case VolunteerCategoryKey.researchWritingEditing:
-          result['research_writing_editing'] = value;
+          result['research'] = value;
           break;
       }
     }
@@ -256,6 +256,10 @@ class EditCampaignViewModel extends ChangeNotifier {
       targetVolunteerStream,
       startDateStream.transform(ValidationTransformer(validationType: 'campaignStartDate')),
       (title, description, openFormTime, closeFormTime, location, budgetTarget, targetVolunteer, startDate) {
+        openFormTime = DateFormat('dd/MM/yyyy').parse(openFormTime).toLocal().toIso8601String();
+        closeFormTime = DateFormat('dd/MM/yyyy').parse(closeFormTime).toLocal().toIso8601String();
+        startDate = DateFormat('dd/MM/yyyy').parse(startDate).toLocal().toIso8601String();
+
         return <String, String>{
           'title': title,
           'description': description,
@@ -276,11 +280,22 @@ class EditCampaignViewModel extends ChangeNotifier {
         setLoading(true);
         _convertToMultipartFiles()
           .then((images) {
-            // return _campaignService.create(payload, images);
-            return Future.delayed(const Duration(seconds: 2));
+            return _campaignService.create(payload, images);
           })
           .then((_) {
             showSnackBar.call('Tạo chiến dịch thành công');
+            // empty all fields
+            _titleController.clear();
+            _descriptionController.clear();
+            _openFormTimeController.clear();
+            _closeFormTimeController.clear();
+            _locationController.clear();
+            _budgetTargetController.clear();
+            _targetVolunteerController.clear();
+            _startDateController.clear();
+            _files.clear();
+            _selectedCategories.clear();
+            _hagTags.clear();
           })
           .catchError(() => showSnackBar.call('Có lỗi xảy ra'))
           .whenComplete(() => setLoading(false));
