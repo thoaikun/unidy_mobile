@@ -11,9 +11,13 @@ class CampaignService extends Service {
   final int CAMPAIGN_LIMIT = 3;
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
-  Future<List<CampaignPost>> getRecommendCampaignFromRecommendService(int? offset) async {
+  Future<List<CampaignPost>> getRecommendCampaignFromRecommendService({int offset = 0}) async {
     try {
-      Response response = await httpClient.get('api/v1/campaign/getRecommendCampaign');
+      Map<String, dynamic> payload = {
+        'offset': offset.toString(),
+        'limit': CAMPAIGN_LIMIT.toString(),
+      };
+      Response response = await httpClient.get('api/v1/campaign/getRecommendCampaign', payload);
 
       switch(response.statusCode) {
         case 200:

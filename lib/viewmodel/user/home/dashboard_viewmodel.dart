@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
-import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/services/campaign_service.dart';
@@ -9,7 +8,6 @@ import 'package:unidy_mobile/services/post_service.dart';
 class DashboardViewModel extends ChangeNotifier {
   final PostService _postService = GetIt.instance<PostService>();
   final CampaignService _campaignService = GetIt.instance<CampaignService>();
-  final AppPreferences _appPreferences = GetIt.instance<AppPreferences>();
 
   String? _lastPostOffset;
   int _lastCampaignFromRecommendationServiceOffset = 0;
@@ -39,7 +37,7 @@ class DashboardViewModel extends ChangeNotifier {
   void initData() {
     Future.wait([
       _postService.getRecommendationPosts(_lastPostOffset),
-      _campaignService.getRecommendCampaignFromRecommendService(_lastCampaignFromRecommendationServiceOffset),
+      _campaignService.getRecommendCampaignFromRecommendService(offset: _lastCampaignFromRecommendationServiceOffset),
       _campaignService.getRecommendCampaignFromNeo4J(_lastCampaignFromNeo4JOffset)
     ])
       .then((value) {
@@ -91,7 +89,7 @@ class DashboardViewModel extends ChangeNotifier {
 
   void getCampaigns() {
     Future.wait([
-      _campaignService.getRecommendCampaignFromRecommendService(_lastCampaignFromRecommendationServiceOffset),
+      _campaignService.getRecommendCampaignFromRecommendService(offset: _lastCampaignFromRecommendationServiceOffset),
       _campaignService.getRecommendCampaignFromNeo4J(_lastCampaignFromNeo4JOffset)
     ])
       .then((value) {

@@ -37,7 +37,7 @@ class CampaignPost {
 class Campaign {
   String campaignId;
   String? hashTag;
-  String title;
+  String? title;
   String description;
   CampaignStatus status;
   String startDate;
@@ -77,8 +77,8 @@ class Campaign {
     campaignId: json["campaignId"],
     hashTag: json["hashTag"],
     title: json["title"],
-    description: json["description"],
-    status: json["status"],
+    description: json["content"],
+    status: toCampaignStatus(json['status']),
     startDate: json["startDate"],
     endDate: json["endDate"],
     timeTakePlace: json["timeTakePlace"],
@@ -150,4 +150,17 @@ enum CampaignStatus {
   inProgress,
   done,
   canceled
+}
+
+CampaignStatus toCampaignStatus(String? value) {
+  switch (value) {
+    case 'IN_PROGRESS':
+      return CampaignStatus.inProgress;
+    case 'DONE':
+      return CampaignStatus.done;
+    case 'CANCELED':
+      return CampaignStatus.canceled;
+    default:
+      return CampaignStatus.inProgress;
+  }
 }

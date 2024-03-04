@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/models/volunteer_category_model.dart';
-import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
 import 'package:unidy_mobile/viewmodel/edit_campaign_viewmodel.dart';
+import 'package:unidy_mobile/widgets/button/upload_btn.dart';
 import 'package:unidy_mobile/widgets/image/image_preview.dart';
 import 'package:unidy_mobile/widgets/input/editable_chip_input.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
-import 'package:unidy_mobile/widgets/button/upload_btn.dart';
 
 class EditCampaignScreen extends StatefulWidget {
   const EditCampaignScreen({super.key});
@@ -135,14 +134,14 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
                   controller: editCampaignViewModel.titleController,
                   label: 'Tên chiến dịch',
                   error: editCampaignViewModel.titleError,
-                  prefixIcon: Icon(Icons.campaign_rounded),
+                  prefixIcon: const Icon(Icons.campaign_rounded),
                 ),
                 const SizedBox(height: 10),
                 Input(
                   controller: editCampaignViewModel.descriptionController,
                   label: 'Mô tả',
                   error: editCampaignViewModel.descriptionError,
-                  prefixIcon: Icon(Icons.description_rounded),
+                  prefixIcon: const Icon(Icons.description_rounded),
                 ).textarea(),
                 const SizedBox(height: 10),
                 EditableChipInput(
@@ -173,14 +172,14 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
                 Input(
                   controller: editCampaignViewModel.budgetTargetController,
                   label: 'Mục tiêu (tùy chọn)',
-                  prefixIcon: Icon(Icons.attach_money_rounded),
+                  prefixIcon: const Icon(Icons.attach_money_rounded),
                   numberKeyboard: true,
                 ),
                 const SizedBox(height: 10),
                 Input(
                   controller: editCampaignViewModel.targetVolunteerController,
                   label: 'Số lượng tình nguyện viên (tùy chọn)',
-                  prefixIcon: Icon(Icons.volunteer_activism_rounded),
+                  prefixIcon: const Icon(Icons.volunteer_activism_rounded),
                   numberKeyboard: true,
                 ),
                 const SizedBox(height: 10),

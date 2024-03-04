@@ -7,6 +7,7 @@ import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/local_data_model.dart';
 import 'package:unidy_mobile/services/authentication_service.dart';
+import 'package:unidy_mobile/services/firebase_service.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/models/authenticate_model.dart';
@@ -21,6 +22,7 @@ class LoginViewModel extends ChangeNotifier {
   HttpClient httpClient = GetIt.instance<HttpClient>();
   final UserService userService = GetIt.instance<UserService>();
   final AppPreferences appPreferences = GetIt.instance<AppPreferences>();
+  final FirebaseService firebaseService = FirebaseService();
   final Duration debounceTime = const Duration(milliseconds: 500);
 
   final TextEditingController _emailController = TextEditingController();
@@ -114,6 +116,7 @@ class LoginViewModel extends ChangeNotifier {
       await appPreferences.setString('localData', jsonEncode(localData.toJson()));
     }
     httpClient.addHeader('Authorization', 'Bearer ${authenticationResponse.accessToken}');
+    await firebaseService.initNotification();
     _setLoadingLogin(false);
     if (authenticationResponse.role == 'VOLUNTEER') {
       if (authenticationResponse.isChosenFavorite == true) {

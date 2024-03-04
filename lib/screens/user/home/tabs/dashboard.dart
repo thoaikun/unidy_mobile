@@ -61,7 +61,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
           physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             if (index < dashboardViewModel.recommendationList.length) {
-              if (dashboardViewModel.recommendationList[index] is CampaignPostCard) {
+              if (dashboardViewModel.recommendationList[index] is CampaignPost) {
                 CampaignPost campaign = dashboardViewModel.recommendationList[index];
                 return CampaignPostCard(campaignPost: campaign);
               }

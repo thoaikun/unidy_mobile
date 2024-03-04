@@ -107,7 +107,7 @@ class _FriendsState extends State<Friends> {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SuggestionFriendListContainer()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SuggestionFriendListContainer()));
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,

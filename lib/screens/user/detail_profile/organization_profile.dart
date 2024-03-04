@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/themes/color_config.dart';
 
 class OrganizationProfileScreen extends StatefulWidget {
   const OrganizationProfileScreen({super.key});

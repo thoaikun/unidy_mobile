@@ -5,6 +5,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
+import 'package:unidy_mobile/screens/user/donation/donation_screen.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
@@ -382,7 +383,7 @@ class CampaignPostCard extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: FilledButton(
-                onPressed: () => {},
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DonationScreen())),
                 child: const Text('Tham gia ngay', style: TextStyle(color: Colors.white)),
               ),
             )
@@ -396,7 +397,7 @@ class CampaignPostCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(campaignPost.campaign.title, style: Theme.of(context).textTheme.titleMedium),
+        Text(campaignPost.campaign.title ?? 'Không có tiêu đề', style: Theme.of(context).textTheme.titleMedium),
         ReadMoreText(
           campaignPost.campaign.description,
           trimLines: 3,
