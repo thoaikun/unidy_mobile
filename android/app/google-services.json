@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1044258734361",
+    "project_id": "unidy-a27dd",
+    "storage_bucket": "unidy-a27dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044258734361:android:9961e2c02eb2ad27340588",
+        "android_client_info": {
+          "package_name": "com.example.unidy_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0BvhqNXFtImpWuWFghsXXhjG21hBoIAg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
