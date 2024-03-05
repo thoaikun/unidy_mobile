@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/post_emotional_model.dart';
+import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/viewmodel/user/home/add_post_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
@@ -174,7 +175,19 @@ class _AddPostState extends State<AddPost> {
                       if (error is ValidationException) {
                         return;
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(_buildSnakeBar(false));
+                      else if (error is ResponseException && error.code == ExceptionErrorCode.invalidToken) {
+                        error.handleForbiddenException(
+                          () => Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              (route) => false
+                          )
+                        );
+                      }
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            _buildSnakeBar(false));
+                      }
                     })
                     .whenComplete(() => addPostController.setLoading(false));
                 },

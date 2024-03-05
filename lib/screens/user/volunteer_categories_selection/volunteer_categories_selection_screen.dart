@@ -72,9 +72,9 @@ class _VolunteerCategoriesSelectionScreenState extends State<VolunteerCategories
               direction: Axis.horizontal,
               spacing: 8.0,
               runSpacing: 8.0,
-              children: volunteerCategoriesSelectionViewModel.categories.map((category) {
+              children: VolunteerCategory.categories.map((category) {
                   return FilterChip(
-                    label: Text(fromVolunteerCategoryToString(category)),
+                    label: Text(category.toString()),
                     onSelected: (bool selected) {
                       volunteerCategoriesSelectionViewModel.toggleCategory(selected, category);
                     },

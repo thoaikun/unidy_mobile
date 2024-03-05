@@ -5,9 +5,10 @@ import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
+import 'package:unidy_mobile/services/base_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
-class UserService {
+class UserService extends Service {
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
   Future<User> whoAmI() async {
@@ -19,6 +20,7 @@ class UserService {
           User userResponse = userFromJson(utf8.decode(response.bodyBytes));
           return userResponse;
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -37,6 +39,7 @@ class UserService {
         case 200:
           break;
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -58,6 +61,7 @@ class UserService {
         case 400:
           throw ResponseException(value: 'Định dạng ảnh không phù hợp', code: ExceptionErrorCode.invalidImageExtension);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -80,6 +84,7 @@ class UserService {
           ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidResetPassword);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -101,6 +106,7 @@ class UserService {
           ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalid);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -123,6 +129,7 @@ class UserService {
         case 400:
           throw ResponseException(value: 'Lời mời kết bạn không hợp lệ', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -143,6 +150,7 @@ class UserService {
         case 400:
           throw ResponseException(value: 'Không thể chấp nhận lời mời kết bạn', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -163,6 +171,7 @@ class UserService {
         case 400:
           throw ResponseException(value: 'Không thể từ chối lời mời kết bạn', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -183,6 +192,7 @@ class UserService {
         case 400:
           throw ResponseException(value: 'Không thể xóa bạn bè', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -204,6 +214,7 @@ class UserService {
         case 400:
           throw ResponseException(value: 'Không thể lấy danh sách lời mời kết bạn', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -225,9 +236,9 @@ class UserService {
         case 400:
           throw ResponseException(value: 'Không thể lấy danh sách bạn bè', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
-          print(response.body);
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
     }
@@ -247,13 +258,56 @@ class UserService {
         case 400:
           throw ResponseException(value: 'Không thể lấy danh sách gợi ý', code: ExceptionErrorCode.invalidFriendRequest);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
-          print(response.body);
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
     }
     catch(error) {
+      rethrow;
+    }
+  }
+
+
+  Future<void> followOrganization(int organizationId) async {
+    try {
+      Response response = await httpClient.patch('api/v1/users/follow-organization?organizationId=$organizationId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Không thể theo dõi tổ chức', code: ExceptionErrorCode.invalidFollowOrganization);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> unfollowOrganization(int organizationId) async {
+    try {
+      Response response = await httpClient.patch('api/v1/users/unfollow-organization?organizationId=$organizationId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Không thể bỏ theo dõi tổ chức', code: ExceptionErrorCode.invalidFollowOrganization);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
       rethrow;
     }
   }

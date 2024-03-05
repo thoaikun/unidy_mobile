@@ -6,7 +6,13 @@ class Validation  {
       'name': ExceptionErrorCode.invalidName,
       'job': ExceptionErrorCode.invalidJob,
       'workplace': ExceptionErrorCode.invalidWorkplace,
-      'dob': ExceptionErrorCode.invalidDob
+      'dob': ExceptionErrorCode.invalidDob,
+      'campaignTitle': ExceptionErrorCode.invalidCampaignTitle,
+      'campaignDescription': ExceptionErrorCode.invalidCampaignDescription,
+      'campaignLocation': ExceptionErrorCode.invalidCampaignLocation,
+      'campaignStartDate': ExceptionErrorCode.invalidCampaignStartDate,
+      'campaignOpenFormDate': ExceptionErrorCode.invalidCampaignOpenFormDate,
+      'campaignCloseFormDate': ExceptionErrorCode.invalidCampaignCloseFormDate,
     };
 
     if (value == null) {

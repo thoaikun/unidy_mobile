@@ -14,11 +14,11 @@ class WaitingButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _WaitingButtonState createState() =>
-      _WaitingButtonState();
+  WaitingButtonState createState() =>
+      WaitingButtonState();
 }
 
-class _WaitingButtonState extends State<WaitingButton> {
+class WaitingButtonState extends State<WaitingButton> {
   bool _isDisabled = false;
   Timer? _countdownTimer;
   String _remainingTime = '0';

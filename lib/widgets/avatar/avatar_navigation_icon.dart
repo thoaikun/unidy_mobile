@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
-import 'package:unidy_mobile/models/user_model.dart';
 
 class AvatarProfile extends StatelessWidget {
   final bool selected;

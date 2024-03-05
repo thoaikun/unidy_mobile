@@ -15,15 +15,6 @@ class VolunteerCategoriesSelectionViewModel extends ChangeNotifier {
   void Function() handleNavigateToHomeScreen;
   void Function(String title, String content) showAlertDialog;
 
-  List<VolunteerCategory> categories = [
-    VolunteerCategory.education,
-    VolunteerCategory.strengtheningCommunities,
-    VolunteerCategory.environment,
-    VolunteerCategory.emergencyPreparedness,
-    VolunteerCategory.health,
-    VolunteerCategory.helpingNeighbours,
-    VolunteerCategory.researchWritingEditing,
-  ];
   List<VolunteerCategory> selectedCategories = [];
   bool isLoading = false;
 
@@ -66,7 +57,7 @@ class VolunteerCategoriesSelectionViewModel extends ChangeNotifier {
   Map<String, double> initCategoryWeights() {
     Map<String, double> result = {};
 
-    for (VolunteerCategory category in categories) {
+    for (VolunteerCategory category in VolunteerCategory.categories) {
       double value;
       if (selectedCategories.contains(category)) {
         value = Random().nextDouble() * (1 - 0.1) + 0.1;
@@ -75,26 +66,26 @@ class VolunteerCategoriesSelectionViewModel extends ChangeNotifier {
         value = 0;
       }
 
-      switch(category) {
-        case VolunteerCategory.education:
+      switch(category.key) {
+        case VolunteerCategoryKey.education:
           result['education_type'] = value;
           break;
-        case VolunteerCategory.emergencyPreparedness:
+        case VolunteerCategoryKey.emergencyPreparedness:
           result['emergency_preparedness'] = value;
           break;
-        case VolunteerCategory.environment:
+        case VolunteerCategoryKey.environment:
           result['environment'] = value;
           break;
-        case VolunteerCategory.health:
+        case VolunteerCategoryKey.health:
           result['healthy'] = value;
           break;
-        case VolunteerCategory.helpingNeighbours:
+        case VolunteerCategoryKey.helpingNeighbours:
           result['help_other'] = value;
           break;
-        case VolunteerCategory.strengtheningCommunities:
+        case VolunteerCategoryKey.strengtheningCommunities:
           result['community_type'] = value;
           break;
-        case VolunteerCategory.researchWritingEditing:
+        case VolunteerCategoryKey.researchWritingEditing:
           result['research_writing_editing'] = value;
           break;
       }

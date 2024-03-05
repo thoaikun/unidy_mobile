@@ -2,15 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/services/authentication_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
-
-enum EUserRole {
-  volunteer,
-  sponsor,
-  organization
-}
 
 class SignUpViewModel extends ChangeNotifier {
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
@@ -19,7 +14,7 @@ class SignUpViewModel extends ChangeNotifier {
   final Duration debounceTime = const Duration(milliseconds: 500);
 
   int _currentStep = 0;
-  EUserRole? _selectedRole;
+  ERole? _selectedRole;
   bool passwordVisible = false;
   bool loadingSignUp = false;
   String _email = '';
@@ -53,7 +48,7 @@ class SignUpViewModel extends ChangeNotifier {
   String? workplaceError;
 
   int get step => _currentStep;
-  EUserRole? get selectedRole => _selectedRole;
+  ERole? get selectedRole => _selectedRole;
   TextEditingController get emailController => _emailController;
   TextEditingController get passwordController => _passwordController;
   TextEditingController get dobController => _dobController;
@@ -63,9 +58,8 @@ class SignUpViewModel extends ChangeNotifier {
   TextEditingController get jobController => _jobController;
   TextEditingController get workPlaceController => _workplaceController;
 
-
   SignUpViewModel() {
-    _selectedRole = EUserRole.volunteer;
+    _selectedRole = ERole.volunteer;
     _emailController.addListener(() => _setEmailError(null));
     _passwordController.addListener(() => _setPasswordError(null));
     _dobController.addListener(() => _setDobError(null));
@@ -78,9 +72,10 @@ class SignUpViewModel extends ChangeNotifier {
     _sexController.text = 'Nam';
     verifyNewAccount();
     verifyUserInfo();
+    verifyOrganizationInfo();
   }
 
-  void setUserRole(EUserRole role) {
+  void setUserRole(ERole role) {
     _selectedRole = role;
     notifyListeners();
   }
@@ -216,9 +211,9 @@ class SignUpViewModel extends ChangeNotifier {
           "job": job,
           "workLocation": workplace,
           "password": _password,
-          "role": _selectedRole == EUserRole.volunteer
+          "role": _selectedRole == ERole.volunteer
             ? 'VOLUNTEER' :
-            _selectedRole == EUserRole.sponsor
+            _selectedRole == ERole.sponsor
             ? 'SPONSOR' :
             'ORGANIZATION'
         };
@@ -229,12 +224,52 @@ class SignUpViewModel extends ChangeNotifier {
         _setLoading(true);
         authenticationService.signUp(payload)
           .then((_) {
-            _setLoading(false);
             nextStep();
           })
           .catchError((error) {
             print(error);
-          });
+          })
+          .whenComplete(() => _setLoading(false));
+      })
+      .onError(handleSignUpError);
+  }
+
+  void verifyOrganizationInfo() {
+    Stream<String> nameStream = _nameSubject.stream;
+    Stream<String> dobStream = _dobSubject.stream;
+    Stream<String> phoneStream = _phoneSubject.stream;
+    Stream<String> workplaceStream = _workplaceSubject.stream;
+
+    CombineLatestStream.combine4(
+      nameStream.transform(ValidationTransformer(validationType: 'name')),
+      dobStream.transform(ValidationTransformer(validationType: 'dob')),
+      phoneStream.transform(PhoneValidationTransformer()),
+      workplaceStream.transform(ValidationTransformer(validationType: 'workplace')),
+      (name, dob, phone, workplace) {
+        DateTime dateTime = DateFormat('dd/MM/yyyy').parse(dob);
+
+        return <String, String>{
+          "fullName" : name,
+          "dayOfBirth" : DateFormat('yyyy-MM-dd').format(dateTime).toString(),
+          "phone" : phone,
+          "email": _email,
+          "address": workplace,
+          "password": _password,
+          "role": 'ORGANIZATION'
+        };
+      }
+    )
+      .debounceTime(debounceTime)
+      .listen((payload) {
+        _setLoading(true);
+        authenticationService.signUp(payload)
+          .then((_) {
+            nextStep();
+          })
+          .catchError((error) {
+            print(error);
+          })
+          .whenComplete(() => _setLoading(false));
       })
       .onError(handleSignUpError);
   }
@@ -269,12 +304,25 @@ class SignUpViewModel extends ChangeNotifier {
     Sink<String> jobSink = _jobSubject.sink;
     Sink<String> workplaceSink = _workplaceSubject.sink;
 
-    dobSink.add(_dobController.text); // Replace with your dob controller
-    sexSink.add(_sexController.text); // Replace with your sex controller
-    phoneSink.add(_phoneController.text); // Replace with your phone controller
-    nameSink.add(_nameController.text); // Replace with your name controller
-    jobSink.add(_jobController.text); // Replace with your job controller
-    workplaceSink.add(_workplaceController.text); // Replace with your workplace controller
+    switch (_selectedRole) {
+      case ERole.volunteer:
+      case ERole.sponsor:
+        dobSink.add(_dobController.text); // Replace with your dob controller
+        sexSink.add(_sexController.text); // Replace with your sex controller
+        phoneSink.add(_phoneController.text); // Replace with your phone controller
+        nameSink.add(_nameController.text); // Replace with your name controller
+        jobSink.add(_jobController.text); // Replace with your job controller
+        workplaceSink.add(_workplaceController.text); // Replace with your workplace controller
+        return;
+      case ERole.organization:
+        dobSink.add(_dobController.text); // Replace with your dob controller
+        phoneSink.add(_phoneController.text); // Replace with your phone controller
+        nameSink.add(_nameController.text); // Replace with your name controller
+        workplaceSink.add(_workplaceController.text); // Replace with your workplace controller
+        return;
+      default:
+        return;
+    }
   }
 
   void handleSignUpError(Object error) {

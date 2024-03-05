@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/viewmodel/signup_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/role_card.dart';
+import 'package:unidy_mobile/models/authenticate_model.dart';
 
 class SelectRoleStep extends StatelessWidget {
   const SelectRoleStep({super.key});
@@ -41,8 +42,8 @@ class SelectRoleStep extends StatelessWidget {
                     ],
                     title: 'Tình nguyện viên',
                     description: 'Tham gia các chương trình từ thiện',
-                    isSelected: signUpViewModel.selectedRole == EUserRole.volunteer ,
-                    onTap: () => signUpViewModel.setUserRole(EUserRole.volunteer),
+                    isSelected: signUpViewModel.selectedRole == ERole.volunteer ,
+                    onTap: () => signUpViewModel.setUserRole(ERole.volunteer),
                   ),
                   const SizedBox(height: 20),
                   RoleCard(
@@ -52,8 +53,8 @@ class SelectRoleStep extends StatelessWidget {
                     ],
                     title: 'Nhà hảo tâm',
                     description: 'Tài trợ cho các chương trình từ thiện',
-                    isSelected: signUpViewModel.selectedRole == EUserRole.sponsor ,
-                    onTap: () => signUpViewModel.setUserRole(EUserRole.sponsor),
+                    isSelected: signUpViewModel.selectedRole == ERole.sponsor ,
+                    onTap: () => signUpViewModel.setUserRole(ERole.sponsor),
                   ),
                   const SizedBox(height: 20),
                   RoleCard(
@@ -63,8 +64,8 @@ class SelectRoleStep extends StatelessWidget {
                     ],
                     title: 'Nhà tổ chức',
                     description: 'Tổ chức các hoạt động từ thiện',
-                    isSelected: signUpViewModel.selectedRole == EUserRole.organization ,
-                    onTap: () => signUpViewModel.setUserRole(EUserRole.organization),
+                    isSelected: signUpViewModel.selectedRole == ERole.organization ,
+                    onTap: () => signUpViewModel.setUserRole(ERole.organization),
                   ),
                 ]
             )

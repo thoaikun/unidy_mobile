@@ -70,6 +70,27 @@ class RequestFriendListViewModel extends ChangeNotifier {
     }
   }
 
+  void refreshData() async {
+    setFirstLoading(true);
+    try {
+      cursor = Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss').toString();
+      List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests({
+        'limit': LIMIT.toString(),
+        'cursor': cursor
+      });
+      if (friendRequestResponse.isNotEmpty) {
+        cursor = Formatter.formatTime(friendRequestResponse[friendRequestResponse.length - 1].requestAt, 'yyyy-MM-ddTHH:mm:ss').toString();
+      }
+      setFriendRequests(friendRequestResponse);
+    }
+    catch (error) {
+      print(error);
+    }
+    finally {
+      setFirstLoading(false);
+    }
+  }
+
   Future<bool> acceptFriendRequest(FriendRequest? friendRequest) async {
     if (friendRequest == null) return false;
 

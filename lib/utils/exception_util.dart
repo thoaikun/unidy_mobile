@@ -25,6 +25,13 @@ class ResponseException implements Exception {
       'code': code
     }.toString();
   }
+
+  void handleForbiddenException(Function handler) {
+    if (code == ExceptionErrorCode.invalidToken) {
+      handler();
+    }
+    return;
+  }
 }
 
 enum ExceptionErrorCode {
@@ -46,4 +53,15 @@ enum ExceptionErrorCode {
   invalidImageExtension,
   invalidUserId,
   invalidFriendRequest,
+
+  invalidCampaignTitle,
+  invalidCampaignDescription,
+  invalidCampaignLocation,
+  invalidCampaignStartDate,
+  invalidCampaignOpenFormDate,
+  invalidCampaignCloseFormDate,
+
+  invalidFollowOrganization,
+
+  invalidAmountOfMoney,
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 
@@ -47,4 +48,20 @@ class Formatter {
 String getImageUrl(String path) {
   if (path.contains(dotenv.env['S3_BASE_URL']!)) return path;
   return '${dotenv.env['S3_BASE_URL']}$path';
+}
+
+class VndInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) {
+      return newValue.copyWith(text: '');
+    }
+
+    final numValue = int.parse(newValue.text.replaceAll(RegExp('[^0-9]'), ''));
+    final formattedValue = NumberFormat.currency(locale: 'vi_VN', symbol: '').format(numValue);
+    return newValue.copyWith(
+      text: formattedValue,
+      selection: TextSelection.collapsed(offset: formattedValue.length),
+    );
+  }
 }

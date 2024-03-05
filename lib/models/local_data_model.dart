@@ -33,33 +33,30 @@ class LocalData {
     'isChosenFavorite': isChosenFavorite,
   };
 
-  static AccountMode? accountModeFromString(String? value) {
+  static AccountMode accountModeFromString(String? value) {
     switch (value) {
-      case 'sponsor':
+      case 'SPONSOR':
         return AccountMode.sponsor;
-      case 'organization':
+      case 'ORGANIZATION':
         return AccountMode.organization;
-      case 'user':
+      case 'VOLUNTEER':
         return AccountMode.user;
-      case 'none':
-        return AccountMode.none;
       default:
-        return null;
+        return AccountMode.none;
     }
   }
 
   static String accountModeToString(AccountMode? accountMode) {
     switch (accountMode) {
       case AccountMode.user:
-        return 'user';
+        return 'VOLUNTEER';
       case AccountMode.sponsor:
-        return 'sponsor';
+        return 'SPONSOR';
       case AccountMode.organization:
-        return 'organization';
+        return 'ORGANIZATION';
       case AccountMode.none:
-        return 'none';
       default:
-        return 'none';
+        return 'NONE';
     }
   }
 }

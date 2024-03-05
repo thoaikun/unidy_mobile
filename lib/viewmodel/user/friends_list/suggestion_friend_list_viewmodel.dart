@@ -29,16 +29,6 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSkip(int value) {
-    _skip = value;
-    notifyListeners();
-  }
-
-  void setRangeEnd(int value) {
-    _rangeEnd = value;
-    notifyListeners();
-  }
-
   void initData() async {
     _rangeEnd = 4;
     _skip = 0;
@@ -50,8 +40,8 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
       });
       setFriendSuggestionList(friendSuggestionResponse);
       setFirstLoading(false);
-      setSkip(_skip + 10);
-      setRangeEnd(_rangeEnd + 1);
+      _skip += 10;
+      _rangeEnd += 1;
     }
     catch (error) {
       print(error);
@@ -67,12 +57,32 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
         'rangeEnd': _rangeEnd.toString()
       });
       setFriendSuggestionList([..._friendSuggestionList, ...friendSuggestionResponse]);
-      setSkip(_skip + 10);
-      setRangeEnd(_rangeEnd + 1);
+      _skip += 10;
+      _rangeEnd += 1;
       setLoading(false);
     }
     catch (error) {
       print(error);
+    }
+  }
+
+  void refreshData() async {
+    setFirstLoading(true);
+    try {
+      _skip = 0;
+      _rangeEnd = 4;
+      List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations({
+        'limit': '10',
+        'skip': _skip.toString(),
+        'rangeEnd': _rangeEnd.toString()
+      });
+      setFriendSuggestionList(friendSuggestionResponse);
+    }
+    catch (error) {
+      print(error);
+    }
+    finally {
+      setFirstLoading(false);
     }
   }
 

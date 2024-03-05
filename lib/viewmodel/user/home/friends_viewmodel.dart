@@ -120,8 +120,8 @@ class FriendsViewModel extends ChangeNotifier {
 
     try {
       await _userService.unfriend(userId);
-      List<Friend> result = _friendList.where((element) => element.userId != userId).toList();
-      setFriendList(result);
+      _friendList.removeWhere((element) => element.userId != userId);
+      setFriendList(_friendList);
       return true;
     }
     catch (error) {

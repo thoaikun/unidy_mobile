@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:unidy_mobile/config/themes/color_config.dart';
-import 'package:unidy_mobile/models/campaign_model.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/user/home/dashboard_viewmodel.dart';
@@ -36,7 +35,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         return RefreshIndicator(
           onRefresh: () async {
             return Future.delayed(const Duration(seconds: 1))
-              .then((value) => dashboardViewModel.initData());
+              .then((value) => dashboardViewModel.refreshData());
           },
           backgroundColor: Colors.white,
           strokeWidth: 2,
@@ -62,9 +61,9 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
           physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             if (index < dashboardViewModel.recommendationList.length) {
-              if (dashboardViewModel.recommendationList[index] is Campaign) {
-                Campaign campaign = dashboardViewModel.recommendationList[index];
-                return Placeholder();
+              if (dashboardViewModel.recommendationList[index] is CampaignPost) {
+                CampaignPost campaign = dashboardViewModel.recommendationList[index];
+                return CampaignPostCard(campaignPost: campaign);
               }
               else {
                 Post post = dashboardViewModel.recommendationList[index];
@@ -99,9 +98,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   Widget _buildPostCardListSkeleton() {
     return ListView.separated(
       itemBuilder: (BuildContext context, int index) {
-        return const PostCard(
-
-        );
+        return const PostCard().buildSkeleton(context);
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
       itemCount: 5,

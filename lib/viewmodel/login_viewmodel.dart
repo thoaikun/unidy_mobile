@@ -7,20 +7,22 @@ import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/local_data_model.dart';
 import 'package:unidy_mobile/services/authentication_service.dart';
+import 'package:unidy_mobile/services/firebase_service.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  void Function() navigateToHomeScreen;
+  void Function(ERole role) navigateToHomeScreen;
   void Function() navigateToVolunteerCategoriesSelectionScreen;
-  void Function() showErrorDialog;
+  void Function([String? title, String? content]) showErrorDialog;
 
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
   HttpClient httpClient = GetIt.instance<HttpClient>();
   final UserService userService = GetIt.instance<UserService>();
   final AppPreferences appPreferences = GetIt.instance<AppPreferences>();
+  final FirebaseService firebaseService = FirebaseService();
   final Duration debounceTime = const Duration(milliseconds: 500);
 
   final TextEditingController _emailController = TextEditingController();
@@ -101,25 +103,31 @@ class LoginViewModel extends ChangeNotifier {
     String? data = appPreferences.getString('localData');
 
     if (data == null) {
-      LocalData localData = LocalData(authenticationResponse.accessToken, authenticationResponse.refreshToken, true, authenticationResponse.isChosenFavorite ?? true, 'user');
+      LocalData localData = LocalData(authenticationResponse.accessToken, authenticationResponse.refreshToken, false, authenticationResponse.isChosenFavorite ?? true, authenticationResponse.role);
       await appPreferences.setString('localData', jsonEncode(localData.toJson()));
     }
     else {
       LocalData localData = LocalData.fromJson(jsonDecode(data));
       localData.accessToken = authenticationResponse.accessToken;
       localData.refreshToken = authenticationResponse.refreshToken;
-      localData.accountMode = AccountMode.user;
+      localData.accountMode = LocalData.accountModeFromString(authenticationResponse.role);
       localData.isFirstTimeOpenApp = false;
       localData.isChosenFavorite = authenticationResponse.isChosenFavorite ?? true;
       await appPreferences.setString('localData', jsonEncode(localData.toJson()));
     }
     httpClient.addHeader('Authorization', 'Bearer ${authenticationResponse.accessToken}');
+    await firebaseService.initNotification();
     _setLoadingLogin(false);
-    if (authenticationResponse.isChosenFavorite == null) {
-      navigateToHomeScreen();
+    if (authenticationResponse.role == 'VOLUNTEER') {
+      if (authenticationResponse.isChosenFavorite == true) {
+        navigateToHomeScreen(ERole.volunteer);
+      }
+      else {
+        navigateToVolunteerCategoriesSelectionScreen();
+      }
     }
-    else {
-      navigateToVolunteerCategoriesSelectionScreen();
+    else if (authenticationResponse.role == 'ORGANIZATION') {
+      navigateToHomeScreen(ERole.organization);
     }
   }
 

@@ -4,10 +4,11 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/post_model.dart';
+import 'package:unidy_mobile/services/base_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 
-class PostService {
+class PostService extends Service {
   final String POST_LIMIT = '5';
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
@@ -27,6 +28,7 @@ class PostService {
         case 400:
           throw ResponseException(value: 'UserId không đúng', code: ExceptionErrorCode.invalidUserId);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -51,6 +53,7 @@ class PostService {
           List<Post> postListResponse = postListFromJson(utf8.decode(response.bodyBytes));
           return postListResponse;
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -72,6 +75,7 @@ class PostService {
         case 400:
           throw ResponseException(value: 'Định dạng ảnh không phù hợp', code: ExceptionErrorCode.invalidImageExtension);
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -98,6 +102,7 @@ class PostService {
         case 200:
           return;
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -116,6 +121,7 @@ class PostService {
         case 200:
           return;
         case 403:
+          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
