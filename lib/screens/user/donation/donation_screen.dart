@@ -1,8 +1,7 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
-import 'package:unidy_mobile/config/themes/color_config.dart';
-import 'package:unidy_mobile/utils/formatter_util.dart';
-import 'package:unidy_mobile/widgets/input/input.dart';
+import 'package:provider/provider.dart';
+import 'package:unidy_mobile/viewmodel/user/donation_viewmodel.dart';
 
 class DonationScreen extends StatefulWidget {
   const DonationScreen({super.key});
@@ -12,8 +11,6 @@ class DonationScreen extends StatefulWidget {
 }
 
 class _DonationScreenState extends State<DonationScreen> {
-  final CurrencyTextInputFormatter _currencyFormatter = CurrencyTextInputFormatter(locale: 'vi', symbol: 'đ', turnOffGrouping: false, decimalDigits: 0);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,11 +33,12 @@ class _DonationScreenState extends State<DonationScreen> {
                 Text('Số tiền ủng hộ', style: Theme.of(context).textTheme.bodyLarge),
                 _buildInput(),
                 const SizedBox(height: 35),
-                _buildSuggestionDonationChip(),
               ],
             ),
             Column(
               children: [
+                _buildSuggestionDonationChip(),
+                const SizedBox(height: 15),
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
@@ -82,6 +80,8 @@ class _DonationScreenState extends State<DonationScreen> {
   }
 
   Widget _buildInput() {
+    DonationViewModel donationViewModel = Provider.of<DonationViewModel>(context, listen: true);
+
     return Center(
       child: Container(
         constraints: const BoxConstraints(
@@ -89,34 +89,45 @@ class _DonationScreenState extends State<DonationScreen> {
           maxWidth: 200,
         ),
         child: TextFormField(
+          controller: donationViewModel.amountOfMoneyController,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 32),
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
           autofocus: true,
-          inputFormatters: [_currencyFormatter],
-          initialValue: _currencyFormatter.format('0'),
+          inputFormatters: [donationViewModel.currencyFormatter],
         )
       ),
     );
   }
 
   Widget _buildSuggestionDonationChip() {
-    return Wrap(
-      spacing: 10,
-      children: [
-        ChoiceChip(
-          label: Text('50,000đ', style: Theme.of(context).textTheme.bodyLarge),
-          selected: true,
-          showCheckmark: false,
-          onSelected: (bool selected) {},
-        ),
-        ChoiceChip(
-          label: Text('100,000đ', style: Theme.of(context).textTheme.bodyLarge),
-          selected: false,
-          showCheckmark: false,
-          onSelected: (bool selected) {},
-        ),
-      ],
+    DonationViewModel donationViewModel = Provider.of<DonationViewModel>(context, listen: true);
+    List<String> suggestionDonations = donationViewModel.suggestionDonations;
+
+    return Container(
+      height: 50,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width - 40,
+      ),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        itemCount: suggestionDonations.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ChoiceChip(
+            label: Text(suggestionDonations[index], style: Theme.of(context).textTheme.bodyLarge),
+            selected: donationViewModel.selectedSuggestion == suggestionDonations[index],
+            onSelected: (bool selected) {
+              if (selected) {
+                donationViewModel.onSelectedSuggestion(suggestionDonations[index]);
+              }
+            },
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(width: 10);
+        },
+      ),
     );
   }
 }

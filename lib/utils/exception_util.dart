@@ -61,5 +61,7 @@ enum ExceptionErrorCode {
   invalidCampaignOpenFormDate,
   invalidCampaignCloseFormDate,
 
-  invalidFollowOrganization
+  invalidFollowOrganization,
+
+  invalidAmountOfMoney,
 }
