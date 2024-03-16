@@ -10,20 +10,14 @@ import 'package:unidy_mobile/utils/exception_util.dart';
 class TransactionService extends Service {
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
-  Future<MomoTransaction> createMomoTransaction(String amountOfMoney, String campaignId, String organizationId) async {
-      Map<String, String> payload =  {
-        'amount': amountOfMoney,
-        'campaignId': campaignId,
-        'organizationId': organizationId
-      };
-
+  Future<MomoTransaction> createMomoTransaction(Map<String, int> payload) async {
       try {
-        Response response = await httpClient.post('api/v1/donation', payload);
+        Response response = await httpClient.post('api/v1/donation', jsonEncode(payload));
         switch (response.statusCode) {
           case 200:
             return momoTransactionFromJson(utf8.decode(response.bodyBytes));
           case 400:
-            throw ResponseException(value: 'Số tiền không hợp lệ', code: ExceptionErrorCode.invalidAmountOfMoney);
+            throw ResponseException(value: 'Dữ liệu không hợp lệ', code: ExceptionErrorCode.invalidAmountOfMoney);
           case 403:
             catchForbidden();
             throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);

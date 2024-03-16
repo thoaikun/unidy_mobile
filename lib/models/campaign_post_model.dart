@@ -1,10 +1,36 @@
 import 'dart:convert';
 
+CampaignData campaignDataFromJson(String str) => CampaignData.fromJson(json.decode(str));
+
 List<CampaignPost> campaignPostListFromJson(String str) => List<CampaignPost>.from(json.decode(str).map((x) => CampaignPost.fromJson(x)));
 
 CampaignPost campaignPostFromJson(String str) => CampaignPost.fromJson(json.decode(str));
 
 String campaignPostToJson(CampaignPost data) => json.encode(data.toJson());
+
+class CampaignData {
+  final List<CampaignPost> campaigns;
+  String? nextCursor;
+  final int nextOffset;
+
+  CampaignData({
+    required this.campaigns,
+    required this.nextCursor,
+    required this.nextOffset,
+  });
+
+  factory CampaignData.fromJson(Map<String, dynamic> json) => CampaignData(
+    campaigns: List<CampaignPost>.from(json["campaigns"].map((x) => CampaignPost.fromJson(x))),
+    nextCursor: json["nextCursor"],
+    nextOffset: json["nextOffset"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "campaigns": List<CampaignPost>.from(campaigns.map((x) => x.toJson())),
+    "cursor": nextCursor,
+    "nextOffset": nextOffset,
+  };
+}
 
 class CampaignPost {
   Campaign campaign;
@@ -50,6 +76,8 @@ class Campaign {
   String? linkImage;
   int? numOfRegister;
   int? donate;
+  int? donationBudget;
+  int? donationBudgetReceived;
   dynamic userNode;
   List<dynamic> userLikes;
 
@@ -63,13 +91,15 @@ class Campaign {
     required this.endDate,
     required this.timeTakePlace,
     required this.location,
-    required this.numOfRegister,
+    this.numOfRegister,
     required this.createDate,
-    required this.updateDate,
+    this.updateDate,
     required this.isBlock,
-    required this.linkImage,
+    this.linkImage,
     required this.userNode,
-    required this.donate,
+    this.donate,
+    this.donationBudget,
+    this.donationBudgetReceived,
     required this.userLikes,
   });
 
@@ -90,6 +120,8 @@ class Campaign {
     linkImage: json["linkImage"],
     userNode: json["userNode"],
     donate: json["donate"],
+    donationBudget: json["donationBudget"],
+    donationBudgetReceived: json["donationBudgetReceived"],
     userLikes: List<dynamic>.from(json["userLikes"].map((x) => x)),
   );
 
@@ -110,6 +142,8 @@ class Campaign {
     "linkImage": linkImage,
     "userNode": userNode,
     "donate": donate,
+    "donationBudget": donationBudget,
+    "donationBudgetReceived": donationBudgetReceived,
     "userLikes": List<dynamic>.from(userLikes.map((x) => x)),
   };
 }

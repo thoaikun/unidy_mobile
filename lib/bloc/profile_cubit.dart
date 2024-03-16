@@ -40,4 +40,10 @@ class ProfileCubit extends Cubit<User> {
     );
     emit(newProfile);
   }
+
+  void cleanProfile() {
+    emit(User(
+        userId: 0,
+    ));
+  }
 }

@@ -11,42 +11,19 @@ class CampaignService extends Service {
   final int CAMPAIGN_LIMIT = 3;
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
-  Future<List<CampaignPost>> getRecommendCampaignFromRecommendService({int offset = 0}) async {
+  Future<CampaignData> getRecommendCampaign({int offset = 0, String? cursor}) async {
     try {
       Map<String, dynamic> payload = {
         'offset': offset.toString(),
+        'cursor': cursor ?? Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss'),
         'limit': CAMPAIGN_LIMIT.toString(),
       };
       Response response = await httpClient.get('api/v1/campaign/getRecommendCampaign', payload);
 
       switch(response.statusCode) {
         case 200:
-          List<CampaignPost> campaignList = campaignPostListFromJson(utf8.decode(response.bodyBytes));
-          return campaignList;
-        case 403:
-          catchForbidden();
-          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
-        default:
-          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
-      }
-    }
-    catch (error) {
-      rethrow;
-    }
-  }
-
-  Future<List<CampaignPost>> getRecommendCampaignFromNeo4J(String? cursor) async {
-    try {
-      Map<String, dynamic> payload = {
-        'cursor': cursor ?? Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss'),
-        'limit': CAMPAIGN_LIMIT.toString(),
-      };
-      Response response = await httpClient.get('api/v1/campaign/getCampaignPost', payload);
-
-      switch(response.statusCode) {
-        case 200:
-          List<CampaignPost> campaignList = campaignPostListFromJson(utf8.decode(response.bodyBytes));
-          return campaignList;
+          CampaignData campaignData = campaignDataFromJson(utf8.decode(response.bodyBytes));
+          return campaignData;
         case 403:
           catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
@@ -81,9 +58,9 @@ class CampaignService extends Service {
     }
   }
 
-  Future<void> registerAsVolunteer(int campaignId) async {
+  Future<void> registerAsVolunteer(String campaignId) async {
     try {
-      Response response = await httpClient.post('api/v1/campaign/register-as-volunteer', { 'campaignId': campaignId });
+      Response response = await httpClient.get('api/v1/campaign/register?campaignId=$campaignId',);
 
       switch(response.statusCode) {
         case 200:

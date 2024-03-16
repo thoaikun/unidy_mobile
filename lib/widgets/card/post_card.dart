@@ -5,7 +5,10 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
-import 'package:unidy_mobile/screens/user/donation/donation_screen.dart';
+import 'package:unidy_mobile/screens/user/confirm_participant_campaign/confirm_participant_campaign.dart';
+import 'package:unidy_mobile/screens/user/confirm_participant_campaign/confirm_participant_campaign_container.dart';
+import 'package:unidy_mobile/screens/user/donation/donation_screen_container.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
@@ -365,12 +368,16 @@ class CampaignPostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildPostContent(context),
             ),
-            const SizedBox(height: 15),
             Visibility(
-              visible: campaignPost.campaign.linkImage != null,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _buildImageSlide(),
+              visible: campaignPost.campaign.linkImage != null && campaignPost.campaign.linkImage != "[]",
+              child: Column(
+                children: [
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: _buildImageSlide(),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 5),
@@ -382,9 +389,28 @@ class CampaignPostCard extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: FilledButton(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DonationScreen())),
-                child: const Text('Tham gia ngay', style: TextStyle(color: Colors.white)),
+              child: Row(
+                children: [
+                  Visibility(
+                    visible: campaignPost.campaign.status == CampaignStatus.inProgress && campaignPost.campaign.numOfRegister != null,
+                    child: Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmParticipantCampaignContainer(campaignPost: campaignPost))),
+                        child: const Text('Tham gia ngay', style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Visibility(
+                    visible: campaignPost.campaign.status == CampaignStatus.inProgress && campaignPost.campaign.donationBudget != null,
+                    child: Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DonationScreenContainer(campaignPost: campaignPost))),
+                        child: const Text('Ủng hộ', style: TextStyle(color: PrimaryColor.primary500)),
+                      ),
+                    ),
+                  )
+                ],
               ),
             )
           ],
@@ -398,6 +424,7 @@ class CampaignPostCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(campaignPost.campaign.title ?? 'Không có tiêu đề', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 5),
         ReadMoreText(
           campaignPost.campaign.description,
           trimLines: 3,
@@ -406,7 +433,57 @@ class CampaignPostCard extends StatelessWidget {
           trimExpandedText: '',
           moreStyle: Theme.of(context).textTheme.labelLarge?.copyWith(color: TextColor.textColor300),
         ),
+        const SizedBox(height: 10),
+        Text('Thông tin chi tiết:', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 5),
+        Wrap(
+          spacing: 5,
+          children: [
+            Text('Ngày mở chiến dịch: ', style: Theme.of(context).textTheme.bodyMedium),
+            Text(campaignPost.campaign.startDate, style: Theme.of(context).textTheme.bodyMedium)
+          ],
+        ),
+        const SizedBox(height: 5),
+        Wrap(
+          spacing: 5,
+          children: [
+            Text('Ngày kết thúc chiến dịch: ', style: Theme.of(context).textTheme.bodyMedium),
+            Text(campaignPost.campaign.endDate ?? '', style: Theme.of(context).textTheme.bodyMedium)
+          ],
+        ),
+        const SizedBox(height: 5),
+        Wrap(
+          spacing: 5,
+          children: [
+            Text('Địa điểm: ', style: Theme.of(context).textTheme.bodyMedium),
+            Text(campaignPost.campaign.location, style: Theme.of(context).textTheme.bodyMedium)
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text('Yêu cầu:', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 5),
+        Visibility(
+          visible: campaignPost.campaign.numOfRegister != null,
+          child: Wrap(
+            spacing: 5,
+            children: [
+              Text('Số lượng tình nguyện viên: ', style: Theme.of(context).textTheme.bodyMedium),
+              Text('${campaignPost.campaign.numOfRegister.toString()} người', style: Theme.of(context).textTheme.titleSmall?.copyWith(color: ErrorColor.error500))
+            ],
+          ),
+        ),
+        const SizedBox(height: 5),
+        Visibility(
+          visible: campaignPost.campaign.donationBudget != null,
+          child: Wrap(
+            spacing: 5,
+            children: [
+              Text('Ngân sách yêu cầu: ', style: Theme.of(context).textTheme.bodyMedium),
+              Text(Formatter.formatCurrency(campaignPost.campaign.donationBudget), style: Theme.of(context).textTheme.titleSmall?.copyWith(color: ErrorColor.error500))
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
         Visibility(
           visible: campaignPost.campaign.hashTag != null,
           child: Text(campaignPost.campaign.hashTag ?? '', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: PrimaryColor.primary500)),

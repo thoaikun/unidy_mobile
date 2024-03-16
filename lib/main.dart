@@ -8,8 +8,7 @@ import 'package:unidy_mobile/bloc/network_detect_cubit.dart';
 import 'package:unidy_mobile/bloc/profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/theme_config.dart';
 import 'package:unidy_mobile/firebase_options.dart';
-import 'package:unidy_mobile/screens/user/donation/donation_screen.dart';
-import 'package:unidy_mobile/screens/user/donation/donation_screen_container.dart';
+import 'package:unidy_mobile/screens/placeholder/placeholder_screen.dart';
 import 'package:unidy_mobile/utils/local_notification.dart';
 
 import 'config/getit_config.dart';
@@ -57,7 +56,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Unidy',
         theme: unidyThemeData,
-        home: const DonationScreenContainer(),
+        home: const PlaceholderScreen(),
         navigatorKey: navigatorKey,
       )
     );

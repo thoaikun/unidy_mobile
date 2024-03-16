@@ -37,31 +37,24 @@ class DashboardViewModel extends ChangeNotifier {
   void initData() {
     Future.wait([
       _postService.getRecommendationPosts(_lastPostOffset),
-      _campaignService.getRecommendCampaignFromRecommendService(offset: _lastCampaignFromRecommendationServiceOffset),
-      _campaignService.getRecommendCampaignFromNeo4J(_lastCampaignFromNeo4JOffset)
+      _campaignService.getRecommendCampaign(offset: _lastCampaignFromRecommendationServiceOffset, cursor: _lastCampaignFromNeo4JOffset),
     ])
       .then((value) {
         List<Post> postList = value[0] as List<Post>;
-        List<CampaignPost> campaignListFromRecommendationService = value[1] as List<CampaignPost>;
-        List<CampaignPost> campaignListFromNeo4J = value[2] as List<CampaignPost>;
+        CampaignData campaignData = value[1] as CampaignData;
 
         // update cursor and offset
         if (postList.isNotEmpty) {
           Post lastPost = postList[postList.length - 1];
           _lastPostOffset = lastPost.createDate;
         }
-        if (campaignListFromRecommendationService.isNotEmpty) {
-          _lastCampaignFromRecommendationServiceOffset += _campaignService.CAMPAIGN_LIMIT;
-        }
-        if (campaignListFromNeo4J.isNotEmpty) {
-          CampaignPost lastCampaign = campaignListFromNeo4J[campaignListFromNeo4J.length - 1];
-          _lastCampaignFromNeo4JOffset = lastCampaign.campaign.createDate;
-        }
+        _lastCampaignFromRecommendationServiceOffset = campaignData.nextOffset;
+        _lastCampaignFromNeo4JOffset = campaignData.nextCursor;
 
         // merge all data
-        List<dynamic> recommendationList = [...postList, ...removeDuplicateCampaign([ ...campaignListFromRecommendationService, ...campaignListFromNeo4J])];
+        List<dynamic> recommendationList = [...postList, ...campaignData.campaigns];
         recommendationList.shuffle();
-        setRecommendationList(recommendationList);
+        setRecommendationList(removeDuplicate(recommendationList));
       })
       .whenComplete(() {
         setIsFirstLoading(false);
@@ -73,28 +66,29 @@ class DashboardViewModel extends ChangeNotifier {
     initData();
   }
 
-  void getPosts() {
-    _postService.getRecommendationPosts(_lastPostOffset)
-      .then((postList) {
+  void loadMoreData() {
+    setIsLoadMoreLoading(true);
+    Future.wait([
+      _postService.getRecommendationPosts(_lastPostOffset),
+      _campaignService.getRecommendCampaign(offset: _lastCampaignFromRecommendationServiceOffset, cursor: _lastCampaignFromNeo4JOffset),
+    ])
+      .then((value) {
+        List<Post> postList = value[0] as List<Post>;
+        CampaignData campaignData = value[1] as CampaignData;
+
+        // update cursor and offset
         if (postList.isNotEmpty) {
           Post lastPost = postList[postList.length - 1];
           _lastPostOffset = lastPost.createDate;
         }
-        setRecommendationList([..._recommendationList, ...postList]);
-      })
-      .whenComplete(() {
-        setIsLoadMoreLoading(false);
-      });
-  }
+        _lastCampaignFromRecommendationServiceOffset = campaignData.nextOffset;
+        _lastCampaignFromNeo4JOffset = campaignData.nextCursor;
 
-  void getCampaigns() {
-    Future.wait([
-      _campaignService.getRecommendCampaignFromRecommendService(offset: _lastCampaignFromRecommendationServiceOffset),
-      _campaignService.getRecommendCampaignFromNeo4J(_lastCampaignFromNeo4JOffset)
-    ])
-      .then((value) {
-        List<CampaignPost> campaignList = removeDuplicateCampaign([ ...value[0], ...value[1]]);
-        setRecommendationList([..._recommendationList, ...campaignList]);
+        // merge all data
+        List<dynamic> newData = [...postList, ...campaignData.campaigns];
+        newData.shuffle();
+        List<dynamic> recommendationList = [..._recommendationList, ...newData];
+        setRecommendationList(removeDuplicate(recommendationList));
       })
       .whenComplete(() {
         setIsLoadMoreLoading(false);
@@ -102,7 +96,6 @@ class DashboardViewModel extends ChangeNotifier {
   }
 
   void handleLikePost(Post post) {
-    print('like post');
     if (post.isLiked == true) {
       post.isLiked = false;
       post.likeCount = post.likeCount - 1;
@@ -117,7 +110,8 @@ class DashboardViewModel extends ChangeNotifier {
     }
   }
 
-  List<CampaignPost> removeDuplicateCampaign(List<CampaignPost> campaignList) {
-    return campaignList.toSet().toList();
+
+  List<dynamic> removeDuplicate(List<dynamic> list) {
+    return list.toSet().toList();
   }
 }

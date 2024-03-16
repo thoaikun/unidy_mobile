@@ -1,10 +1,14 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/viewmodel/user/donation_viewmodel.dart';
 
 class DonationScreen extends StatefulWidget {
-  const DonationScreen({super.key});
+  final CampaignPost campaignPost;
+  const DonationScreen({super.key, required this.campaignPost});
 
   @override
   State<DonationScreen> createState() => _DonationScreenState();
@@ -13,6 +17,8 @@ class DonationScreen extends StatefulWidget {
 class _DonationScreenState extends State<DonationScreen> {
   @override
   Widget build(BuildContext context) {
+    DonationViewModel donationViewModel = Provider.of<DonationViewModel>(context, listen: true);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ủng hộ chiến dịch'),
@@ -20,12 +26,21 @@ class _DonationScreenState extends State<DonationScreen> {
       body: Container(
         margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(widget.campaignPost.campaign.title ?? 'Chiến dịch chưa có tên', style: Theme.of(context).textTheme.bodyLarge),
+                const SizedBox(height: 15),
+                Row(
+                  children: [
+                    Text('Mục tiêu: ', style: Theme.of(context).textTheme.bodyLarge),
+                    Text(Formatter.formatCurrency(widget.campaignPost.campaign.donationBudget), style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: PrimaryColor.primary500)),
+                  ]
+                ),
+                const SizedBox(height: 15),
                 Text('Chọn phương thức thanh toán', style: Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 15),
                 _buildPaymentMethod(),
@@ -35,6 +50,7 @@ class _DonationScreenState extends State<DonationScreen> {
                 const SizedBox(height: 35),
               ],
             ),
+            Spacer(),
             Column(
               children: [
                 _buildSuggestionDonationChip(),
@@ -42,7 +58,9 @@ class _DonationScreenState extends State<DonationScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
-                    onPressed: () {},
+                    onPressed: () => {
+                      donationViewModel.onDonate(int.parse(widget.campaignPost.campaign.campaignId), widget.campaignPost.organizationNode.userId)
+                    },
                     child: const Text('Ủng hộ'),
                   ),
                 ),

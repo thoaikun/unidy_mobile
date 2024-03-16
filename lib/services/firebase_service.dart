@@ -7,7 +7,7 @@ import 'package:unidy_mobile/config/http_client.dart';
 
 class FirebaseService {
   HttpClient httpClient = GetIt.instance<HttpClient>();
-  final _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> initNotification() async {
     await _firebaseMessaging.requestPermission(

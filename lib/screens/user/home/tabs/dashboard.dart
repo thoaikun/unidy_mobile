@@ -22,8 +22,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
     super.initState();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        Provider.of<DashboardViewModel>(context, listen: false).setIsLoadMoreLoading(true);
-        Provider.of<DashboardViewModel>(context, listen: false).getPosts();
+        Provider.of<DashboardViewModel>(context, listen: false).loadMoreData();
       }
     });
   }
