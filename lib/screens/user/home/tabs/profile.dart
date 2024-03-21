@@ -183,7 +183,7 @@ class _ProfileState extends State<Profile> {
     return SliverList.separated(
       itemBuilder: (BuildContext context, int index) {
         if (index < postList.length) {
-          return PostCard(post: postList[index], userName: user.fullName, avatarUrl: user.image);
+          return PostCard(post: postList[index]);
         }
         else if (index == postList.length && context.watch<ProfileViewModel>().isLoadMoreLoading) {
           return Container(

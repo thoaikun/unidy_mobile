@@ -16,27 +16,47 @@ class HttpClient {
 
   Future<Response> get(String path, [Map<String, dynamic>? queryParams]) {
     Uri url = Uri.parse('$baseUri/$path').replace(queryParameters: queryParams);
-    return client.get(url, headers: headers).timeout(timeLimit);
+    return client.get(url, headers: headers)
+        .timeout(
+          timeLimit,
+          onTimeout: () => throw Exception('Request timeout'),
+        );
   }
 
   Future<Response> post(String path, [Object? body]) async {
     Uri url = Uri.parse('$baseUri/$path');
-    return client.post(url, headers: headers, body: body).timeout(timeLimit);
+    return client.post(url, headers: headers, body: body)
+        .timeout(
+          timeLimit,
+          onTimeout: () => throw Exception('Request timeout')
+        );
   }
 
   Future<Response> put(String path, [Object? body]) {
     Uri url = Uri.parse('$baseUri/$path');
-    return client.put(url, headers: headers, body: body).timeout(timeLimit);
+    return client.put(url, headers: headers, body: body)
+        .timeout(
+          timeLimit,
+          onTimeout: () => throw Exception('Request timeout')
+        );
   }
 
   Future<Response> patch(String path, [Object? body]) {
     Uri url = Uri.parse('$baseUri/$path');
-    return client.patch(url, headers: headers, body: body).timeout(timeLimit);
+    return client.patch(url, headers: headers, body: body)
+        .timeout(
+          timeLimit,
+          onTimeout: () => throw Exception('Request timeout')
+        );
   }
 
   Future<Response> delete(String path, [Object? body]) {
     Uri url = Uri.parse('$baseUri/$path');
-    return client.delete(url, headers: headers, body: body).timeout(timeLimit);
+    return client.delete(url, headers: headers, body: body)
+        .timeout(
+          timeLimit,
+          onTimeout: () => throw Exception('Request timeout')
+        );
   }
 
   Future<StreamedResponse> uploadImage(String path, List<MultipartFile> files, [Map<String, String>? body]) {

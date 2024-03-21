@@ -14,7 +14,7 @@ class Service {
     _handleCleanCache()
       .then((_) {
         Route<dynamic>? route = ModalRoute.of(navigatorKey.currentContext!);
-        if ((route is MaterialPageRoute && route is LoginScreen) || route == null) {
+        if ((route?.settings.name ?? '') == '/login') {
           return;
         }
         navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: LoginScreen())));

@@ -6,6 +6,7 @@ import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/user/home/dashboard_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
+import 'package:unidy_mobile/widgets/error.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -31,6 +32,11 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Consumer<DashboardViewModel>(
       builder: (BuildContext context, DashboardViewModel dashboardViewModel, Widget? child) {
+        if (dashboardViewModel.error) {
+          return ErrorPlaceholder(
+            onRetry: () => dashboardViewModel.refreshData(),
+          );
+        }
         return RefreshIndicator(
           onRefresh: () async {
             return Future.delayed(const Duration(seconds: 1))
@@ -68,8 +74,6 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                 Post post = dashboardViewModel.recommendationList[index];
                 return PostCard(
                     post: post,
-                    userName: post.userNodes?.fullName,
-                    avatarUrl: post.userNodes?.profileImageLink,
                     onLikePost: () => debounce(() => dashboardViewModel.handleLikePost(post), 500).call()
                 );
               }

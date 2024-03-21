@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
+import 'package:unidy_mobile/viewmodel/user/other_profile_viewmodel.dart';
+import 'package:unidy_mobile/widgets/error.dart';
+import 'package:unidy_mobile/widgets/profile/profile_archievement.dart';
 
-class OrganizationProfileScreen extends StatefulWidget {
-  const OrganizationProfileScreen({super.key});
+class VolunteerProfileScreen extends StatefulWidget {
+  const VolunteerProfileScreen({super.key});
 
   @override
-  State<OrganizationProfileScreen> createState() => _OrganizationProfileScreenState();
+  State<VolunteerProfileScreen> createState() => _VolunteerProfileScreenState();
 }
 
-class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
-  SliverToBoxAdapter _buildProfileHeader(User user) {
+class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
+  SliverToBoxAdapter _buildProfileHeader() {
+    User? user = Provider.of<VolunteerProfileViewModel>(context).user;
+
     return SliverToBoxAdapter(
         child: Column(
           children: [
@@ -44,7 +50,7 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
                         child: CircleAvatar(
                           radius: 120,
                           backgroundImage: NetworkImage(
-                            user.image ?? 'https://api.dicebear.com/7.x/initials/png?seed=${user.fullName}',
+                            user?.image ?? 'https://api.dicebear.com/7.x/initials/png?seed=${user?.fullName}',
                           ),
                         ),
                       ),
@@ -58,7 +64,7 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
                     child: SizedBox(
                       width: 240,
                       child: Text(
-                        user.fullName ?? 'Không rõ',
+                        user?.fullName ?? 'Không rõ',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleLarge,
@@ -77,6 +83,8 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
   }
 
   SliverToBoxAdapter _buildProfileInfo() {
+    User? user = Provider.of<VolunteerProfileViewModel>(context).user;
+
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -89,11 +97,11 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Thông tin tổ chức',
+                      'Thông tin cá nhân',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () async {},
                         icon: const Icon(
                           Icons.edit,
                           size: 20,
@@ -109,36 +117,47 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     Text(
-                      Formatter.formatTime(DateTime.now(), 'dd/MM/yyyy - HH:mm').toString(),
+                      Formatter.formatTime(user?.dayOfBirth, 'dd/MM/yyyy - HH:mm').toString(),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),
                     )
                   ],
                 ),
                 const SizedBox(height: 5),
-                // Row(
-                //   children: [
-                //     Text('Giới tính: ', style: Theme.of(context).textTheme.labelLarge,),
-                //     Text(user.sex ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
-                //   ],
-                // ),
+                Row(
+                  children: [
+                    Text('Giới tính: ', style: Theme.of(context).textTheme.labelLarge,),
+                    Text(user?.sex ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
+                  ],
+                ),
                 const SizedBox(height: 5),
-                // Row(
-                //   children: [
-                //     Text('Công việc: ', style: Theme.of(context).textTheme.labelLarge,),
-                //     Text(user.job ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
-                //   ],
-                // ),
+                Row(
+                  children: [
+                    Text('Công việc: ', style: Theme.of(context).textTheme.labelLarge,),
+                    Text(user?.job ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
+                  ],
+                ),
                 const SizedBox(height: 5),
-                // Row(
-                //   children: [
-                //     Text('Tại: ', style: Theme.of(context).textTheme.labelLarge,),
-                //     Text(user.workLocation ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
-                //   ],
-                // )
+                Row(
+                  children: [
+                    Text('Tại: ', style: Theme.of(context).textTheme.labelLarge,),
+                    Text(user?.workLocation ?? 'Không rõ', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),)
+                  ],
+                )
               ],
             ),
           ),
           const Divider(thickness: 5, color: PrimaryColor.primary50)
+        ],
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _buildProfileAchievement() {
+    return const SliverToBoxAdapter(
+      child: Column(
+        children: [
+          ProfileAchievement(),
+          Divider(thickness: 5, color: PrimaryColor.primary50)
         ],
       ),
     );
@@ -166,26 +185,40 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
     //   separatorBuilder: (BuildContext context, int index) => const Divider(),
     //   itemCount: postList.length + 1,
     // );
+
     throw UnimplementedError();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Skeletonizer(
-      enabled: false,
-      child: CustomScrollView(
-        slivers: [
-          // _buildProfileHeader(profileViewModel.user),
-          _buildProfileInfo(),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-              child: Text('Chiến dịch gần đây', style: Theme.of(context).textTheme.titleMedium),
-            ),
-          ),
-          // _buildRecentPost(profileViewModel.postList, profileViewModel.user)
-        ],
+    VolunteerProfileViewModel volunteerProfileViewModel = Provider.of<VolunteerProfileViewModel>(context);
+    if (volunteerProfileViewModel.error) {
+      return ErrorPlaceholder(
+        onRetry: () => volunteerProfileViewModel.refreshData()
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Thông tin tình nguyện viên'),
       ),
+      body: Skeletonizer(
+          enabled: volunteerProfileViewModel.isLoading,
+          child: CustomScrollView(
+            slivers: [
+              _buildProfileHeader(),
+              _buildProfileInfo(),
+              _buildProfileAchievement(),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                  child: Text('Bài đăng gần đây', style: Theme.of(context).textTheme.titleMedium),
+                ),
+              ),
+              // _buildRecentPost(profileViewModel.postList, profileViewModel.user)
+            ],
+          ),
+        ),
     );
   }
 }

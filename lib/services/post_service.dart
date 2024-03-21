@@ -9,13 +9,12 @@ import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class PostService extends Service {
-  final String POST_LIMIT = '5';
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
-  Future<List<Post>> getUserPosts(String? cursor) async {
+  Future<List<Post>> getUserPosts({int skip = 0, int limit = 5}) async {
     Map<String, dynamic> payload = {
-      'cursor': cursor ?? Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss'),
-      'limit': POST_LIMIT
+      'skip': skip.toString(),
+      'limit': limit.toString()
     };
 
     try {
@@ -39,10 +38,10 @@ class PostService extends Service {
     }
   }
 
-  Future<List<Post>> getRecommendationPosts(String? cursor) async {
+  Future<List<Post>> getRecommendationPosts({int skip = 0, int limit = 5}) async {
     Map<String, dynamic> payload = {
-      'cursor': cursor ?? Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss'),
-      'limit': POST_LIMIT
+      'skip': skip.toString(),
+      'limit': limit.toString()
     };
 
     try {

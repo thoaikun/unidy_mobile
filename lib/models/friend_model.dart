@@ -11,12 +11,14 @@ class Friend {
   String fullName;
   bool isBlock;
   String? profileImageLink;
+  String? role;
 
   Friend({
     required this.userId,
     required this.fullName,
     required this.isBlock,
     this.profileImageLink,
+    this.role
   });
 
   factory Friend.fromJson(Map<String, dynamic> json) => Friend(
@@ -24,6 +26,7 @@ class Friend {
     fullName: json["fullName"],
     isBlock: json["isBlock"],
     profileImageLink: json["profileImageLink"],
+    role: json['role']
   );
 
   Map<String, dynamic> toJson() => {
@@ -31,6 +34,7 @@ class Friend {
     "fullName": fullName,
     "isBlock": isBlock,
     "profileImageLink": profileImageLink,
+    "role": role
   };
 }
 

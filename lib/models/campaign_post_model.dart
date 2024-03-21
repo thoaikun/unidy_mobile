@@ -10,24 +10,24 @@ String campaignPostToJson(CampaignPost data) => json.encode(data.toJson());
 
 class CampaignData {
   final List<CampaignPost> campaigns;
-  String? nextCursor;
+  final int total;
   final int nextOffset;
 
   CampaignData({
     required this.campaigns,
-    required this.nextCursor,
+    required this.total,
     required this.nextOffset,
   });
 
   factory CampaignData.fromJson(Map<String, dynamic> json) => CampaignData(
     campaigns: List<CampaignPost>.from(json["campaigns"].map((x) => CampaignPost.fromJson(x))),
-    nextCursor: json["nextCursor"],
+    total: json["total"],
     nextOffset: json["nextOffset"],
   );
 
   Map<String, dynamic> toJson() => {
     "campaigns": List<CampaignPost>.from(campaigns.map((x) => x.toJson())),
-    "cursor": nextCursor,
+    "total": total,
     "nextOffset": nextOffset,
   };
 }
@@ -36,12 +36,14 @@ class CampaignPost {
   Campaign campaign;
   OrganizationNode organizationNode;
   bool isLiked;
+  bool? isJoined;
   int likeCount;
 
   CampaignPost({
     required this.campaign,
     required this.organizationNode,
     required this.isLiked,
+    this.isJoined,
     required this.likeCount,
   });
 
@@ -49,6 +51,7 @@ class CampaignPost {
     campaign: Campaign.fromJson(json["campaign"]),
     organizationNode: OrganizationNode.fromJson(json["organizationNode"]),
     isLiked: json["isLiked"],
+    isJoined: json["isJoined"],
     likeCount: json["likeCount"],
   );
 
@@ -56,6 +59,7 @@ class CampaignPost {
     "campaign": campaign.toJson(),
     "organizationNode": organizationNode.toJson(),
     "isLiked": isLiked,
+    "isJoined": isJoined,
     "likeCount": likeCount,
   };
 }

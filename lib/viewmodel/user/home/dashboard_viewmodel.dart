@@ -9,13 +9,13 @@ class DashboardViewModel extends ChangeNotifier {
   final PostService _postService = GetIt.instance<PostService>();
   final CampaignService _campaignService = GetIt.instance<CampaignService>();
 
-  String? _lastPostOffset;
-  int _lastCampaignFromRecommendationServiceOffset = 0;
-  String? _lastCampaignFromNeo4JOffset;
-  final int LIMIT = 10;
+  int _postOffset = 0;
+  int _campaignOffset = 0;
+  final int LIMIT = 3;
 
   bool isFirstLoading = true;
   bool isLoadMoreLoading = false;
+  bool error = false;
   List<dynamic> _recommendationList = [];
   List<dynamic> get recommendationList => _recommendationList;
 
@@ -34,27 +34,32 @@ class DashboardViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setError(bool value) {
+    error = value;
+    notifyListeners();
+  }
+
   void initData() {
+    setIsFirstLoading(true);
     Future.wait([
-      _postService.getRecommendationPosts(_lastPostOffset),
-      _campaignService.getRecommendCampaign(offset: _lastCampaignFromRecommendationServiceOffset, cursor: _lastCampaignFromNeo4JOffset),
+      _postService.getRecommendationPosts(skip: _postOffset, limit: LIMIT),
+      _campaignService.getRecommendCampaign(skip: _campaignOffset, limit: LIMIT),
     ])
       .then((value) {
         List<Post> postList = value[0] as List<Post>;
         CampaignData campaignData = value[1] as CampaignData;
 
         // update cursor and offset
-        if (postList.isNotEmpty) {
-          Post lastPost = postList[postList.length - 1];
-          _lastPostOffset = lastPost.createDate;
-        }
-        _lastCampaignFromRecommendationServiceOffset = campaignData.nextOffset;
-        _lastCampaignFromNeo4JOffset = campaignData.nextCursor;
+        _postOffset += LIMIT;
+        _campaignOffset += LIMIT;
 
         // merge all data
         List<dynamic> recommendationList = [...postList, ...campaignData.campaigns];
         recommendationList.shuffle();
         setRecommendationList(removeDuplicate(recommendationList));
+      })
+      .catchError((error) {
+        setError(true);
       })
       .whenComplete(() {
         setIsFirstLoading(false);
@@ -62,33 +67,35 @@ class DashboardViewModel extends ChangeNotifier {
   }
 
   void refreshData() {
-    _lastPostOffset = null;
+    _postOffset = 0;
+    _campaignOffset = 0;
+    setError(false);
     initData();
   }
 
   void loadMoreData() {
     setIsLoadMoreLoading(true);
     Future.wait([
-      _postService.getRecommendationPosts(_lastPostOffset),
-      _campaignService.getRecommendCampaign(offset: _lastCampaignFromRecommendationServiceOffset, cursor: _lastCampaignFromNeo4JOffset),
+      _postService.getRecommendationPosts(skip: _postOffset, limit: LIMIT),
+      _campaignService.getRecommendCampaign(skip: _campaignOffset, limit: LIMIT),
     ])
       .then((value) {
         List<Post> postList = value[0] as List<Post>;
         CampaignData campaignData = value[1] as CampaignData;
 
         // update cursor and offset
-        if (postList.isNotEmpty) {
-          Post lastPost = postList[postList.length - 1];
-          _lastPostOffset = lastPost.createDate;
-        }
-        _lastCampaignFromRecommendationServiceOffset = campaignData.nextOffset;
-        _lastCampaignFromNeo4JOffset = campaignData.nextCursor;
+        _postOffset += LIMIT;
+        _campaignOffset += LIMIT;
 
         // merge all data
         List<dynamic> newData = [...postList, ...campaignData.campaigns];
         newData.shuffle();
         List<dynamic> recommendationList = [..._recommendationList, ...newData];
         setRecommendationList(removeDuplicate(recommendationList));
+      })
+      .catchError((error) {
+        error = true;
+        notifyListeners();
       })
       .whenComplete(() {
         setIsLoadMoreLoading(false);

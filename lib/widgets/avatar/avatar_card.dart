@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/screens/user/detail_profile/organization_profile/organization_profile_container.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class AvatarCard extends StatelessWidget {
@@ -8,6 +9,7 @@ class AvatarCard extends StatelessWidget {
   final String? userName;
   final String? avatarUrl;
   final String? createdAt;
+  final void Function()? onTap;
 
   const AvatarCard({
     super.key,
@@ -15,7 +17,8 @@ class AvatarCard extends StatelessWidget {
     this.description,
     this.userName,
     this.avatarUrl,
-    this.createdAt
+    this.createdAt,
+    this.onTap,
   });
 
   @override
@@ -63,6 +66,7 @@ class AvatarCard extends StatelessWidget {
           style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TextColor.textColor300)
       ) : null,
       contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+      onTap: onTap,
     );
   }
 }

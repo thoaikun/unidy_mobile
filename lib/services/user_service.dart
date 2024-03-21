@@ -31,6 +31,26 @@ class UserService extends Service {
     }
   }
 
+  Future<User> getOtherUserProfile(int userId) async {
+    try {
+      Response response = await httpClient.get('api/v1/users/profile/$userId');
+
+      switch(response.statusCode) {
+        case 200:
+          User userResponse = userFromJson(utf8.decode(response.bodyBytes));
+          return userResponse;
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
   Future<void> updateProfile(Map<String, dynamic> payload) async {
     try {
       Response response = await httpClient.patch('api/v1/users/profile', jsonEncode(payload));
