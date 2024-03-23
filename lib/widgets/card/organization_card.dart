@@ -5,7 +5,14 @@ import 'package:unidy_mobile/models/friend_model.dart';
 class OrganizationCard extends StatelessWidget {
   final bool followed;
   final Friend organization;
-  const OrganizationCard({super.key, required this.followed, required this.organization});
+  final void Function()? onTap;
+
+  const OrganizationCard({
+    super.key,
+    required this.followed,
+    required this.organization,
+    this.onTap
+  });
 
   Widget _buildFollowBtn() {
     return TextButton.icon(
@@ -33,6 +40,7 @@ class OrganizationCard extends StatelessWidget {
       ),
       trailing: _buildFollowBtn(),
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+      onTap: onTap,
     );
   }
 }

@@ -34,8 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<FriendsViewModel>(context, listen: false).initData();
-    Provider.of<DashboardViewModel>(context, listen: false).initData();
   }
 
   @override

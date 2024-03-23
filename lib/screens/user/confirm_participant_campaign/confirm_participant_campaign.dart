@@ -53,15 +53,21 @@ class _ConfirmParticipantCampaignState extends State<ConfirmParticipantCampaign>
       children: [
         Text('Thông tin cá nhân', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 10),
-        Row(
+        Wrap(
+          runAlignment: WrapAlignment.end,
+          spacing: 10,
           children: [
+            const Icon(Icons.person_rounded, color: PrimaryColor.primary500, size: 18,),
             const Text('Họ và tên: '),
             Text(user.fullName ?? 'Chưa cập nhật'),
           ],
         ),
         const SizedBox(height: 10),
-        Row(
+        Wrap(
+          runAlignment: WrapAlignment.end,
+          spacing: 10,
           children: [
+            const Icon(Icons.phone_rounded, color: PrimaryColor.primary500, size: 18,),
             const Text('Số điện thoại: '),
             Text(user.phone ?? 'Chưa cập nhật'),
           ],
@@ -77,22 +83,31 @@ class _ConfirmParticipantCampaignState extends State<ConfirmParticipantCampaign>
       children: [
         Text('Thông tin chiến dịch', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 10),
-        Row(
+        Wrap(
+          runAlignment: WrapAlignment.end,
+          spacing: 10,
           children: [
+            const Icon(Icons.campaign_rounded, color: PrimaryColor.primary500, size: 18,),
             const Text('Tên chiến dịch: '),
             Text(widget.campaignPost.campaign.title ?? 'Chưa cập nhật'),
           ],
         ),
         const SizedBox(height: 10),
         Wrap(
+          runAlignment: WrapAlignment.end,
+          spacing: 10,
           children: [
+            const Icon(Icons.calendar_today_rounded, color: PrimaryColor.primary500, size: 18,),
             const Text('Thời gian diễn ra: '),
             Text(widget.campaignPost.campaign.timeTakePlace ?? 'Chưa cập nhật')
           ],
         ),
         const SizedBox(height: 10),
         Wrap(
+          runAlignment: WrapAlignment.end,
+          spacing: 10,
           children: [
+            const Icon(Icons.location_on_rounded, color: PrimaryColor.primary500, size: 18,),
             const Text('Nơi diễn ra: '),
             Text(widget.campaignPost.campaign.location),
           ],

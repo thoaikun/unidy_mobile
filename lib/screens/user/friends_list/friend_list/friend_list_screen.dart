@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
+import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
 import 'package:unidy_mobile/viewmodel/user/friends_list/friend_list_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
@@ -44,6 +45,7 @@ class _FriendListScreenState extends State<FriendListScreen> {
             if (index < friends.length) {
               return FriendCard(
                 friend: friends[index],
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: friends[index].userId ?? 0))),
                 onUnfriend: friendListViewModel.unfriend,
               );
             }

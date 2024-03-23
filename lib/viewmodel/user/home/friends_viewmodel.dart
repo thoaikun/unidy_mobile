@@ -16,6 +16,10 @@ class FriendsViewModel extends ChangeNotifier {
   List<Friend> get friendList => _friendList;
   List<FriendSuggestion> get recommendationList => _recommendationList;
 
+  FriendsViewModel() {
+    initData();
+  }
+
   void setRequestList(List<FriendRequest> value) {
     _requestList = value;
     notifyListeners();

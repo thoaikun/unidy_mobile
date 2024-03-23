@@ -19,6 +19,10 @@ class DashboardViewModel extends ChangeNotifier {
   List<dynamic> _recommendationList = [];
   List<dynamic> get recommendationList => _recommendationList;
 
+  DashboardViewModel() {
+    initData();
+  }
+
   void setRecommendationList(List<dynamic> value) {
     _recommendationList = value;
     notifyListeners();

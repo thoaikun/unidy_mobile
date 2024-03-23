@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/services/user_service.dart';
 
+
 class FriendListViewModel extends ChangeNotifier {
   final UserService _userService = GetIt.instance<UserService>();
 

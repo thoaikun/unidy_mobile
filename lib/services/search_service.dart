@@ -35,7 +35,7 @@ class SearchService extends Service {
   Future<SearchResult> searchCampaign(String query, {int offset = 0, int limit = 5}) async {
     try {
       Map<String, dynamic> payload = {
-        'query': query,
+        'searchTerm': query,
         'offset': offset.toString(),
         'limit': limit.toString(),
       };
@@ -58,14 +58,17 @@ class SearchService extends Service {
   Future<SearchResult> searchPost(String query, {int offset = 0, int limit = 5}) async {
     try {
       Map<String, dynamic> payload = {
-        'query': query,
+        'searchTerm': query,
         'offset': offset.toString(),
         'limit': limit.toString(),
       };
       final response = await _httpClient.get('api/v1/search/post', payload);
       switch(response.statusCode) {
         case 200:
-          return searchResultFromJson(utf8.decode(response.bodyBytes));
+          SearchResult searchResult = searchResultFromJson(utf8.decode(response.bodyBytes));
+          return searchResult;
+        case 400:
+          throw ResponseException(value: utf8.decode(response.bodyBytes), code: ExceptionErrorCode.invalidUserId);
         case 403:
           catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
@@ -81,7 +84,7 @@ class SearchService extends Service {
   Future<SearchResult> searchUser(String query, {int offset = 0, int limit = 5}) async {
     try {
       Map<String, dynamic> payload = {
-        'query': query,
+        'searchTerm': query,
         'offset': offset.toString(),
         'limit': limit.toString(),
       };
