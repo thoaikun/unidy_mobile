@@ -76,9 +76,11 @@ class Campaign {
   String location;
   String? createDate;
   String? updateDate;
-  bool isBlock;
+  bool? isBlock;
   String? linkImage;
   int? numOfRegister;
+  int? numberVolunteerRegistered;
+  int? numberVolunteer;
   int? donate;
   int? donationBudget;
   int? donationBudgetReceived;
@@ -88,7 +90,7 @@ class Campaign {
   Campaign({
     required this.campaignId,
     this.hashTag,
-    required this.title,
+    this.title,
     required this.description,
     required this.status,
     required this.startDate,
@@ -96,9 +98,11 @@ class Campaign {
     required this.timeTakePlace,
     required this.location,
     this.numOfRegister,
+    this.numberVolunteerRegistered,
+    this.numberVolunteer,
     required this.createDate,
     this.updateDate,
-    required this.isBlock,
+    this.isBlock,
     this.linkImage,
     required this.userNode,
     this.donate,
@@ -108,16 +112,18 @@ class Campaign {
   });
 
   factory Campaign.fromJson(Map<String, dynamic> json) => Campaign(
-    campaignId: json["campaignId"],
+    campaignId: json["campaignId"].toString(),
     hashTag: json["hashTag"],
     title: json["title"],
-    description: json["content"],
+    description: json["content"] ?? json["description"],
     status: toCampaignStatus(json['status']),
     startDate: json["startDate"],
     endDate: json["endDate"],
     timeTakePlace: json["timeTakePlace"],
     location: json["location"],
     numOfRegister: json["numOfRegister"],
+    numberVolunteerRegistered: json["numberVolunteerRegistered"],
+    numberVolunteer: json["numberVolunteer"],
     createDate: json["createDate"],
     updateDate: json["updateDate"],
     isBlock: json["isBlock"],
@@ -126,7 +132,7 @@ class Campaign {
     donate: json["donate"],
     donationBudget: json["donationBudget"],
     donationBudgetReceived: json["donationBudgetReceived"],
-    userLikes: List<dynamic>.from(json["userLikes"].map((x) => x)),
+    userLikes: List<dynamic>.from(json["userLikes"]?.map((x) => x) ?? []),
   );
 
   Map<String, dynamic> toJson() => {
@@ -140,6 +146,8 @@ class Campaign {
     "timeTakePlace": timeTakePlace,
     "location": location,
     "numOfRegister": numOfRegister,
+    "numberVolunteerRegistered": numberVolunteerRegistered,
+    "numberVolunteer": numberVolunteer,
     "createDate": createDate,
     "updateDate": updateDate,
     "isBlock": isBlock,
@@ -148,7 +156,7 @@ class Campaign {
     "donate": donate,
     "donationBudget": donationBudget,
     "donationBudgetReceived": donationBudgetReceived,
-    "userLikes": List<dynamic>.from(userLikes.map((x) => x)),
+    "userLikes": userLikes != null ? List<dynamic>.from(userLikes!.map((x) => x)) : null,
   };
 }
 

@@ -10,7 +10,7 @@ class FriendListViewModel extends ChangeNotifier {
   bool isFirstLoading = true;
   bool isLoading = false;
   final int LIMIT = 10;
-  String cursor = '0';
+  int _skip = 0;
 
   List<Friend> _friendList = [];
   List<Friend> get friendList => _friendList;
@@ -32,14 +32,11 @@ class FriendListViewModel extends ChangeNotifier {
 
   void initData() async {
     try {
-      List<Friend> friendListResponse = await _userService.getFriends({
-        'limit': LIMIT.toString(),
-        'cursor': cursor
-      });
-      // if (friendListResponse.isNotEmpty) {
-      //   Friend lastFriend = friendListResponse[friendListResponse.length - 1];
-      //   cursor = lastFriend.createDate;
-      // }
+      List<Friend> friendListResponse = await _userService.getFriends(
+        limit: LIMIT,
+        skip: _skip
+      );
+      _skip += LIMIT;
       setFriendList(friendListResponse);
     }
     catch (error) {
@@ -53,14 +50,11 @@ class FriendListViewModel extends ChangeNotifier {
   void loadMore() async {
     setIsLoading(true);
     try {
-      List<Friend> friendListResponse = await _userService.getFriends({
-        'limit': LIMIT.toString(),
-        'cursor': cursor
-      });
-      // if (friendListResponse.isNotEmpty) {
-      //   Friend lastFriend = friendListResponse[friendListResponse.length - 1];
-      //   cursor = lastFriend.createDate;
-      // }
+      List<Friend> friendListResponse = await _userService.getFriends(
+        limit: LIMIT,
+        skip: _skip
+      );
+      _skip += LIMIT;
       setFriendList([..._friendList , ...friendListResponse]);
     }
     catch (error) {
@@ -73,15 +67,12 @@ class FriendListViewModel extends ChangeNotifier {
 
   void refreshData() async {
     try {
-      cursor = '0';
-      List<Friend> friendListResponse = await _userService.getFriends({
-        'limit': LIMIT.toString(),
-        'cursor': cursor
-      });
-      // if (friendListResponse.isNotEmpty) {
-      //   Friend lastFriend = friendListResponse[friendListResponse.length - 1];
-      //   cursor = lastFriend.createDate;
-      // }
+      _skip = 0;
+      List<Friend> friendListResponse = await _userService.getFriends(
+        limit: LIMIT,
+        skip: _skip
+      );
+      _skip += LIMIT;
       setFriendList(friendListResponse);
     }
     catch (error) {

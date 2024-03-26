@@ -121,8 +121,24 @@ class DashboardViewModel extends ChangeNotifier {
     }
   }
 
-
   List<dynamic> removeDuplicate(List<dynamic> list) {
-    return list.toSet().toList();
+    List<dynamic> result = [];
+    Set<String> postIdSet = {};
+    Set<int> campaignIdSet = {};
+    for (var item in list) {
+      if (item is Post) {
+        if (!postIdSet.contains(item.postId)) {
+          postIdSet.add(item.postId);
+          result.add(item);
+        }
+      }
+      else {
+        if (!postIdSet.contains(item.campaign.campaignId)) {
+          postIdSet.add(item.campaign.campaignId);
+          result.add(item);
+        }
+      }
+    }
+    return result;
   }
 }

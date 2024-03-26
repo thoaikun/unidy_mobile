@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:unidy_mobile/config/http_client.dart';
+import 'package:unidy_mobile/models/campaign_joined_history_model.dart';
+import 'package:unidy_mobile/models/donation_history_model.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
@@ -223,8 +225,12 @@ class UserService extends Service {
     }
   }
 
-  Future<List<FriendRequest>> getFriendRequests(Map<String, String> payload) async {
+  Future<List<FriendRequest>> getFriendRequests({int skip = 0, int limit = 5}) async {
     try {
+      Map<String, String> payload = {
+        'skip': skip.toString(),
+        'limit': limit.toString()
+      };
       Response response = await httpClient.get('api/v1/users/list-invite', payload);
 
       switch(response.statusCode) {
@@ -245,8 +251,12 @@ class UserService extends Service {
     }
   }
 
-  Future<List<Friend>> getFriends(Map<String, String> payload) async {
+  Future<List<Friend>> getFriends({int skip = 0, int limit = 5}) async {
     try {
+      Map<String, String> payload = {
+        'skip': skip.toString(),
+        'limit': limit.toString()
+      };
       Response response = await httpClient.get('api/v1/users/get-list-friend', payload);
 
       switch(response.statusCode) {
@@ -267,8 +277,13 @@ class UserService extends Service {
     }
   }
 
-  Future<List<FriendSuggestion>> getRecommendations(Map<String, String> payload) async {
+  Future<List<FriendSuggestion>> getRecommendations({int skip = 0, int limit = 5, rangeEnd = 4}) async {
     try {
+      Map<String, String> payload = {
+        'skip': skip.toString(),
+        'limit': limit.toString(),
+        'rangeEnd': rangeEnd.toString()
+      };
       Response response = await httpClient.get('api/v1/users/get-recommend-friend', payload);
 
       switch(response.statusCode) {
@@ -328,6 +343,58 @@ class UserService extends Service {
       }
     }
     catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<CampaignJoinedHistory>> getJoinedCampaign({ int size = 5, int page = 0}) async {
+    try {
+      Map<String, String> payload = {
+        'pageSize': size.toString(),
+        'pageNumber': page.toString()
+      };
+      Response response = await httpClient.get('api/v1/users/campaigns', payload);
+
+      switch(response.statusCode) {
+        case 200:
+          List<CampaignJoinedHistory> campaignJoinedHistory = campaignJoinedHistoryListFromJson(utf8.decode(response.bodyBytes));
+          return campaignJoinedHistory;
+        case 400:
+          throw ResponseException(value: 'Không thể lấy thông tin chiến dịch đã tham gia', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch(error) {
+      rethrow;
+    }
+  }
+
+  Future<List<DonationHistory>> getDonationHistory({int size = 5, int page = 0}) async {
+    try {
+      Map<String, String> payload = {
+        'pageSize': size.toString(),
+        'pageNumber': page.toString()
+      };
+      Response response = await httpClient.get('api/v1/users/transactions', payload);
+
+      switch(response.statusCode) {
+        case 200:
+          List<DonationHistory> donationHistory = donationHistoryListFromJson(utf8.decode(response.bodyBytes));
+          return donationHistory;
+        case 400:
+          throw ResponseException(value: 'Không thể lấy lịch sử quyên góp', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch(error) {
       rethrow;
     }
   }

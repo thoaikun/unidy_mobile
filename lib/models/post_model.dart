@@ -14,7 +14,7 @@ class Post {
   String? updateDate;
   bool isBlock;
   String linkImage;
-  UserNodes? userNodes;
+  UserNode? userNodes;
   int likeCount;
   bool isLiked;
 
@@ -39,7 +39,7 @@ class Post {
     updateDate: json["updateDate"],
     isBlock: json["isBlock"],
     linkImage: json["linkImage"],
-    userNodes: UserNodes.fromJson(json["userNodes"]),
+    userNodes: UserNode.fromJson(json["userNode"]),
     likeCount: json["likeCount"] ?? 0,
     isLiked: json["isLiked"] ?? false
   );
@@ -58,24 +58,24 @@ class Post {
   };
 }
 
-class UserNodes {
+class UserNode {
   int userId;
   String fullName;
   bool isBlock;
   dynamic profileImageLink;
 
-  UserNodes({
+  UserNode({
     required this.userId,
     required this.fullName,
     required this.isBlock,
     required this.profileImageLink,
   });
 
-  static UserNodes? fromJson(Map<String, dynamic>? json) {
+  static UserNode? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return UserNodes(
+    return UserNode(
       userId: json["userId"],
       fullName: json["fullName"],
       isBlock: json["isBlock"],

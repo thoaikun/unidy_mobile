@@ -10,7 +10,7 @@ class RequestFriendListViewModel extends ChangeNotifier {
   bool isFirstLoading = true;
   bool isLoading = false;
   final int LIMIT = 10;
-  String cursor = Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss')!;
+  int _skip = 0;
 
   List<FriendRequest> _friendRequests = [];
   List<FriendRequest> get friendRequests => _friendRequests;
@@ -32,13 +32,11 @@ class RequestFriendListViewModel extends ChangeNotifier {
 
   void initData() async {
     try {
-      List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests({
-        'limit': LIMIT.toString(),
-        'cursor': cursor.toString()
-      });
-      if (friendRequestResponse.isNotEmpty) {
-        cursor = Formatter.formatTime(friendRequestResponse[friendRequestResponse.length - 1].requestAt, 'yyyy-MM-ddTHH:mm:ss').toString();
-      }
+      List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests(
+        limit: LIMIT,
+        skip: _skip
+      );
+     _skip += LIMIT;
       setFriendRequests(friendRequestResponse);
       setFirstLoading(false);
     }
@@ -53,13 +51,11 @@ class RequestFriendListViewModel extends ChangeNotifier {
   void loadMore() async {
     setLoading(true);
     try {
-      List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests({
-        'limit': LIMIT.toString(),
-        'cursor': cursor
-      });
-      if (friendRequestResponse.isNotEmpty) {
-        cursor = Formatter.formatTime(friendRequestResponse[friendRequestResponse.length - 1].requestAt, 'yyyy-MM-ddTHH:mm:ss').toString();
-      }
+      List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests(
+        limit: LIMIT,
+        skip: _skip
+      );
+      _skip += LIMIT;
       setFriendRequests([...friendRequests, ...friendRequestResponse]);
     }
     catch (error) {
@@ -73,14 +69,12 @@ class RequestFriendListViewModel extends ChangeNotifier {
   void refreshData() async {
     setFirstLoading(true);
     try {
-      cursor = Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss').toString();
-      List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests({
-        'limit': LIMIT.toString(),
-        'cursor': cursor
-      });
-      if (friendRequestResponse.isNotEmpty) {
-        cursor = Formatter.formatTime(friendRequestResponse[friendRequestResponse.length - 1].requestAt, 'yyyy-MM-ddTHH:mm:ss').toString();
-      }
+      _skip = 0;
+      List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests(
+        limit: LIMIT,
+        skip: _skip
+      );
+      _skip += LIMIT;
       setFriendRequests(friendRequestResponse);
     }
     catch (error) {

@@ -10,6 +10,7 @@ import 'package:unidy_mobile/screens/user/confirm_participant_campaign/confirm_p
 import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
 import 'package:unidy_mobile/screens/user/donation/donation_screen_container.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
+import 'package:unidy_mobile/viewmodel/comment_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
@@ -187,58 +188,13 @@ class PostCard extends StatelessWidget {
                       borderRadius:
                       BorderRadius.vertical(top: Radius.circular(8))
                   ),
-                  builder: (BuildContext context) => _buildCommentSheetModal(context)
+                  builder: (BuildContext context) => CommentTree(id: post?.postId ?? '', commentType: ECommentType.postComment)
               );
             },
             icon: const Icon(Icons.chat_bubble_outline_rounded)
         ),
         IconButton(onPressed: () {}, icon: const Icon(Icons.share_rounded))
       ],
-    );
-  }
-
-  Widget _buildCommentSheetModal(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (_, controller) => Column(
-        children: [
-          const Icon(
-            Icons.remove,
-            size: 40,
-            color: TextColor.textColor200,
-          ),
-          Expanded(
-              child: ListView.builder(
-                controller: controller,
-                itemCount: 2,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (_, index) {
-                  return CommentTree();
-                },
-              )
-          ),
-          AnimatedPadding(
-            padding: MediaQuery.of(context).viewInsets,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.easeInOut,
-            child:  Container(
-                decoration: const BoxDecoration(
-                    color: PrimaryColor.primary100
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                alignment: Alignment.bottomCenter,
-                child: Input(
-                    label: 'Bình luận',
-                    placeholder: 'Nhập bình luận',
-                    suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.send_rounded))
-                )
-            ),
-          )
-        ],
-      ),
     );
   }
 
@@ -557,58 +513,13 @@ class CampaignPostCard extends StatelessWidget {
                       borderRadius:
                       BorderRadius.vertical(top: Radius.circular(8))
                   ),
-                  builder: (BuildContext context) => _buildCommentSheetModal(context)
+                  builder: (BuildContext context) => CommentTree(id: campaignPost.campaign.campaignId, commentType: ECommentType.campaignComment)
               );
             },
             icon: const Icon(Icons.chat_bubble_outline_rounded)
         ),
         IconButton(onPressed: () {}, icon: const Icon(Icons.share_rounded))
       ],
-    );
-  }
-
-  Widget _buildCommentSheetModal(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (_, controller) => Column(
-        children: [
-          const Icon(
-            Icons.remove,
-            size: 40,
-            color: TextColor.textColor200,
-          ),
-          Expanded(
-              child: ListView.builder(
-                controller: controller,
-                itemCount: 2,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (_, index) {
-                  return CommentTree();
-                },
-              )
-          ),
-          AnimatedPadding(
-            padding: MediaQuery.of(context).viewInsets,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.easeInOut,
-            child:  Container(
-                decoration: const BoxDecoration(
-                    color: PrimaryColor.primary100
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                alignment: Alignment.bottomCenter,
-                child: Input(
-                    label: 'Bình luận',
-                    placeholder: 'Nhập bình luận',
-                    suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.send_rounded))
-                )
-            ),
-          )
-        ],
-      ),
     );
   }
 
