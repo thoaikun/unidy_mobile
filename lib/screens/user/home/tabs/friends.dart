@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
+import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
 import 'package:unidy_mobile/screens/user/friends_list/friend_list/friend_list_container.dart';
 import 'package:unidy_mobile/screens/user/friends_list/friend_list/friend_list_screen.dart';
 import 'package:unidy_mobile/screens/user/friends_list/request_friend_list/request_friend_list_container.dart';
@@ -141,6 +142,7 @@ class _FriendsState extends State<Friends> {
       friendWidgetList.add(
         FriendCard(
           friend: friend,
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: friend.userId))),
           onUnfriend: friendsViewModel.unfriend
         )
       );

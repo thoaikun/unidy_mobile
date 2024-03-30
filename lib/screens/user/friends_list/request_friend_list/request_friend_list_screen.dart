@@ -4,6 +4,7 @@ import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/viewmodel/user/friends_list/request_friend_list_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
+import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
 
 class RequestFriendListScreen extends StatefulWidget {
   const RequestFriendListScreen({super.key});
@@ -49,16 +50,7 @@ class _RequestFriendListScreenState extends State<RequestFriendListScreen> {
             );
           }
           else if (index == friendRequests.length && context.watch<RequestFriendListViewModel>().isLoading) {
-            return Container(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: const Center(
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
+            return const LoadingMoreIndicator();
           }
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5,),

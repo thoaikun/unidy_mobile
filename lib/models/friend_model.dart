@@ -11,12 +11,18 @@ class Friend {
   String fullName;
   bool isBlock;
   String? profileImageLink;
+  String? role;
+  bool? isFriend;
+  bool? isFollow;
 
   Friend({
     required this.userId,
     required this.fullName,
     required this.isBlock,
     this.profileImageLink,
+    this.role,
+    this.isFriend,
+    this.isFollow
   });
 
   factory Friend.fromJson(Map<String, dynamic> json) => Friend(
@@ -24,6 +30,9 @@ class Friend {
     fullName: json["fullName"],
     isBlock: json["isBlock"],
     profileImageLink: json["profileImageLink"],
+    role: json['role'],
+    isFriend: json['isFriend'],
+    isFollow: json['isFollow']
   );
 
   Map<String, dynamic> toJson() => {
@@ -31,6 +40,9 @@ class Friend {
     "fullName": fullName,
     "isBlock": isBlock,
     "profileImageLink": profileImageLink,
+    "role": role,
+    "isFriend": isFriend,
+    "isFollow": isFollow
   };
 }
 

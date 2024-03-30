@@ -4,6 +4,7 @@ import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/viewmodel/user/friends_list/suggestion_friend_list_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
+import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
 
 class SuggestionFriendListScreen extends StatefulWidget {
   const SuggestionFriendListScreen({
@@ -51,16 +52,7 @@ class _SuggestionFriendListScreenState extends State<SuggestionFriendListScreen>
               );
             }
             else if (index == friendSuggestionList.length && context.watch<SuggestionFriendListViewModel>().isLoading) {
-              return Container(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: const Center(
-                  child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              );
+              return const LoadingMoreIndicator();
             }
           },
           separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5,),

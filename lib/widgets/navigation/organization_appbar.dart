@@ -5,7 +5,6 @@ import 'package:unidy_mobile/screens/organization/edit_campaign/edit_campaign_sc
 import 'package:unidy_mobile/screens/user/notification/notification_screen.dart';
 import 'package:unidy_mobile/viewmodel/notification_viewmodel.dart';
 import 'package:unidy_mobile/widgets/popup_menu.dart';
-import 'package:unidy_mobile/widgets/search/search_delegate.dart';
 
 class UnidyOrganizationAppBar extends StatefulWidget {
   const UnidyOrganizationAppBar({super.key});

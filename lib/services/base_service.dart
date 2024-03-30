@@ -13,11 +13,11 @@ class Service {
   void catchForbidden() {
     _handleCleanCache()
       .then((_) {
-        Route<dynamic>? route = ModalRoute.of(navigatorKey.currentContext!);
-        if ((route is MaterialPageRoute && route is LoginScreen) || route == null) {
-          return;
-        }
-        navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: LoginScreen())));
+        // Route<dynamic>? route = ModalRoute.of(navigatorKey.currentContext!);
+        // if ((route?.settings.name ?? '') == '/login') {
+        //   return;
+        // }
+        // navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: LoginScreen())));
       });
   }
 

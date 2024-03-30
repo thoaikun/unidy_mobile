@@ -3,26 +3,27 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
+import 'package:unidy_mobile/models/certificate_model.dart';
+import 'package:unidy_mobile/models/comment_model.dart';
+import 'package:unidy_mobile/models/donation_history_model.dart';
 import 'package:unidy_mobile/services/base_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
-import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class CampaignService extends Service {
-  final int CAMPAIGN_LIMIT = 3;
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
-  Future<List<CampaignPost>> getRecommendCampaignFromRecommendService({int offset = 0}) async {
+  Future<CampaignData> getRecommendCampaign({int skip = 0, int limit=5}) async {
     try {
       Map<String, dynamic> payload = {
-        'offset': offset.toString(),
-        'limit': CAMPAIGN_LIMIT.toString(),
+        'skip': skip.toString(),
+        'limit': limit.toString(),
       };
-      Response response = await httpClient.get('api/v1/campaign/getRecommendCampaign', payload);
+      Response response = await httpClient.get('api/v1/campaign/recommendation', payload);
 
       switch(response.statusCode) {
         case 200:
-          List<CampaignPost> campaignList = campaignPostListFromJson(utf8.decode(response.bodyBytes));
-          return campaignList;
+          CampaignData campaignData = campaignDataFromJson(utf8.decode(response.bodyBytes));
+          return campaignData;
         case 403:
           catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
@@ -35,18 +36,20 @@ class CampaignService extends Service {
     }
   }
 
-  Future<List<CampaignPost>> getRecommendCampaignFromNeo4J(String? cursor) async {
+  Future<CampaignData> getOrganizationCampaignPosts(int organizationId, {int skip = 0, int limit = 5}) async {
     try {
       Map<String, dynamic> payload = {
-        'cursor': cursor ?? Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss'),
-        'limit': CAMPAIGN_LIMIT.toString(),
+        'skip': skip.toString(),
+        'limit': limit.toString(),
       };
-      Response response = await httpClient.get('api/v1/campaign/getCampaignPost', payload);
+      Response response = await httpClient.get('api/v1/campaign/organization/$organizationId', payload);
 
       switch(response.statusCode) {
         case 200:
-          List<CampaignPost> campaignList = campaignPostListFromJson(utf8.decode(response.bodyBytes));
-          return campaignList;
+          CampaignData campaignData = campaignDataFromJson(utf8.decode(response.bodyBytes));
+          return campaignData;
+        case 400:
+          throw ResponseException(value: 'organization id không đúng', code: ExceptionErrorCode.invalidUserId);
         case 403:
           catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
@@ -54,7 +57,7 @@ class CampaignService extends Service {
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
     }
-    catch (error) {
+    catch (e) {
       rethrow;
     }
   }
@@ -81,15 +84,167 @@ class CampaignService extends Service {
     }
   }
 
-  Future<void> registerAsVolunteer(int campaignId) async {
+  Future<void> registerAsVolunteer(String campaignId) async {
     try {
-      Response response = await httpClient.post('api/v1/campaign/register-as-volunteer', { 'campaignId': campaignId });
+      Response response = await httpClient.get('api/v1/campaign/register?campaignId=$campaignId',);
 
       switch(response.statusCode) {
         case 200:
           return;
         case 400:
           throw ResponseException(value: 'Dữ liệu không hợp lệ', code: ExceptionErrorCode.invalidInput);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<Comment>> getComments(String campaignId, {int skip = 0, int limit = 5}) async {
+    try {
+      Map<String, String> payload = {
+        'skip': skip.toString(),
+        'limit': limit.toString()
+      };
+      Response response = await httpClient.get('api/v1/campaign/$campaignId/comments', payload);
+
+      switch(response.statusCode) {
+        case 200:
+          List<Comment> commentListResponse = commentListFromJson(utf8.decode(response.bodyBytes));
+          return commentListResponse;
+        case 400:
+          throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<Comment>> getReplies(String campaignId, int commentId, {int skip = 0, int limit = 5}) async {
+    try {
+      Map<String, String> payload = {
+        'commentId': commentId.toString(),
+        'skip': skip.toString(),
+        'limit': limit.toString()
+      };
+      Response response = await httpClient.get('api/v1/posts/$campaignId/comments/$commentId/replies', payload);
+
+      switch(response.statusCode) {
+        case 200:
+          List<Comment> commentListResponse = commentListFromJson(utf8.decode(response.bodyBytes));
+          return commentListResponse;
+        case 400:
+          throw ResponseException(value: 'CommentId không đúng', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> createComment(String campaignId, String content) async {
+    try {
+      Map<String, String> payload = {
+        'content': content
+      };
+      Response response = await httpClient.post('api/v1/campaign/$campaignId/comments', jsonEncode(payload));
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'PostId không đúng', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> createReply(String campaignId, int commentId, String content) async {
+    try {
+      Map<String, String> payload = {
+        'content': content
+      };
+      Response response = await httpClient.post('api/v1/campaign/$campaignId/comments/$commentId/replies', jsonEncode(payload));
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'CommentId không đúng', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<Certificate?> getCertificateInCampaign(String campaignId) async {
+    try {
+      Response response = await httpClient.get('api/v1/campaign/$campaignId/certificates');
+
+      switch(response.statusCode) {
+        case 200:
+          List<Certificate> certificates = certificateListFromJson(utf8.decode(response.bodyBytes));
+          if (certificates.isNotEmpty) {
+            return certificates.first;
+          }
+          return null;
+        case 400:
+          throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<DonationHistory>> getDonationsInCampaign(String campaignId, {int pageNumber = 0, int pageSize = 5}) async {
+    try {
+      Map<String, String> payload = {
+        'pageNumber': pageNumber.toString(),
+        'pageSize': pageSize.toString()
+      };
+      Response response = await httpClient.get('api/v1/campaign/$campaignId/transactions', payload);
+
+      switch(response.statusCode) {
+        case 200:
+          List<DonationHistory> donations = donationHistoryListFromJson(utf8.decode(response.bodyBytes));
+          return donations;
+        case 400:
+          throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);
         case 403:
           catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);

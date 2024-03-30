@@ -256,9 +256,9 @@ class EditCampaignViewModel extends ChangeNotifier {
       targetVolunteerStream,
       startDateStream.transform(ValidationTransformer(validationType: 'campaignStartDate')),
       (title, description, openFormTime, closeFormTime, location, budgetTarget, targetVolunteer, startDate) {
-        openFormTime = DateFormat('dd/MM/yyyy').parse(openFormTime).toLocal().toIso8601String();
-        closeFormTime = DateFormat('dd/MM/yyyy').parse(closeFormTime).toLocal().toIso8601String();
-        startDate = DateFormat('dd/MM/yyyy').parse(startDate).toLocal().toIso8601String();
+        openFormTime = DateFormat('yyyy-MM-ddTHH:mm:ss').format(DateFormat('dd/MM/yyyy').parse(openFormTime).toLocal()).toString();
+        closeFormTime = DateFormat('yyyy-MM-ddTHH:mm:ss').format(DateFormat('dd/MM/yyyy').parse(closeFormTime).toLocal()).toString();
+        startDate = DateFormat('yyyy-MM-ddTHH:mm:ss').format(DateFormat('dd/MM/yyyy').parse(startDate).toLocal()).toString();
 
         return <String, String>{
           'title': title,
@@ -278,27 +278,27 @@ class EditCampaignViewModel extends ChangeNotifier {
       .debounceTime(const Duration(milliseconds: 500))
       .listen((payload) {
         setLoading(true);
-        _convertToMultipartFiles()
-          .then((images) {
-            return _campaignService.create(payload, images);
-          })
-          .then((_) {
-            showSnackBar.call('Tạo chiến dịch thành công');
-            // empty all fields
-            _titleController.clear();
-            _descriptionController.clear();
-            _openFormTimeController.clear();
-            _closeFormTimeController.clear();
-            _locationController.clear();
-            _budgetTargetController.clear();
-            _targetVolunteerController.clear();
-            _startDateController.clear();
-            _files.clear();
-            _selectedCategories.clear();
-            _hagTags.clear();
-          })
-          .catchError(() => showSnackBar.call('Có lỗi xảy ra'))
-          .whenComplete(() => setLoading(false));
+        // _convertToMultipartFiles()
+        //   .then((images) {
+        //     return _campaignService.create(payload, images);
+        //   })
+        //   .then((_) {
+        //     showSnackBar.call('Tạo chiến dịch thành công');
+        //     // empty all fields
+        //     _titleController.clear();
+        //     _descriptionController.clear();
+        //     _openFormTimeController.clear();
+        //     _closeFormTimeController.clear();
+        //     _locationController.clear();
+        //     _budgetTargetController.clear();
+        //     _targetVolunteerController.clear();
+        //     _startDateController.clear();
+        //     _files.clear();
+        //     _selectedCategories.clear();
+        //     _hagTags.clear();
+        //   })
+        //   .catchError(() => showSnackBar.call('Có lỗi xảy ra'))
+        //   .whenComplete(() => setLoading(false));
       })
       .onError(_handleError);
   }

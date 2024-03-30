@@ -4,6 +4,7 @@ import 'package:unidy_mobile/viewmodel/user/home/add_post_viewmodel.dart';
 import 'package:unidy_mobile/viewmodel/user/home/dashboard_viewmodel.dart';
 import 'package:unidy_mobile/viewmodel/navigation_viewmodel.dart';
 import 'package:unidy_mobile/viewmodel/user/home/friends_viewmodel.dart';
+import 'package:unidy_mobile/viewmodel/user/home/history_viewmodel.dart';
 import 'package:unidy_mobile/viewmodel/user/home/profile_viewmodel.dart';
 
 import 'home_screen.dart';
@@ -24,7 +25,8 @@ class _HomeScreenContainerState extends State<HomeScreenContainer> {
         ChangeNotifierProvider(create: (_) => AddPostViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
         ChangeNotifierProvider(create: (_) => DashboardViewModel()),
-        ChangeNotifierProvider(create: (_) => FriendsViewModel())
+        ChangeNotifierProvider(create: (_) => FriendsViewModel()),
+        ChangeNotifierProvider(create: (_) => HistoryViewModel()),
       ],
       child: const HomeScreen(),
     );

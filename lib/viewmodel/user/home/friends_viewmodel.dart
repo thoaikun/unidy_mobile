@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/services/user_service.dart';
-import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class FriendsViewModel extends ChangeNotifier {
   final UserService _userService = GetIt.instance<UserService>();
@@ -15,6 +14,10 @@ class FriendsViewModel extends ChangeNotifier {
   List<FriendRequest> get requestList => _requestList;
   List<Friend> get friendList => _friendList;
   List<FriendSuggestion> get recommendationList => _recommendationList;
+
+  FriendsViewModel() {
+    initData();
+  }
 
   void setRequestList(List<FriendRequest> value) {
     _requestList = value;
@@ -40,19 +43,9 @@ class FriendsViewModel extends ChangeNotifier {
     isLoading = true;
     try {
       var values = await Future.wait([
-        _userService.getFriendRequests({
-          'limit': '4',
-          'cursor': Formatter.formatTime(DateTime.now(), 'yyyy-MM-ddTHH:mm:ss')!
-        }),
-        _userService.getFriends({
-          'limit': '4',
-          'cursor': '0'
-        }),
-        _userService.getRecommendations({
-          'limit': '4',
-          'skip': '0',
-          'rangeEnd': '4'
-        })
+        _userService.getFriendRequests(),
+        _userService.getFriends(),
+        _userService.getRecommendations()
       ]);
 
       setRequestList(values[0] as List<FriendRequest>);
@@ -90,16 +83,6 @@ class FriendsViewModel extends ChangeNotifier {
     }
     catch (error) {
       return false;
-    }
-  }
-
-  void getRecommendation(Map<String, String> payload) async {
-    try {
-      List<FriendSuggestion> recommendationResponse = await _userService.getRecommendations(payload);
-      setRecommendationList(recommendationResponse);
-    }
-    catch (error) {
-      print(error);
     }
   }
 

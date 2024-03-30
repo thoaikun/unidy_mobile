@@ -33,11 +33,11 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
     _rangeEnd = 4;
     _skip = 0;
     try {
-      List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations({
-        'limit': '10',
-        'skip': _skip.toString(),
-        'rangeEnd': _rangeEnd.toString()
-      });
+      List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations(
+        limit: 10,
+        skip: _skip,
+        rangeEnd: _rangeEnd
+      );
       setFriendSuggestionList(friendSuggestionResponse);
       setFirstLoading(false);
       _skip += 10;
@@ -51,11 +51,11 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
   void loadMore() async {
     setLoading(true);
     try {
-      List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations({
-        'limit': '10',
-        'skip': _skip.toString(),
-        'rangeEnd': _rangeEnd.toString()
-      });
+      List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations(
+        limit: 10,
+        skip: _skip,
+        rangeEnd: _rangeEnd
+      );
       setFriendSuggestionList([..._friendSuggestionList, ...friendSuggestionResponse]);
       _skip += 10;
       _rangeEnd += 1;
@@ -71,11 +71,11 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
     try {
       _skip = 0;
       _rangeEnd = 4;
-      List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations({
-        'limit': '10',
-        'skip': _skip.toString(),
-        'rangeEnd': _rangeEnd.toString()
-      });
+      List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations(
+        limit: 10,
+        skip: _skip,
+        rangeEnd: _rangeEnd
+      );
       setFriendSuggestionList(friendSuggestionResponse);
     }
     catch (error) {

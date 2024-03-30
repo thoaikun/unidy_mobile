@@ -10,7 +10,7 @@ class Empty extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset('assets/imgs/icon/empty-box.png'),
+        Image.asset('assets/imgs/icon/empty-box.png', width: 100, height: 100, color: TextColor.textColor300),
         const SizedBox(height: 20,),
         Text(
           description ?? '',

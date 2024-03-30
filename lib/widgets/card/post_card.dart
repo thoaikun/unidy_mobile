@@ -1,27 +1,30 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
-import 'package:unidy_mobile/screens/user/donation/donation_screen.dart';
+import 'package:unidy_mobile/screens/user/confirm_participant_campaign/confirm_participant_campaign_screen_container.dart';
+import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
+import 'package:unidy_mobile/screens/user/donation/donation_screen_container.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
+import 'package:unidy_mobile/viewmodel/comment_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
+import '../../screens/user/detail_profile/organization_profile/organization_profile_container.dart';
+
 class PostCard extends StatelessWidget {
   final Post? post;
-  final String? userName;
-  final String? avatarUrl;
   final void Function()? onLikePost;
 
   const PostCard({
     super.key,
     this.post,
-    this.userName,
-    this.avatarUrl,
     this.onLikePost
   });
 
@@ -39,8 +42,9 @@ class PostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: AvatarCard(
                 showTime: true,
-                userName: userName,
-                avatarUrl: avatarUrl,
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: post?.userNode?.userId ?? 0))),
+                userName: post?.userNode?.fullName,
+                avatarUrl: post?.userNode?.profileImageLink,
                 createdAt: post?.createDate,
                 description: 'Đang cảm thấy ${post?.status.toLowerCase()}'
               ),
@@ -77,7 +81,14 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildImageList(context),
-            const AvatarCard(showTime: true, description: 'Đã chia sẽ một kỉ niệm'),
+            AvatarCard(
+              showTime: true,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: post?.userNode?.userId ?? 0))),
+              userName: post?.userNode?.fullName,
+              avatarUrl: post?.userNode?.profileImageLink,
+              createdAt: post?.createDate,
+              description: 'Đang cảm thấy ${post?.status.toLowerCase()}'
+            ),
             const SizedBox(height: 15),
             _buildPostContent(context),
             const SizedBox(height: 15),
@@ -100,8 +111,9 @@ class PostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: AvatarCard(
                   showTime: true,
-                  userName: userName,
-                  avatarUrl: avatarUrl,
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: post?.userNode?.userId ?? 0))),
+                  userName: post?.userNode?.fullName,
+                  avatarUrl: post?.userNode?.profileImageLink,
                   createdAt: post?.createDate,
                   description: 'Đang cảm thấy ${post?.status.toLowerCase()}'
               ),
@@ -176,58 +188,13 @@ class PostCard extends StatelessWidget {
                       borderRadius:
                       BorderRadius.vertical(top: Radius.circular(8))
                   ),
-                  builder: (BuildContext context) => _buildCommentSheetModal(context)
+                  builder: (BuildContext context) => CommentTree(id: post?.postId ?? '', commentType: ECommentType.postComment)
               );
             },
             icon: const Icon(Icons.chat_bubble_outline_rounded)
         ),
         IconButton(onPressed: () {}, icon: const Icon(Icons.share_rounded))
       ],
-    );
-  }
-
-  Widget _buildCommentSheetModal(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (_, controller) => Column(
-        children: [
-          const Icon(
-            Icons.remove,
-            size: 40,
-            color: TextColor.textColor200,
-          ),
-          Expanded(
-              child: ListView.builder(
-                controller: controller,
-                itemCount: 2,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (_, index) {
-                  return CommentTree();
-                },
-              )
-          ),
-          AnimatedPadding(
-            padding: MediaQuery.of(context).viewInsets,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.easeInOut,
-            child:  Container(
-                decoration: const BoxDecoration(
-                    color: PrimaryColor.primary100
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                alignment: Alignment.bottomCenter,
-                child: Input(
-                    label: 'Bình luận',
-                    placeholder: 'Nhập bình luận',
-                    suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.send_rounded))
-                )
-            ),
-          )
-        ],
-      ),
     );
   }
 
@@ -252,11 +219,7 @@ class PostCard extends StatelessWidget {
   }
 
   Widget _buildImageList(BuildContext context) {
-    List<String> imgs = [
-      'https://upload.wikimedia.org/wikipedia/commons/6/6c/Vilnius_Marathon_2015_volunteers_by_Augustas_Didzgalvis.jpg',
-      'https://kindful.com/wp-content/uploads/volunteer-management_Feature.jpg',
-      'https://images.ctfassets.net/81iqaqpfd8fy/57NATA4649mbTvRfGpd6R1/911f94cdfd6089a77aefb4b1e9ebac7a/Teenvolunteercover.jpg'
-    ];
+    List<String> imgs = List<String>.from(jsonDecode(post?.linkImage ?? '[]'));
     List<Widget> result = [];
 
     for (int i = 0; i < imgs.length; i++) {
@@ -281,7 +244,7 @@ class PostCard extends StatelessWidget {
                 );
               },
               errorBuilder: (BuildContext context, Object child, StackTrace? error) => const Icon(Icons.error),
-              fit: BoxFit.contain
+              fit: BoxFit.cover
           )
         );
       }
@@ -356,6 +319,7 @@ class CampaignPostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: AvatarCard(
                   showTime: true,
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrganizationProfileContainer(organizationId: campaignPost.organizationNode.userId))),
                   userName: campaignPost.organizationNode.fullName,
                   avatarUrl: campaignPost.organizationNode.profileImageLink,
                   createdAt: campaignPost.campaign.createDate,
@@ -365,12 +329,16 @@ class CampaignPostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildPostContent(context),
             ),
-            const SizedBox(height: 15),
             Visibility(
-              visible: campaignPost.campaign.linkImage != null,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _buildImageSlide(),
+              visible: campaignPost.campaign.linkImage != null && campaignPost.campaign.linkImage != "[]",
+              child: Column(
+                children: [
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: _buildImageSlide(),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 5),
@@ -382,11 +350,56 @@ class CampaignPostCard extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: FilledButton(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DonationScreen())),
-                child: const Text('Tham gia ngay', style: TextStyle(color: Colors.white)),
+              child: Row(
+                children: [
+                  Visibility(
+                    visible: campaignPost.campaign.status == CampaignStatus.inProgress && campaignPost.campaign.numOfRegister != null,
+                    child: Expanded(
+                      child: FilledButton(
+                        onPressed: campaignPost.isJoined != true ? () => Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmParticipantCampaignContainer(campaignPost: campaignPost))) : null,
+                        child: Text(campaignPost.isJoined == true ? 'Đã tham gia' : 'Tham gia ngay', style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Visibility(
+                    visible: campaignPost.campaign.status == CampaignStatus.inProgress && campaignPost.campaign.donationBudget != null,
+                    child: Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DonationScreenContainer(campaignPost: campaignPost))),
+                        child: const Text('Ủng hộ', style: TextStyle(color: PrimaryColor.primary500)),
+                      ),
+                    ),
+                  )
+                ],
               ),
             )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget searchResult(BuildContext context) {
+    return GestureDetector(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 20, 0, 15),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildImageList(context),
+            AvatarCard(
+              showTime: true,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrganizationProfileContainer(organizationId: campaignPost.organizationNode.userId))),
+              userName: campaignPost.organizationNode.fullName,
+              avatarUrl: campaignPost.organizationNode.profileImageLink,
+              createdAt: campaignPost.campaign.createDate,
+            ),
+            const SizedBox(height: 15),
+            _buildPostContent(context),
+            const SizedBox(height: 15),
+            _buildPostInteraction(context)
           ],
         ),
       ),
@@ -398,6 +411,7 @@ class CampaignPostCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(campaignPost.campaign.title ?? 'Không có tiêu đề', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 5),
         ReadMoreText(
           campaignPost.campaign.description,
           trimLines: 3,
@@ -406,7 +420,57 @@ class CampaignPostCard extends StatelessWidget {
           trimExpandedText: '',
           moreStyle: Theme.of(context).textTheme.labelLarge?.copyWith(color: TextColor.textColor300),
         ),
+        const SizedBox(height: 10),
+        Text('Thông tin chi tiết:', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 5),
+        Wrap(
+          spacing: 5,
+          children: [
+            Text('Ngày mở chiến dịch: ', style: Theme.of(context).textTheme.bodyMedium),
+            Text(Formatter.formatTime(DateTime.parse(campaignPost.campaign.startDate), 'dd/MM/yyyy - HH:mm') ?? DateTime.now().toString(), style: Theme.of(context).textTheme.bodyMedium)
+          ],
+        ),
+        const SizedBox(height: 5),
+        Wrap(
+          spacing: 5,
+          children: [
+            Text('Ngày kết thúc chiến dịch: ', style: Theme.of(context).textTheme.bodyMedium),
+            Text(Formatter.formatTime(DateTime.parse(campaignPost.campaign.endDate), 'dd/MM/yyyy - HH:mm') ?? DateTime.now().toString(), style: Theme.of(context).textTheme.bodyMedium)
+          ],
+        ),
+        const SizedBox(height: 5),
+        Wrap(
+          spacing: 5,
+          children: [
+            Text('Địa điểm: ', style: Theme.of(context).textTheme.bodyMedium),
+            Text(campaignPost.campaign.location, style: Theme.of(context).textTheme.bodyMedium)
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text('Yêu cầu:', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 5),
+        Visibility(
+          visible: campaignPost.campaign.numOfRegister != null,
+          child: Wrap(
+            spacing: 5,
+            children: [
+              Text('Số lượng tình nguyện viên: ', style: Theme.of(context).textTheme.bodyMedium),
+              Text('${campaignPost.campaign.numOfRegister.toString()} người', style: Theme.of(context).textTheme.titleSmall?.copyWith(color: ErrorColor.error500))
+            ],
+          ),
+        ),
+        const SizedBox(height: 5),
+        Visibility(
+          visible: campaignPost.campaign.donationBudget != null,
+          child: Wrap(
+            spacing: 5,
+            children: [
+              Text('Ngân sách yêu cầu: ', style: Theme.of(context).textTheme.bodyMedium),
+              Text(Formatter.formatCurrency(campaignPost.campaign.donationBudget), style: Theme.of(context).textTheme.titleSmall?.copyWith(color: ErrorColor.error500))
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
         Visibility(
           visible: campaignPost.campaign.hashTag != null,
           child: Text(campaignPost.campaign.hashTag ?? '', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: PrimaryColor.primary500)),
@@ -416,16 +480,16 @@ class CampaignPostCard extends StatelessWidget {
   }
 
   Widget _buildPostInteraction(BuildContext context) {
-    // int totalLike = 0;
-    // if (post?.isLiked == true) {
-    //   totalLike = (post?.likeCount ?? 0) + 1;
-    // }
-    // else if (post?.isLiked == false) {
-    //   totalLike = post?.likeCount ?? 0;
-    // }
-    // else {
-    //   totalLike = 0;
-    // }
+    int totalLike = 0;
+    if (campaignPost.isLiked == true) {
+      totalLike = (campaignPost.likeCount ?? 0) + 1;
+    }
+    else if (campaignPost.isLiked == false) {
+      totalLike = campaignPost.likeCount ?? 0;
+    }
+    else {
+      totalLike = 0;
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -436,7 +500,7 @@ class CampaignPostCard extends StatelessWidget {
                 onPressed: () => {},
                 icon: const Icon(Icons.favorite_border_rounded)
             ),
-            Text('0 lượt thích', style: Theme.of(context).textTheme.bodySmall)
+            Text('$totalLike lượt thích', style: Theme.of(context).textTheme.bodySmall)
           ],
         ),
         IconButton(
@@ -449,58 +513,13 @@ class CampaignPostCard extends StatelessWidget {
                       borderRadius:
                       BorderRadius.vertical(top: Radius.circular(8))
                   ),
-                  builder: (BuildContext context) => _buildCommentSheetModal(context)
+                  builder: (BuildContext context) => CommentTree(id: campaignPost.campaign.campaignId, commentType: ECommentType.campaignComment)
               );
             },
             icon: const Icon(Icons.chat_bubble_outline_rounded)
         ),
         IconButton(onPressed: () {}, icon: const Icon(Icons.share_rounded))
       ],
-    );
-  }
-
-  Widget _buildCommentSheetModal(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (_, controller) => Column(
-        children: [
-          const Icon(
-            Icons.remove,
-            size: 40,
-            color: TextColor.textColor200,
-          ),
-          Expanded(
-              child: ListView.builder(
-                controller: controller,
-                itemCount: 2,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (_, index) {
-                  return CommentTree();
-                },
-              )
-          ),
-          AnimatedPadding(
-            padding: MediaQuery.of(context).viewInsets,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.easeInOut,
-            child:  Container(
-                decoration: const BoxDecoration(
-                    color: PrimaryColor.primary100
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                alignment: Alignment.bottomCenter,
-                child: Input(
-                    label: 'Bình luận',
-                    placeholder: 'Nhập bình luận',
-                    suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.send_rounded))
-                )
-            ),
-          )
-        ],
-      ),
     );
   }
 
@@ -522,5 +541,83 @@ class CampaignPostCard extends StatelessWidget {
       );
     }
     return const SizedBox();
+  }
+
+  Widget _buildImageList(BuildContext context) {
+    List<String> imgs = List<String>.from(jsonDecode(campaignPost.campaign.linkImage ?? '[]'));
+    List<Widget> result = [];
+
+    for (int i = 0; i < imgs.length; i++) {
+      if ( i < 2) {
+        result.add(
+            Image.network(
+                imgs[i],
+                width: ((MediaQuery.of(context).size.width - 70) / 3),
+                height: ((MediaQuery.of(context).size.width - 70) / 3),
+                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return SizedBox(
+                    width: ((MediaQuery.of(context).size.width - 70) / 3),
+                    height: ((MediaQuery.of(context).size.width - 70) / 3),
+                    child: const Center(
+                      child: SizedBox(
+                          width: 25,
+                          height: 25,
+                          child: CircularProgressIndicator()
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (BuildContext context, Object child, StackTrace? error) => const Icon(Icons.error),
+                fit: BoxFit.cover
+            )
+        );
+      }
+      else {
+        result.add(Stack(
+          children: [
+            Image.network(
+              imgs[i],
+              width: ((MediaQuery.of(context).size.width - 70) / 3),
+              height: ((MediaQuery.of(context).size.width - 70) / 3),
+              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) return child;
+                return SizedBox(
+                  width: ((MediaQuery.of(context).size.width - 70) / 3),
+                  height: ((MediaQuery.of(context).size.width - 70) / 3),
+                  child: const Center(
+                    child: SizedBox(
+                      width: 25,
+                      height: 25,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
+              },
+              errorBuilder: (BuildContext context, Object child, StackTrace? error) => const Icon(Icons.error),
+              fit: BoxFit.contain,
+            ),
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: Text(
+                    '+ ${imgs.length - 2}',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+                  ),
+                ),// Adjust opacity as needed
+              ),
+            ),
+          ],
+        ));
+        break;
+      }
+    }
+
+    return Wrap(
+        spacing: 15,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        children: result
+    );
   }
 }

@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final post = postFromJson(jsonString);
-
 import 'dart:convert';
 
 List<Post> postListFromJson(String str) => List<Post>.from(json.decode(str).map((x) => Post.fromJson(x)));
@@ -18,7 +14,7 @@ class Post {
   String? updateDate;
   bool isBlock;
   String linkImage;
-  UserNodes? userNodes;
+  UserNode? userNode;
   int likeCount;
   bool isLiked;
 
@@ -30,7 +26,7 @@ class Post {
     required this.updateDate,
     required this.isBlock,
     required this.linkImage,
-    required this.userNodes,
+    required this.userNode,
     required this.likeCount,
     required this.isLiked
   });
@@ -43,7 +39,7 @@ class Post {
     updateDate: json["updateDate"],
     isBlock: json["isBlock"],
     linkImage: json["linkImage"],
-    userNodes: UserNodes.fromJson(json["userNodes"]),
+    userNode: UserNode.fromJson(json["userNode"]),
     likeCount: json["likeCount"] ?? 0,
     isLiked: json["isLiked"] ?? false
   );
@@ -56,30 +52,30 @@ class Post {
     "updateDate": updateDate,
     "isBlock": isBlock,
     "linkImage": linkImage,
-    "userNodes": userNodes?.toJson(),
+    "userNodes": userNode?.toJson(),
     "likeCount": likeCount,
     "isLiked": isLiked
   };
 }
 
-class UserNodes {
+class UserNode {
   int userId;
   String fullName;
   bool isBlock;
   dynamic profileImageLink;
 
-  UserNodes({
+  UserNode({
     required this.userId,
     required this.fullName,
     required this.isBlock,
     required this.profileImageLink,
   });
 
-  static UserNodes? fromJson(Map<String, dynamic>? json) {
+  static UserNode? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    return UserNodes(
+    return UserNode(
       userId: json["userId"],
       fullName: json["fullName"],
       isBlock: json["isBlock"],

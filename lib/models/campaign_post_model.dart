@@ -1,21 +1,49 @@
 import 'dart:convert';
 
+CampaignData campaignDataFromJson(String str) => CampaignData.fromJson(json.decode(str));
+
 List<CampaignPost> campaignPostListFromJson(String str) => List<CampaignPost>.from(json.decode(str).map((x) => CampaignPost.fromJson(x)));
 
 CampaignPost campaignPostFromJson(String str) => CampaignPost.fromJson(json.decode(str));
 
 String campaignPostToJson(CampaignPost data) => json.encode(data.toJson());
 
+class CampaignData {
+  final List<CampaignPost> campaigns;
+  final int total;
+  final int nextOffset;
+
+  CampaignData({
+    required this.campaigns,
+    required this.total,
+    required this.nextOffset,
+  });
+
+  factory CampaignData.fromJson(Map<String, dynamic> json) => CampaignData(
+    campaigns: List<CampaignPost>.from(json["campaigns"].map((x) => CampaignPost.fromJson(x))),
+    total: json["total"],
+    nextOffset: json["nextOffset"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "campaigns": List<CampaignPost>.from(campaigns.map((x) => x.toJson())),
+    "total": total,
+    "nextOffset": nextOffset,
+  };
+}
+
 class CampaignPost {
   Campaign campaign;
   OrganizationNode organizationNode;
   bool isLiked;
+  bool? isJoined;
   int likeCount;
 
   CampaignPost({
     required this.campaign,
     required this.organizationNode,
     required this.isLiked,
+    this.isJoined,
     required this.likeCount,
   });
 
@@ -23,6 +51,7 @@ class CampaignPost {
     campaign: Campaign.fromJson(json["campaign"]),
     organizationNode: OrganizationNode.fromJson(json["organizationNode"]),
     isLiked: json["isLiked"],
+    isJoined: json["isJoined"],
     likeCount: json["likeCount"],
   );
 
@@ -30,6 +59,7 @@ class CampaignPost {
     "campaign": campaign.toJson(),
     "organizationNode": organizationNode.toJson(),
     "isLiked": isLiked,
+    "isJoined": isJoined,
     "likeCount": likeCount,
   };
 }
@@ -46,51 +76,63 @@ class Campaign {
   String location;
   String? createDate;
   String? updateDate;
-  bool isBlock;
+  bool? isBlock;
   String? linkImage;
   int? numOfRegister;
+  int? numberVolunteerRegistered;
+  int? numberVolunteer;
   int? donate;
+  int? donationBudget;
+  int? donationBudgetReceived;
   dynamic userNode;
   List<dynamic> userLikes;
 
   Campaign({
     required this.campaignId,
     this.hashTag,
-    required this.title,
+    this.title,
     required this.description,
     required this.status,
     required this.startDate,
     required this.endDate,
     required this.timeTakePlace,
     required this.location,
-    required this.numOfRegister,
+    this.numOfRegister,
+    this.numberVolunteerRegistered,
+    this.numberVolunteer,
     required this.createDate,
-    required this.updateDate,
-    required this.isBlock,
-    required this.linkImage,
+    this.updateDate,
+    this.isBlock,
+    this.linkImage,
     required this.userNode,
-    required this.donate,
+    this.donate,
+    this.donationBudget,
+    this.donationBudgetReceived,
     required this.userLikes,
   });
 
   factory Campaign.fromJson(Map<String, dynamic> json) => Campaign(
-    campaignId: json["campaignId"],
+    campaignId: json["campaignId"].toString(),
     hashTag: json["hashTag"],
     title: json["title"],
-    description: json["content"],
+    description: json["content"] ?? json["description"],
     status: toCampaignStatus(json['status']),
     startDate: json["startDate"],
     endDate: json["endDate"],
     timeTakePlace: json["timeTakePlace"],
     location: json["location"],
     numOfRegister: json["numOfRegister"],
+    numberVolunteerRegistered: json["numberVolunteerRegistered"],
+    numberVolunteer: json["numberVolunteer"],
     createDate: json["createDate"],
     updateDate: json["updateDate"],
     isBlock: json["isBlock"],
     linkImage: json["linkImage"],
     userNode: json["userNode"],
     donate: json["donate"],
-    userLikes: List<dynamic>.from(json["userLikes"].map((x) => x)),
+    donationBudget: json["donationBudget"],
+    donationBudgetReceived: json["donationBudgetReceived"],
+    userLikes: List<dynamic>.from(json["userLikes"]?.map((x) => x) ?? []),
   );
 
   Map<String, dynamic> toJson() => {
@@ -104,13 +146,17 @@ class Campaign {
     "timeTakePlace": timeTakePlace,
     "location": location,
     "numOfRegister": numOfRegister,
+    "numberVolunteerRegistered": numberVolunteerRegistered,
+    "numberVolunteer": numberVolunteer,
     "createDate": createDate,
     "updateDate": updateDate,
     "isBlock": isBlock,
     "linkImage": linkImage,
     "userNode": userNode,
     "donate": donate,
-    "userLikes": List<dynamic>.from(userLikes.map((x) => x)),
+    "donationBudget": donationBudget,
+    "donationBudgetReceived": donationBudgetReceived,
+    "userLikes": userLikes != null ? List<dynamic>.from(userLikes!.map((x) => x)) : null,
   };
 }
 

@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:unidy_mobile/config/http_client.dart';
+import 'package:unidy_mobile/models/campaign_joined_history_model.dart';
+import 'package:unidy_mobile/models/donation_history_model.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/services/base_service.dart';
+import 'package:unidy_mobile/services/firebase_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
 class UserService extends Service {
@@ -14,6 +17,26 @@ class UserService extends Service {
   Future<User> whoAmI() async {
     try {
       Response response = await httpClient.get('api/v1/users/profile');
+
+      switch(response.statusCode) {
+        case 200:
+          User userResponse = userFromJson(utf8.decode(response.bodyBytes));
+          return userResponse;
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<User> getOtherUserProfile(int userId) async {
+    try {
+      Response response = await httpClient.get('api/v1/users/profile/$userId');
 
       switch(response.statusCode) {
         case 200:
@@ -203,8 +226,12 @@ class UserService extends Service {
     }
   }
 
-  Future<List<FriendRequest>> getFriendRequests(Map<String, String> payload) async {
+  Future<List<FriendRequest>> getFriendRequests({int skip = 0, int limit = 5}) async {
     try {
+      Map<String, String> payload = {
+        'skip': skip.toString(),
+        'limit': limit.toString()
+      };
       Response response = await httpClient.get('api/v1/users/list-invite', payload);
 
       switch(response.statusCode) {
@@ -225,13 +252,18 @@ class UserService extends Service {
     }
   }
 
-  Future<List<Friend>> getFriends(Map<String, String> payload) async {
+  Future<List<Friend>> getFriends({int skip = 0, int limit = 5}) async {
     try {
+      Map<String, String> payload = {
+        'skip': skip.toString(),
+        'limit': limit.toString()
+      };
       Response response = await httpClient.get('api/v1/users/get-list-friend', payload);
 
       switch(response.statusCode) {
         case 200:
           List<Friend> friends = friendListFromJson(utf8.decode(response.bodyBytes));
+          for (var element in friends) {element.isFollow = true;}
           return friends;
         case 400:
           throw ResponseException(value: 'Không thể lấy danh sách bạn bè', code: ExceptionErrorCode.invalidFriendRequest);
@@ -247,8 +279,13 @@ class UserService extends Service {
     }
   }
 
-  Future<List<FriendSuggestion>> getRecommendations(Map<String, String> payload) async {
+  Future<List<FriendSuggestion>> getRecommendations({int skip = 0, int limit = 5, rangeEnd = 4}) async {
     try {
+      Map<String, String> payload = {
+        'skip': skip.toString(),
+        'limit': limit.toString(),
+        'rangeEnd': rangeEnd.toString()
+      };
       Response response = await httpClient.get('api/v1/users/get-recommend-friend', payload);
 
       switch(response.statusCode) {
@@ -270,13 +307,14 @@ class UserService extends Service {
   }
 
 
-  Future<void> followOrganization(int organizationId) async {
+  Future<String> followOrganization(int organizationId) async {
     try {
       Response response = await httpClient.patch('api/v1/users/follow-organization?organizationId=$organizationId');
 
       switch(response.statusCode) {
         case 200:
-          return;
+          String topic = jsonDecode(response.body)['topic'];
+          return topic;
         case 400:
           throw ResponseException(value: 'Không thể theo dõi tổ chức', code: ExceptionErrorCode.invalidFollowOrganization);
         case 403:
@@ -308,6 +346,58 @@ class UserService extends Service {
       }
     }
     catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<CampaignJoinedHistory>> getJoinedCampaign({ int size = 5, int page = 0}) async {
+    try {
+      Map<String, String> payload = {
+        'pageSize': size.toString(),
+        'pageNumber': page.toString()
+      };
+      Response response = await httpClient.get('api/v1/users/campaigns', payload);
+
+      switch(response.statusCode) {
+        case 200:
+          List<CampaignJoinedHistory> campaignJoinedHistory = campaignJoinedHistoryListFromJson(utf8.decode(response.bodyBytes));
+          return campaignJoinedHistory;
+        case 400:
+          throw ResponseException(value: 'Không thể lấy thông tin chiến dịch đã tham gia', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch(error) {
+      rethrow;
+    }
+  }
+
+  Future<List<DonationHistory>> getDonationHistory({int size = 5, int page = 0}) async {
+    try {
+      Map<String, String> payload = {
+        'pageSize': size.toString(),
+        'pageNumber': page.toString()
+      };
+      Response response = await httpClient.get('api/v1/users/transactions', payload);
+
+      switch(response.statusCode) {
+        case 200:
+          List<DonationHistory> donationHistory = donationHistoryListFromJson(utf8.decode(response.bodyBytes));
+          return donationHistory;
+        case 400:
+          throw ResponseException(value: 'Không thể lấy lịch sử quyên góp', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch(error) {
       rethrow;
     }
   }

@@ -6,11 +6,13 @@ import 'package:unidy_mobile/utils/formatter_util.dart';
 class FriendCard extends StatelessWidget {
   final Friend? friend;
   final void Function(int? userId)? onUnfriend;
+  final void Function()? onTap;
 
   const FriendCard({
     super.key,
     this.friend,
     this.onUnfriend,
+    this.onTap
   });
 
   @override
@@ -28,12 +30,18 @@ class FriendCard extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: TextButton.icon(
+      trailing: friend?.isFriend ?? false ? TextButton.icon(
           onPressed: () => showAlertDialog(context),
-          icon: const Icon(Icons.people_alt, size: 18),
+          icon: const Icon(Icons.people_alt_rounded, size: 18),
           label: const Text('Bạn bè')
-      ),
+        ) :
+        TextButton.icon(
+          onPressed: () => showAlertDialog(context),
+          icon: const Icon(Icons.person_add_alt_rounded, size: 18, color: TextColor.textColor500,),
+          label: const Text('Kết bạn', style: TextStyle(color: TextColor.textColor500)),
+        ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+      onTap: () => onTap?.call(),
     );
   }
 
@@ -67,11 +75,13 @@ class RequestFriendCard extends StatelessWidget {
   final FriendRequest? friendRequest;
   final Future<bool> Function(FriendRequest? friendRequest)? onAccept;
   final Future<bool> Function(FriendRequest? friendRequest)? onDecline;
+  final void Function()? onTap;
   const RequestFriendCard({
     super.key,
     this.friendRequest,
     this.onAccept,
-    this.onDecline
+    this.onDecline,
+    this.onTap
   });
 
   @override
@@ -116,6 +126,7 @@ class RequestFriendCard extends StatelessWidget {
         ],
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+      onTap: onTap,
     );
   }
 
@@ -130,11 +141,13 @@ class RequestFriendCard extends StatelessWidget {
 class AddFriendCard extends StatefulWidget {
   final FriendSuggestion? friendSuggestion;
   final Future<void> Function(int? userId)? onSendFriendRequest;
+  final void Function()? onTap;
 
   const AddFriendCard({
     super.key,
     this.friendSuggestion,
     this.onSendFriendRequest,
+    this.onTap
   });
 
   @override
@@ -175,6 +188,7 @@ class _AddFriendCardState extends State<AddFriendCard> {
           )
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+      onTap: widget.onTap,
     );
   }
 }

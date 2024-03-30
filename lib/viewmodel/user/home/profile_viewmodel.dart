@@ -9,7 +9,8 @@ class ProfileViewModel extends ChangeNotifier {
   final UserService _userService = GetIt.instance<UserService>();
   final PostService _postService = GetIt.instance<PostService>();
 
-  String? _lastPostOffset;
+  final int LIMIT = 5;
+  int _postOffset = 0;
   bool loading = true;
   bool isLoadMoreLoading = true;
   User _user = User(userId: 0);
@@ -50,12 +51,9 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void getMyOwnPost() {
-    _postService.getUserPosts(_lastPostOffset)
+    _postService.getUserPosts(user.userId, skip: _postOffset, limit: LIMIT)
       .then((postList) {
-        if (postList.isNotEmpty) {
-          Post lastPost = postList[postList.length - 1];
-          _lastPostOffset = lastPost.createDate;
-        }
+        _postOffset += LIMIT;
         setPostList(postList);
       })
       .catchError((error) {
@@ -66,12 +64,9 @@ class ProfileViewModel extends ChangeNotifier {
 
   void loadMorePosts() {
     setIsLoadMoreLoading(true);
-    _postService.getUserPosts(_lastPostOffset)
+    _postService.getUserPosts(user.userId, skip: _postOffset, limit: LIMIT)
       .then((postList) {
-        if (postList.isNotEmpty) {
-          Post lastPost = postList[postList.length - 1];
-          _lastPostOffset = lastPost.createDate;
-        }
+        _postOffset += LIMIT;
         setPostList(postList);
       })
         .whenComplete(() {

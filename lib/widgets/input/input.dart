@@ -4,6 +4,7 @@ import 'package:unidy_mobile/config/themes/theme_config.dart';
 
 class Input extends StatelessWidget {
   final TextEditingController? controller;
+  final FocusNode? focusNode;
   final void Function()? onTap;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -22,6 +23,7 @@ class Input extends StatelessWidget {
   const Input({ 
     Key? key, 
     this.controller,
+    this.focusNode,
     this.onTap,
     this.prefixIcon,
     this.suffixIcon,
@@ -81,6 +83,7 @@ class Input extends StatelessWidget {
   Widget build(BuildContext context){
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       decoration: getInputDecoration(),
       keyboardType: numberKeyboard ? TextInputType.number : TextInputType.text,
       textAlignVertical: TextAlignVertical.center,
@@ -113,6 +116,7 @@ class Input extends StatelessWidget {
   Widget textarea() {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       decoration: getInputDecoration(),
       minLines: 1,
       keyboardType: TextInputType.multiline,

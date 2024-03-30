@@ -6,6 +6,8 @@ import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/user/home/dashboard_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
+import 'package:unidy_mobile/widgets/error.dart';
+import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -22,8 +24,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
     super.initState();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        Provider.of<DashboardViewModel>(context, listen: false).setIsLoadMoreLoading(true);
-        Provider.of<DashboardViewModel>(context, listen: false).getPosts();
+        Provider.of<DashboardViewModel>(context, listen: false).loadMoreData();
       }
     });
   }
@@ -32,6 +33,11 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Consumer<DashboardViewModel>(
       builder: (BuildContext context, DashboardViewModel dashboardViewModel, Widget? child) {
+        if (dashboardViewModel.error) {
+          return ErrorPlaceholder(
+            onRetry: () => dashboardViewModel.refreshData(),
+          );
+        }
         return RefreshIndicator(
           onRefresh: () async {
             return Future.delayed(const Duration(seconds: 1))
@@ -69,23 +75,12 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                 Post post = dashboardViewModel.recommendationList[index];
                 return PostCard(
                     post: post,
-                    userName: post.userNodes?.fullName,
-                    avatarUrl: post.userNodes?.profileImageLink,
                     onLikePost: () => debounce(() => dashboardViewModel.handleLikePost(post), 500).call()
                 );
               }
             }
             else if (index == dashboardViewModel.recommendationList.length && dashboardViewModel.isLoadMoreLoading) {
-              return Container(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: const Center(
-                  child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              );
+              return const LoadingMoreIndicator();
             }
           },
           separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
