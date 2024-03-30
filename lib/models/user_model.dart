@@ -15,6 +15,7 @@ class User {
   String? workLocation;
   String? role;
   String? image;
+  bool? isFriend;
 
   User({
     required this.userId,
@@ -26,7 +27,8 @@ class User {
     this.job,
     this.workLocation,
     this.role,
-    this.image
+    this.image,
+    this.isFriend
   });
 
 
@@ -40,7 +42,8 @@ class User {
     job: json["job"],
     workLocation: json["workLocation"],
     role: json["role"],
-    image: json['image']
+    image: json['image'],
+    isFriend: json['isFriend']
   );
 
   Map<String, dynamic> toJson() => {
@@ -53,6 +56,7 @@ class User {
     "job": job,
     "workLocation": workLocation,
     "role": role,
-    "image": image
+    "image": image,
+    "isFriend": isFriend
   };
 }

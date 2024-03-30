@@ -151,7 +151,6 @@ import 'package:unidy_mobile/widgets/empty.dart';
         organizationWidgets.add(
             OrganizationCard(
               organization: organization,
-              followed: true,
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrganizationProfileContainer(organizationId: organization.userId)))
             )
         );

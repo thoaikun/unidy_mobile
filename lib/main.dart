@@ -79,7 +79,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void handleDynamicLink(Uri link) {
-    navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => DonationSuccessScreen()));
+    navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => const DonationSuccessScreen()));
   }
 
 

@@ -5,49 +5,49 @@ Organization organizationFromJson(String str) => Organization.fromJson(json.deco
 String organizationToJson(Organization data) => json.encode(data.toJson());
 
 class Organization {
-  int organizationId;
+  int userId;
   String organizationName;
   String address;
   String phone;
   String email;
-  String status;
   String country;
-  int userId;
   String firebaseTopic;
+  String? image;
+  bool isFollow;
 
   Organization({
-    required this.organizationId,
+    required this.userId,
     required this.organizationName,
     required this.address,
     required this.phone,
     required this.email,
-    required this.status,
     required this.country,
-    required this.userId,
     required this.firebaseTopic,
+    this.image,
+    this.isFollow = false
   });
 
   factory Organization.fromJson(Map<String, dynamic> json) => Organization(
-    organizationId: json["organizationId"],
+    userId: json["userId"],
     organizationName: json["organizationName"],
     address: json["address"],
     phone: json["phone"],
     email: json["email"],
-    status: json["status"],
     country: json["country"],
-    userId: json["userId"],
     firebaseTopic: json["firebaseTopic"],
+    image: json["image"],
+    isFollow: json["isFollow"]
   );
 
   Map<String, dynamic> toJson() => {
-    "organizationId": organizationId,
+    "userId": userId,
     "organizationName": organizationName,
     "address": address,
     "phone": phone,
     "email": email,
-    "status": status,
     "country": country,
-    "userId": userId,
     "firebaseTopic": firebaseTopic,
+    "image": image,
+    "isFollow": isFollow
   };
 }

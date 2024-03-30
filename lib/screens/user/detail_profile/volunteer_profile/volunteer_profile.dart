@@ -6,7 +6,10 @@ import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/viewmodel/user/other_profile_viewmodel.dart';
+import 'package:unidy_mobile/widgets/card/post_card.dart';
+import 'package:unidy_mobile/widgets/empty.dart';
 import 'package:unidy_mobile/widgets/error.dart';
+import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
 import 'package:unidy_mobile/widgets/profile/profile_archievement.dart';
 
 class VolunteerProfileScreen extends StatefulWidget {
@@ -38,7 +41,7 @@ class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
                     ),
                     Positioned(
                       left: 15,
-                      bottom: -80,
+                      bottom: -90,
                       child: Container(
                         width: 120,
                         height: 120,
@@ -58,24 +61,44 @@ class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(0, 30, 10, 10),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: SizedBox(
-                      width: 240,
-                      child: Text(
-                        user?.fullName ?? 'Không rõ',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleLarge,
-                        textAlign: TextAlign.left,
+                  padding: const EdgeInsets.fromLTRB(0, 15, 10, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: SizedBox(
+                          width: 240,
+                          child: Text(
+                            user?.fullName ?? 'Không rõ',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleLarge,
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 5),
+                      SizedBox(
+                        width: 240,
+                        child: user?.isFriend == true ?
+                          FilledButton.icon(
+                              onPressed: () {},
+                              icon: Icon(Icons.people_rounded, size: 20),
+                              label: Text('Bạn bè')
+                          ) :
+                          OutlinedButton.icon(
+                              onPressed: () {},
+                              icon: Icon(Icons.person_add, size: 20),
+                              label: Text('Kết bạn')
+                          ),
+                      )
+                    ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const Divider(thickness: 5, color: PrimaryColor.primary50)
           ],
         )
@@ -163,30 +186,28 @@ class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
     );
   }
 
-  SliverList _buildRecentPost(List<Post> postList, User user) {
-    // return SliverList.separated(
-    //   itemBuilder: (BuildContext context, int index) {
-    //     if (index < postList.length) {
-    //       return PostCard(post: postList[index], userName: user.fullName, avatarUrl: user.image);
-    //     }
-    //     else if (index == postList.length && context.watch<ProfileViewModel>().isLoadMoreLoading) {
-    //       return Container(
-    //         padding: const EdgeInsets.symmetric(vertical: 20),
-    //         child: const Center(
-    //           child: SizedBox(
-    //             width: 30,
-    //             height: 30,
-    //             child: CircularProgressIndicator(),
-    //           ),
-    //         ),
-    //       );
-    //     }
-    //   },
-    //   separatorBuilder: (BuildContext context, int index) => const Divider(),
-    //   itemCount: postList.length + 1,
-    // );
+  Widget _buildRecentPost() {
+    VolunteerProfileViewModel volunteerProfileViewModel = Provider.of<VolunteerProfileViewModel>(context);
+    List<Post> postList = volunteerProfileViewModel.posts;
 
-    throw UnimplementedError();
+    if (postList.isEmpty) {
+      return const SliverToBoxAdapter(
+        child: Empty(description: 'Chưa có bài đăng nào')
+      );
+    }
+
+    return SliverList.separated(
+      itemBuilder: (BuildContext context, int index) {
+        if (index < postList.length) {
+          return PostCard(post: postList[index]);
+        }
+        else if (index == postList.length && volunteerProfileViewModel.isLoadingMore) {
+          return const LoadingMoreIndicator();
+        }
+      },
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
+      itemCount: postList.length + 1,
+    );
   }
 
   @override
@@ -215,7 +236,7 @@ class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
                   child: Text('Bài đăng gần đây', style: Theme.of(context).textTheme.titleMedium),
                 ),
               ),
-              // _buildRecentPost(profileViewModel.postList, profileViewModel.user)
+              _buildRecentPost()
             ],
           ),
         ),

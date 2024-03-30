@@ -6,7 +6,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
-import 'package:unidy_mobile/screens/user/confirm_participant_campaign/confirm_participant_campaign_container.dart';
+import 'package:unidy_mobile/screens/user/confirm_participant_campaign/confirm_participant_campaign_screen_container.dart';
 import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
 import 'package:unidy_mobile/screens/user/donation/donation_screen_container.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
@@ -42,9 +42,9 @@ class PostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: AvatarCard(
                 showTime: true,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: post?.userNodes?.userId ?? 0))),
-                userName: post?.userNodes?.fullName,
-                avatarUrl: post?.userNodes?.profileImageLink,
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: post?.userNode?.userId ?? 0))),
+                userName: post?.userNode?.fullName,
+                avatarUrl: post?.userNode?.profileImageLink,
                 createdAt: post?.createDate,
                 description: 'Đang cảm thấy ${post?.status.toLowerCase()}'
               ),
@@ -83,9 +83,9 @@ class PostCard extends StatelessWidget {
             _buildImageList(context),
             AvatarCard(
               showTime: true,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: post?.userNodes?.userId ?? 0))),
-              userName: post?.userNodes?.fullName,
-              avatarUrl: post?.userNodes?.profileImageLink,
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: post?.userNode?.userId ?? 0))),
+              userName: post?.userNode?.fullName,
+              avatarUrl: post?.userNode?.profileImageLink,
               createdAt: post?.createDate,
               description: 'Đang cảm thấy ${post?.status.toLowerCase()}'
             ),
@@ -111,9 +111,9 @@ class PostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: AvatarCard(
                   showTime: true,
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: post?.userNodes?.userId ?? 0))),
-                  userName: post?.userNodes?.fullName,
-                  avatarUrl: post?.userNodes?.profileImageLink,
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: post?.userNode?.userId ?? 0))),
+                  userName: post?.userNode?.fullName,
+                  avatarUrl: post?.userNode?.profileImageLink,
                   createdAt: post?.createDate,
                   description: 'Đang cảm thấy ${post?.status.toLowerCase()}'
               ),
@@ -427,7 +427,7 @@ class CampaignPostCard extends StatelessWidget {
           spacing: 5,
           children: [
             Text('Ngày mở chiến dịch: ', style: Theme.of(context).textTheme.bodyMedium),
-            Text(campaignPost.campaign.startDate, style: Theme.of(context).textTheme.bodyMedium)
+            Text(Formatter.formatTime(DateTime.parse(campaignPost.campaign.startDate), 'dd/MM/yyyy - HH:mm') ?? DateTime.now().toString(), style: Theme.of(context).textTheme.bodyMedium)
           ],
         ),
         const SizedBox(height: 5),
@@ -435,7 +435,7 @@ class CampaignPostCard extends StatelessWidget {
           spacing: 5,
           children: [
             Text('Ngày kết thúc chiến dịch: ', style: Theme.of(context).textTheme.bodyMedium),
-            Text(campaignPost.campaign.endDate ?? '', style: Theme.of(context).textTheme.bodyMedium)
+            Text(Formatter.formatTime(DateTime.parse(campaignPost.campaign.endDate), 'dd/MM/yyyy - HH:mm') ?? DateTime.now().toString(), style: Theme.of(context).textTheme.bodyMedium)
           ],
         ),
         const SizedBox(height: 5),

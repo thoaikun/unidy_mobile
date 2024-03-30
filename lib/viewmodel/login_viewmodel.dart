@@ -22,7 +22,7 @@ class LoginViewModel extends ChangeNotifier {
   HttpClient httpClient = GetIt.instance<HttpClient>();
   final UserService userService = GetIt.instance<UserService>();
   final AppPreferences appPreferences = GetIt.instance<AppPreferences>();
-  final FirebaseService firebaseService = FirebaseService();
+  final FirebaseService firebaseService = GetIt.instance<FirebaseService>();
   final Duration debounceTime = const Duration(milliseconds: 500);
 
   final TextEditingController _emailController = TextEditingController();

@@ -7,6 +7,7 @@ import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/user/home/dashboard_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
 import 'package:unidy_mobile/widgets/error.dart';
+import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -79,16 +80,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
               }
             }
             else if (index == dashboardViewModel.recommendationList.length && dashboardViewModel.isLoadMoreLoading) {
-              return Container(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: const Center(
-                  child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              );
+              return const LoadingMoreIndicator();
             }
           },
           separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),

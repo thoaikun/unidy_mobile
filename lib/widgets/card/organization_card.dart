@@ -3,13 +3,11 @@ import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 
 class OrganizationCard extends StatelessWidget {
-  final bool followed;
   final Friend organization;
   final void Function()? onTap;
 
   const OrganizationCard({
     super.key,
-    required this.followed,
     required this.organization,
     this.onTap
   });
@@ -17,10 +15,10 @@ class OrganizationCard extends StatelessWidget {
   Widget _buildFollowBtn() {
     return TextButton.icon(
         onPressed: () {},
-        icon: !followed ?
+        icon: organization.isFollow != true ?
           const Icon(Icons.star_border_rounded) :
           const Icon(Icons.star_rounded, color: PrimaryColor.primary500),
-        label: Text(followed ? 'Theo dõi' : 'Đã theo dõi')
+        label: Text(organization.isFollow != true ? 'Theo dõi' : 'Đã theo dõi')
     );
   }
 

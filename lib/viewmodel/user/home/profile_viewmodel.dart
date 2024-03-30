@@ -51,7 +51,7 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void getMyOwnPost() {
-    _postService.getUserPosts(skip: _postOffset, limit: LIMIT)
+    _postService.getUserPosts(user.userId, skip: _postOffset, limit: LIMIT)
       .then((postList) {
         _postOffset += LIMIT;
         setPostList(postList);
@@ -64,7 +64,7 @@ class ProfileViewModel extends ChangeNotifier {
 
   void loadMorePosts() {
     setIsLoadMoreLoading(true);
-    _postService.getUserPosts(skip: _postOffset, limit: LIMIT)
+    _postService.getUserPosts(user.userId, skip: _postOffset, limit: LIMIT)
       .then((postList) {
         _postOffset += LIMIT;
         setPostList(postList);

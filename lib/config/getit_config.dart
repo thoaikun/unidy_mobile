@@ -3,6 +3,7 @@ import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/services/authentication_service.dart';
 import 'package:unidy_mobile/services/campaign_service.dart';
+import 'package:unidy_mobile/services/firebase_service.dart';
 import 'package:unidy_mobile/services/organization_service.dart';
 import 'package:unidy_mobile/services/post_service.dart';
 import 'package:unidy_mobile/services/search_service.dart';
@@ -29,4 +30,5 @@ void configGetIt() async {
   getIt.registerLazySingleton<OrganizationService>(() => OrganizationService());
   getIt.registerLazySingleton<TransactionService>(() => TransactionService());
   getIt.registerLazySingleton<SearchService>(() => SearchService());
+  getIt.registerLazySingleton<FirebaseService>(() => FirebaseService());
 }

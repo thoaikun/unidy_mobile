@@ -8,53 +8,78 @@ DonationHistory donationHistoryFromJson(String str) => DonationHistory.fromJson(
 String donationHistoryToJson(DonationHistory data) => json.encode(data.toJson());
 
 class DonationHistory {
-  int transactionId;
-  String transactionType;
-  DateTime transactionTime;
+  int? transactionId;
+  String? transactionType;
+  DateTime? transactionTime;
   int transactionAmount;
-  String transactionCode;
-  String signature;
+  String? transactionCode;
+  String? signature;
   int organizationUserId;
   int campaignId;
-  int userId;
-  Campaign campaign;
+  Campaign? campaign;
+  UserInfo user;
+
 
   DonationHistory({
-    required this.transactionId,
-    required this.transactionType,
-    required this.transactionTime,
+    this.transactionId,
+    this.transactionType,
+    this.transactionTime,
     required this.transactionAmount,
-    required this.transactionCode,
-    required this.signature,
+    this.transactionCode,
+    this.signature,
     required this.organizationUserId,
     required this.campaignId,
-    required this.userId,
-    required this.campaign,
+    this.campaign,
+    required this.user,
   });
 
   factory DonationHistory.fromJson(Map<String, dynamic> json) => DonationHistory(
     transactionId: json["transactionId"],
     transactionType: json["transactionType"],
-    transactionTime: DateTime.parse(json["transactionTime"]),
+    transactionTime: json["transactionTime"] != null ? DateTime.parse(json["transactionTime"]) : null,
     transactionAmount: json["transactionAmount"],
     transactionCode: json["transactionCode"],
     signature: json["signature"],
     organizationUserId: json["organizationUserId"],
     campaignId: json["campaignId"],
-    userId: json["userId"],
-    campaign: Campaign.fromJson(json["campaign"]),
+    campaign: json["campaign"] == null ? null : Campaign.fromJson(json["campaign"]),
+    user: UserInfo.fromJson(json["user"]),
   );
 
   Map<String, dynamic> toJson() => {
     "transactionId": transactionId,
     "transactionType": transactionType,
-    "transactionTime": transactionTime.toIso8601String(),
+    "transactionTime": transactionTime?.toIso8601String(),
     "transactionAmount": transactionAmount,
     "transactionCode": transactionCode,
     "signature": signature,
     "organizationUserId": organizationUserId,
     "campaignId": campaignId,
+    "campaign": campaign?.toJson(),
+    "user": user.toJson(),
+  };
+}
+
+class UserInfo {
+  int userId;
+  String fullName;
+  String linkImage;
+
+  UserInfo({
+    required this.userId,
+    required this.fullName,
+    required this.linkImage,
+  });
+
+  factory UserInfo.fromJson(Map<String, dynamic> json) => UserInfo(
+    userId: json["userId"],
+    fullName: json["fullName"],
+    linkImage: json["linkImage"],
+  );
+
+  Map<String, dynamic> toJson() => {
     "userId": userId,
-    "campaign": campaign.toJson(),
+    "fullName": fullName,
+    "linkImage": linkImage,
   };
 }

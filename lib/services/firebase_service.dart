@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
@@ -34,5 +35,12 @@ class FirebaseService {
     catch (error) {
       rethrow;
     }
+  }
+
+  void subscribeToTopic(String topic) {
+    _firebaseMessaging.getToken().then((token) {
+      print('Token: $token');
+    });
+    _firebaseMessaging.subscribeToTopic(topic);
   }
 }

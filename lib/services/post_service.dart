@@ -11,14 +11,14 @@ import 'package:unidy_mobile/utils/exception_util.dart';
 class PostService extends Service {
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
-  Future<List<Post>> getUserPosts({int skip = 0, int limit = 5}) async {
+  Future<List<Post>> getUserPosts(int userId, {int skip = 0, int limit = 5}) async {
     Map<String, dynamic> payload = {
       'skip': skip.toString(),
       'limit': limit.toString()
     };
 
     try {
-      Response response = await httpClient.get('api/v1/posts/get-post-by-userId', payload);
+      Response response = await httpClient.get('api/v1/posts/users/$userId', payload);
 
       switch(response.statusCode) {
         case 200:

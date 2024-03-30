@@ -8,6 +8,7 @@ import 'package:unidy_mobile/models/error_response_model.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/services/base_service.dart';
+import 'package:unidy_mobile/services/firebase_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
 class UserService extends Service {
@@ -262,6 +263,7 @@ class UserService extends Service {
       switch(response.statusCode) {
         case 200:
           List<Friend> friends = friendListFromJson(utf8.decode(response.bodyBytes));
+          for (var element in friends) {element.isFollow = true;}
           return friends;
         case 400:
           throw ResponseException(value: 'Không thể lấy danh sách bạn bè', code: ExceptionErrorCode.invalidFriendRequest);
@@ -305,13 +307,14 @@ class UserService extends Service {
   }
 
 
-  Future<void> followOrganization(int organizationId) async {
+  Future<String> followOrganization(int organizationId) async {
     try {
       Response response = await httpClient.patch('api/v1/users/follow-organization?organizationId=$organizationId');
 
       switch(response.statusCode) {
         case 200:
-          return;
+          String topic = jsonDecode(response.body)['topic'];
+          return topic;
         case 400:
           throw ResponseException(value: 'Không thể theo dõi tổ chức', code: ExceptionErrorCode.invalidFollowOrganization);
         case 403:

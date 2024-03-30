@@ -14,7 +14,7 @@ class Post {
   String? updateDate;
   bool isBlock;
   String linkImage;
-  UserNode? userNodes;
+  UserNode? userNode;
   int likeCount;
   bool isLiked;
 
@@ -26,7 +26,7 @@ class Post {
     required this.updateDate,
     required this.isBlock,
     required this.linkImage,
-    required this.userNodes,
+    required this.userNode,
     required this.likeCount,
     required this.isLiked
   });
@@ -39,7 +39,7 @@ class Post {
     updateDate: json["updateDate"],
     isBlock: json["isBlock"],
     linkImage: json["linkImage"],
-    userNodes: UserNode.fromJson(json["userNode"]),
+    userNode: UserNode.fromJson(json["userNode"]),
     likeCount: json["likeCount"] ?? 0,
     isLiked: json["isLiked"] ?? false
   );
@@ -52,7 +52,7 @@ class Post {
     "updateDate": updateDate,
     "isBlock": isBlock,
     "linkImage": linkImage,
-    "userNodes": userNodes?.toJson(),
+    "userNodes": userNode?.toJson(),
     "likeCount": likeCount,
     "isLiked": isLiked
   };

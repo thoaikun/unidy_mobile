@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
-import 'package:unidy_mobile/screens/user/confirm_participant_campaign/confirm_participant_campaign.dart';
+import 'package:unidy_mobile/screens/user/confirm_participant_campaign/confirm_participant_campaign_screen.dart';
 import 'package:unidy_mobile/viewmodel/user/confirm_participant_campaign_viewmodel.dart';
 
 class ConfirmParticipantCampaignContainer extends StatefulWidget {

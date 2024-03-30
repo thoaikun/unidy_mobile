@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 class CircleProgressBar extends StatelessWidget {
   final Color? backgroundColor;
   final Color? color;
-  final double max;
-  final double value;
+  final int max;
+  final int value;
   final double radius;
+  final String? label;
 
   const CircleProgressBar({
     super.key,
@@ -13,7 +14,8 @@ class CircleProgressBar extends StatelessWidget {
     required this.value,
     required this.radius,
     this.color,
-    this.backgroundColor
+    this.backgroundColor,
+    this.label,
   });
 
   @override
@@ -33,7 +35,7 @@ class CircleProgressBar extends StatelessWidget {
         Positioned.fill(
           child: Center(
             child: Text(
-              '$value',
+              label ?? '$value',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(color: color),
             ),
           ),

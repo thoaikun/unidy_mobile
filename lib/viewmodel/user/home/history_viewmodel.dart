@@ -20,6 +20,8 @@ class HistoryViewModel extends ChangeNotifier {
   bool isFirstLoadingDonation = true;
   bool isLoadingCampaign = false;
   bool isLoadingDonation = false;
+  bool campaignError = false;
+  bool donationError = false;
 
   List<CampaignJoinedHistory> _joinedCampaignList = [];
   List<DonationHistory> _donationHistoryList = [];
@@ -70,16 +72,30 @@ class HistoryViewModel extends ChangeNotifier {
   Future<void> getData() async {
     switch (_currentTab) {
       case EHistoryTab.campaign:
-        if (_joinedCampaignList.isNotEmpty) return;
-        List<CampaignJoinedHistory> histories = await _userService.getJoinedCampaign(page: _campaignPage, size: LIMIT);
-        setCampaignList(histories);
-        setFirstCampaignLoading(false);
+        try {
+          if (_joinedCampaignList.isNotEmpty) return;
+          List<CampaignJoinedHistory> histories = await _userService.getJoinedCampaign(page: _campaignPage, size: LIMIT);
+          setCampaignList(histories);
+        } catch (e) {
+          campaignError = true;
+          notifyListeners();
+        }
+        finally {
+          setFirstCampaignLoading(false);
+        }
         break;
       case EHistoryTab.donation:
-        if (_donationHistoryList.isNotEmpty) return;
-        List<DonationHistory> histories = await _userService.getDonationHistory(page: _donationPage, size: LIMIT);
-        setDonationList(histories);
-        setFirstDonationLoading(false);
+        try {
+          if (_donationHistoryList.isNotEmpty) return;
+          List<DonationHistory> histories = await _userService.getDonationHistory(page: _donationPage, size: LIMIT);
+          setDonationList(histories);
+        } catch (e) {
+          donationError = true;
+          notifyListeners();
+        }
+        finally {
+          setFirstDonationLoading(false);
+        }
         break;
     }
   }
@@ -87,20 +103,36 @@ class HistoryViewModel extends ChangeNotifier {
   void loadMore() async {
     switch (_currentTab) {
       case EHistoryTab.campaign:
-        setCampaignLoading(true);
-        List<CampaignJoinedHistory> histories = await _userService.getJoinedCampaign(page: _campaignPage, size: LIMIT);
-        if (histories.isNotEmpty) {
-          setCampaignList(histories);
+        try {
+          setCampaignLoading(true);
+          List<CampaignJoinedHistory> histories = await _userService.getJoinedCampaign(page: _campaignPage, size: LIMIT);
+          if (histories.isNotEmpty) {
+            setCampaignList(histories);
+          }
         }
-        setCampaignLoading(false);
+        catch (e) {
+          campaignError = true;
+          notifyListeners();
+        }
+        finally {
+          setCampaignLoading(false);
+        }
         break;
       case EHistoryTab.donation:
-        setDonationLoading(true);
-        List<DonationHistory> histories = await _userService.getDonationHistory(page: _donationPage, size: LIMIT);
-        if (histories.isNotEmpty) {
-          setDonationList(histories);
+        try {
+          setDonationLoading(true);
+          List<DonationHistory> histories = await _userService.getDonationHistory(page: _donationPage, size: LIMIT);
+          if (histories.isNotEmpty) {
+            setDonationList(histories);
+          }
         }
-        setDonationLoading(false);
+        catch (e) {
+          donationError = true;
+          notifyListeners();
+        }
+        finally {
+          setDonationLoading(false);
+        }
         break;
     }
   }

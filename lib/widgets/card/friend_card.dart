@@ -30,11 +30,16 @@ class FriendCard extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: TextButton.icon(
+      trailing: friend?.isFriend ?? false ? TextButton.icon(
           onPressed: () => showAlertDialog(context),
-          icon: const Icon(Icons.people_alt, size: 18),
+          icon: const Icon(Icons.people_alt_rounded, size: 18),
           label: const Text('Bạn bè')
-      ),
+        ) :
+        TextButton.icon(
+          onPressed: () => showAlertDialog(context),
+          icon: const Icon(Icons.person_add_alt_rounded, size: 18, color: TextColor.textColor500,),
+          label: const Text('Kết bạn', style: TextStyle(color: TextColor.textColor500)),
+        ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
       onTap: () => onTap?.call(),
     );

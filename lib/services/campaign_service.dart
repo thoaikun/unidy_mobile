@@ -3,7 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:unidy_mobile/config/http_client.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
+import 'package:unidy_mobile/models/certificate_model.dart';
 import 'package:unidy_mobile/models/comment_model.dart';
+import 'package:unidy_mobile/models/donation_history_model.dart';
 import 'package:unidy_mobile/services/base_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 
@@ -192,6 +194,57 @@ class CampaignService extends Service {
           return;
         case 400:
           throw ResponseException(value: 'CommentId không đúng', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<Certificate?> getCertificateInCampaign(String campaignId) async {
+    try {
+      Response response = await httpClient.get('api/v1/campaign/$campaignId/certificates');
+
+      switch(response.statusCode) {
+        case 200:
+          List<Certificate> certificates = certificateListFromJson(utf8.decode(response.bodyBytes));
+          if (certificates.isNotEmpty) {
+            return certificates.first;
+          }
+          return null;
+        case 400:
+          throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<DonationHistory>> getDonationsInCampaign(String campaignId, {int pageNumber = 0, int pageSize = 5}) async {
+    try {
+      Map<String, String> payload = {
+        'pageNumber': pageNumber.toString(),
+        'pageSize': pageSize.toString()
+      };
+      Response response = await httpClient.get('api/v1/campaign/$campaignId/transactions', payload);
+
+      switch(response.statusCode) {
+        case 200:
+          List<DonationHistory> donations = donationHistoryListFromJson(utf8.decode(response.bodyBytes));
+          return donations;
+        case 400:
+          throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);
         case 403:
           catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);

@@ -7,6 +7,7 @@ import 'package:unidy_mobile/models/organization_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/viewmodel/user/other_profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
+import 'package:unidy_mobile/widgets/empty.dart';
 import 'package:unidy_mobile/widgets/error.dart';
 
 class OrganizationProfileScreen extends StatefulWidget {
@@ -30,7 +31,8 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
   }
 
   SliverToBoxAdapter _buildProfileHeader() {
-    Organization? organization = Provider.of<OrganizationProfileViewModel>(context).organization;
+    OrganizationProfileViewModel organizationProfileViewModel = Provider.of<OrganizationProfileViewModel>(context);
+    Organization? organization = organizationProfileViewModel.organization;
 
     return SliverToBoxAdapter(
         child: Column(
@@ -62,7 +64,7 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
                         child: CircleAvatar(
                           radius: 120,
                           backgroundImage: NetworkImage(
-                            'https://api.dicebear.com/7.x/initials/png?seed=${organization?.organizationName ?? ''}',
+                            organization?.image ?? 'https://api.dicebear.com/7.x/initials/png?seed=${organization?.organizationName ?? ''}',
                           ),
                         ),
                       ),
@@ -70,19 +72,39 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(0, 30, 10, 10),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: SizedBox(
-                      width: 240,
-                      child: Text(
-                        organization?.organizationName ?? 'Tên tổ chức',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleLarge,
-                        textAlign: TextAlign.left,
+                  padding: const EdgeInsets.fromLTRB(0, 15, 10, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: SizedBox(
+                          width: 240,
+                          child: Text(
+                            organization?.organizationName ?? 'Không rõ',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleLarge,
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 5),
+                      SizedBox(
+                        width: 240,
+                        child: organization?.isFollow == true ?
+                        FilledButton.icon(
+                            onPressed: () {},
+                            icon: Icon(Icons.track_changes_sharp, size: 20),
+                            label: Text('Đang theo dõi')
+                        ) :
+                        OutlinedButton.icon(
+                            onPressed: () => organizationProfileViewModel.onFollow(),
+                            icon: Icon(Icons.add_outlined, size: 20),
+                            label: Text('Theo dõi')
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ],
@@ -155,8 +177,14 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
     );
   }
 
-  SliverList _buildRecentPost() {
+  Widget _buildRecentPost() {
     List<CampaignPost> campaigns = Provider.of<OrganizationProfileViewModel>(context).campaigns;
+
+    if (campaigns.isEmpty) {
+      return const SliverToBoxAdapter(
+        child: Empty(description: 'Chưa có chiến dịch nào')
+      );
+    }
 
     return SliverList.separated(
       itemBuilder: (BuildContext context, int index) {
@@ -179,7 +207,6 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
       separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemCount: campaigns.length + 1,
     );
-    throw UnimplementedError();
   }
 
   @override

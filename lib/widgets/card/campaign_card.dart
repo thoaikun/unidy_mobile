@@ -3,7 +3,8 @@ import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/campaign_joined_history_model.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/donation_history_model.dart';
-import 'package:unidy_mobile/screens/user/campaign_detail/campaign_detail.dart';
+import 'package:unidy_mobile/screens/user/campaign_detail/campaign_detail_screen.dart';
+import 'package:unidy_mobile/screens/user/campaign_detail/campaign_detail_screen_container.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/widgets/status_tag.dart';
 
@@ -14,7 +15,7 @@ class CampaignJoinedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CampaignDetailScreen())),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CampaignDetailScreenContainer(campaign: history.campaign))),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: _buildInfo(context)
@@ -99,7 +100,7 @@ class CampaignDonationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CampaignDetailScreen())),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CampaignDetailScreenContainer(campaign: history?.campaign))),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: _buildInfo(context)
@@ -109,10 +110,10 @@ class CampaignDonationCard extends StatelessWidget {
 
   Widget _buildInfo(BuildContext context) {
     Widget status = const StatusTag(label: 'Đã kết thúc', type: StatusType.success);
-    if (history.campaign.status == CampaignStatus.inProgress) {
+    if (history.campaign?.status == CampaignStatus.inProgress) {
       status = const StatusTag(label: 'Đang diễn ra', type: StatusType.info);
     }
-    else if (history.campaign.status == CampaignStatus.canceled) {
+    else if (history.campaign?.status == CampaignStatus.canceled) {
       status = const StatusTag(label: 'Đã hủy', type: StatusType.error);
     }
 
@@ -125,7 +126,7 @@ class CampaignDonationCard extends StatelessWidget {
             Expanded(
               flex: 1,
               child: Text(
-                history.campaign.title ?? 'Không có tiêu đề',
+                history.campaign?.title ?? 'Không có tiêu đề',
                 style: Theme.of(context).textTheme.titleMedium,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -156,7 +157,7 @@ class CampaignDonationCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300),
                 ),
                 Text(
-                    history.campaign.timeTakePlace ?? ''
+                    history.campaign?.timeTakePlace ?? ''
                 )
               ],
             ),

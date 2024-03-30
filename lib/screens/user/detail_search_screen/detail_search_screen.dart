@@ -63,7 +63,6 @@ class _DetailSearchScreenState extends State<DetailSearchScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: OrganizationCard(
                     organization: item,
-                    followed: false,
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrganizationProfileContainer(organizationId: item?.userId)))
                   ),
                 );

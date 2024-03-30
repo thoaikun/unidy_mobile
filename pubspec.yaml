@@ -59,6 +59,7 @@ dependencies:
   currency_text_input_formatter: ^2.1.11
   url_launcher: ^6.2.5
   firebase_dynamic_links: ^5.4.17
+  webview_flutter: ^4.5.0
 
 dev_dependencies:
   flutter_test:

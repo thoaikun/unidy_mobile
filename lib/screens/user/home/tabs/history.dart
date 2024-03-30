@@ -6,6 +6,7 @@ import 'package:unidy_mobile/models/donation_history_model.dart';
 import 'package:unidy_mobile/viewmodel/user/home/history_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/campaign_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
+import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
 
 class History extends StatefulWidget {
   const History({super.key});
@@ -83,16 +84,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
         physics: const AlwaysScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
           if (index == joinedCampaignList.length && historyViewModel.isLoadingCampaign) {
-            return Container(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: const Center(
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
+            return const LoadingMoreIndicator();
           }
           else if (index < joinedCampaignList.length) {
             CampaignJoinedHistory campaignJoinedHistory = joinedCampaignList[index];
@@ -133,16 +125,7 @@ class _HistoryState extends State<History> with TickerProviderStateMixin {
         physics: const AlwaysScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
           if (index == donationHistoryList.length && historyViewModel.isLoadingDonation) {
-            return Container(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: const Center(
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
+            return const LoadingMoreIndicator();
           }
           else if (index < donationHistoryList.length) {
             DonationHistory donationHistory = donationHistoryList[index];
