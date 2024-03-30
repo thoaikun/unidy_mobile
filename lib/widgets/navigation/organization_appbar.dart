@@ -32,20 +32,19 @@ class _UnidyOrganizationAppBarState extends State<UnidyOrganizationAppBar> {
             icon: const Icon(Icons.add_rounded, color: PrimaryColor.primary500),
           ),
           Consumer<NotificationViewModel>(
-              builder: (BuildContext context, NotificationViewModel notificationViewModel, Widget? child) {
-                return IconButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationScreen())),
-                  icon: const Badge(
-                      label: Text('1'),
-                      alignment: Alignment.topRight,
-                      child: Icon(Icons.notifications_rounded)
-                  ),
-                );
-              }
+            builder: (BuildContext context, NotificationViewModel notificationViewModel, Widget? child) {
+              return IconButton(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationScreen())),
+                icon: const Badge(
+                  label: Text('1'),
+                  alignment: Alignment.topRight,
+                  child: Icon(Icons.notifications_rounded)
+                ),
+              );
+            }
           ),
           UnidyPopupMenu(
             popupMenuItems: [
-              IPopupMenuItem(value: EPopupMenuOption.volunteerMode, label: 'Thoát chế độ quản lý'),
               IPopupMenuItem(value: EPopupMenuOption.logout, label: 'Đăng xuất'),
             ],
           )

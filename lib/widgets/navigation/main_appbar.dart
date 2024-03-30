@@ -45,8 +45,6 @@ class _UnidyMainAppBarState extends State<UnidyMainAppBar> {
           ),
           UnidyPopupMenu(
             popupMenuItems: [
-              IPopupMenuItem(value: EPopupMenuOption.organizationMode, label: 'Quản lý tổ chức'),
-              IPopupMenuItem(value: EPopupMenuOption.sponsorMode, label: 'Quản lý nhà hảo tâm'),
               IPopupMenuItem(value: EPopupMenuOption.logout, label: 'Đăng xuất'),
             ],
           )

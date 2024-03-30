@@ -1,20 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/local_data_model.dart';
 import 'package:unidy_mobile/screens/authentication/login_screen.dart';
-import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
-import 'package:unidy_mobile/screens/user/home/home_screen.dart';
-import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
 
 enum EPopupMenuOption {
-  logout,
-  organizationMode,
-  sponsorMode,
-  volunteerMode
+  logout
 }
 
 class IPopupMenuItem {
@@ -49,15 +42,6 @@ class _UnidyPopupMenuState extends State<UnidyPopupMenu> {
             }
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
           });
-        break;
-      case EPopupMenuOption.organizationMode:
-        appPreferences.setString('accountMode', 'organization');
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: OrganizationHomeScreen())));
-        break;
-      case EPopupMenuOption.sponsorMode:
-      case EPopupMenuOption.volunteerMode:
-        appPreferences.setString('accountMode', 'user');
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: HomeScreenContainer())));
         break;
     }
   }
