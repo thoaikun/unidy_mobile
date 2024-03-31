@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unidy_mobile/viewmodel/user/search_view_model.dart';
+import 'package:unidy_mobile/viewmodel/user/search_viewmodel.dart';
 
 import 'detail_search_screen.dart';
 

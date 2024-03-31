@@ -69,13 +69,16 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
             if (index < dashboardViewModel.recommendationList.length) {
               if (dashboardViewModel.recommendationList[index] is CampaignPost) {
                 CampaignPost campaign = dashboardViewModel.recommendationList[index];
-                return CampaignPostCard(campaignPost: campaign);
+                return CampaignPostCard(
+                  campaignPost: campaign,
+                  onLike: () => dashboardViewModel.handleLikeCampaign(campaign),
+                );
               }
               else {
                 Post post = dashboardViewModel.recommendationList[index];
                 return PostCard(
                     post: post,
-                    onLikePost: () => debounce(() => dashboardViewModel.handleLikePost(post), 500).call()
+                    onLike: () => dashboardViewModel.handleLikePost(post),
                 );
               }
             }
@@ -93,7 +96,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   Widget _buildPostCardListSkeleton() {
     return ListView.separated(
       itemBuilder: (BuildContext context, int index) {
-        return const PostCard().buildSkeleton(context);
+        return PostCard().buildSkeleton(context);
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
       itemCount: 5,

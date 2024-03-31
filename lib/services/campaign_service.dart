@@ -105,6 +105,48 @@ class CampaignService extends Service {
     }
   }
 
+  Future<void> like(String campaignId) async {
+    try {
+      Response response = await httpClient.patch('api/v1/campaign/$campaignId/like');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> unlike(String campaignId) async {
+    try {
+      Response response = await httpClient.patch('api/v1/campaign/$campaignId/unlike');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
   Future<List<Comment>> getComments(String campaignId, {int skip = 0, int limit = 5}) async {
     try {
       Map<String, String> payload = {

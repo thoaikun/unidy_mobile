@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
+import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/search_result_model.dart';
+import 'package:unidy_mobile/services/campaign_service.dart';
+import 'package:unidy_mobile/services/post_service.dart';
 import 'package:unidy_mobile/services/search_service.dart';
 
 enum ESearchType {
@@ -11,6 +15,8 @@ enum ESearchType {
 
 class SearchViewModel extends ChangeNotifier {
   final SearchService _searchService = GetIt.instance<SearchService>();
+  final PostService _postService = GetIt.instance<PostService>();
+  final CampaignService _campaignService = GetIt.instance<CampaignService>();
 
   final int LIMIT = 10;
   String query;
@@ -92,6 +98,32 @@ class SearchViewModel extends ChangeNotifier {
             setLoading(false);
           });
         break;
+    }
+  }
+
+  void handleLikePost(Post post) {
+    if (post.isLiked == true) {
+      post.isLiked = false;
+      notifyListeners();
+      _postService.unlike(post.postId);
+    }
+    else {
+      post.isLiked = true;
+      notifyListeners();
+      _postService.like(post.postId);
+    }
+  }
+
+  void handleLikeCampaign(CampaignPost campaign) {
+    if (campaign.isLiked == true) {
+      campaign.isLiked = false;
+      notifyListeners();
+      _campaignService.unlike(campaign.campaign.campaignId);
+    }
+    else {
+      campaign.isLiked = true;
+      notifyListeners();
+      _campaignService.like(campaign.campaign.campaignId);
     }
   }
 }

@@ -109,15 +109,26 @@ class DashboardViewModel extends ChangeNotifier {
   void handleLikePost(Post post) {
     if (post.isLiked == true) {
       post.isLiked = false;
-      post.likeCount = post.likeCount - 1;
       notifyListeners();
       _postService.unlike(post.postId);
     }
     else {
       post.isLiked = true;
-      post.likeCount = post.likeCount + 1;
       notifyListeners();
       _postService.like(post.postId);
+    }
+  }
+
+  void handleLikeCampaign(CampaignPost campaign) {
+    if (campaign.isLiked == true) {
+      campaign.isLiked = false;
+      notifyListeners();
+      _campaignService.unlike(campaign.campaign.campaignId);
+    }
+    else {
+      campaign.isLiked = true;
+      notifyListeners();
+      _campaignService.like(campaign.campaign.campaignId);
     }
   }
 

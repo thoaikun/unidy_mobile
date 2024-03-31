@@ -135,6 +135,19 @@ class OrganizationProfileViewModel extends OtherProfileViewModel {
       rethrow;
     }
   }
+
+  void handleLikeCampaign(CampaignPost campaign) {
+    if (campaign.isLiked == true) {
+      campaign.isLiked = false;
+      notifyListeners();
+      _campaignService.unlike(campaign.campaign.campaignId);
+    }
+    else {
+      campaign.isLiked = true;
+      notifyListeners();
+      _campaignService.like(campaign.campaign.campaignId);
+    }
+  }
 }
 
 class VolunteerProfileViewModel extends OtherProfileViewModel {
@@ -211,6 +224,19 @@ class VolunteerProfileViewModel extends OtherProfileViewModel {
       .whenComplete(() {
         setLoadingMore(false);
       });
+  }
+
+  void handleLikePost(Post post) {
+    if (post.isLiked == true) {
+      post.isLiked = false;
+      notifyListeners();
+      _postService.unlike(post.postId);
+    }
+    else {
+      post.isLiked = true;
+      notifyListeners();
+      _postService.like(post.postId);
+    }
   }
 
   @override

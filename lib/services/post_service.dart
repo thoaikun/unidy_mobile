@@ -85,14 +85,6 @@ class PostService extends Service {
     }
   }
 
-  Future<void> update() {
-    throw UnimplementedError();
-  }
-
-  Future<void> delete() {
-    throw UnimplementedError();
-  }
-
   Future<void> like(String postId) async {
     try {
       Response response = await httpClient.patch('api/v1/posts/like?postId=$postId');

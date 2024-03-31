@@ -73,4 +73,17 @@ class ProfileViewModel extends ChangeNotifier {
           setIsLoadMoreLoading(false);
         });
   }
+
+  void handleLikePost(Post post) {
+    if (post.isLiked == true) {
+      post.isLiked = false;
+      notifyListeners();
+      _postService.unlike(post.postId);
+    }
+    else {
+      post.isLiked = true;
+      notifyListeners();
+      _postService.like(post.postId);
+    }
+  }
 }

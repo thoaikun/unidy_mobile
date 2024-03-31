@@ -163,6 +163,27 @@ class UserService extends Service {
     }
   }
 
+  Future<void> deleteFriendRequest(int userId) async {
+    try {
+      Response response = await httpClient.patch('api/v1/users/delete-invite?friendIdRequest=$userId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Không thể xóa lời mời kết bạn', code: ExceptionErrorCode.invalidFriendRequest);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
   Future<void> acceptFriendRequest(int userId) async {
     try {
       Response response = await httpClient.patch('api/v1/users/accept-friend?friendId=$userId');

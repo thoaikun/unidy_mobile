@@ -5,7 +5,7 @@ import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/screens/user/detail_profile/organization_profile/organization_profile_container.dart';
 import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
-import 'package:unidy_mobile/viewmodel/user/search_view_model.dart';
+import 'package:unidy_mobile/viewmodel/user/search_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 import 'package:unidy_mobile/widgets/card/organization_card.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
@@ -72,9 +72,15 @@ class _DetailSearchScreenState extends State<DetailSearchScreen> {
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: item?.userId)))
               );
             case CampaignPost:
-              return CampaignPostCard(campaignPost: item);
+              return CampaignPostCard(
+                campaignPost: item,
+                onLike: () => searchViewModel.handleLikeCampaign(item),
+              );
             case Post:
-              return PostCard(post: item);
+              return PostCard(
+                post: item,
+                onLike: () => searchViewModel.handleLikePost(item),
+              );
             default:
               return const SizedBox();
           }

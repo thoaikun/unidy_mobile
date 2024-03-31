@@ -199,7 +199,10 @@ class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
     return SliverList.separated(
       itemBuilder: (BuildContext context, int index) {
         if (index < postList.length) {
-          return PostCard(post: postList[index]);
+          return PostCard(
+            post: postList[index],
+            onLike: () => volunteerProfileViewModel.handleLikePost(postList[index]),
+          );
         }
         else if (index == postList.length && volunteerProfileViewModel.isLoadingMore) {
           return const LoadingMoreIndicator();

@@ -13,9 +13,11 @@ import 'package:unidy_mobile/screens/user/detail_profile/organization_profile/or
 import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
 import 'package:unidy_mobile/screens/user/detail_search_screen/detail_search_screen.dart';
 import 'package:unidy_mobile/screens/user/detail_search_screen/detail_search_screen_container.dart';
+import 'package:unidy_mobile/services/campaign_service.dart';
+import 'package:unidy_mobile/services/post_service.dart';
 import 'package:unidy_mobile/services/search_service.dart';
 import 'package:unidy_mobile/utils/font_builder_util.dart';
-import 'package:unidy_mobile/viewmodel/user/search_view_model.dart';
+import 'package:unidy_mobile/viewmodel/user/search_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 import 'package:unidy_mobile/widgets/card/organization_card.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
@@ -23,6 +25,8 @@ import 'package:unidy_mobile/widgets/empty.dart';
 
   class UnidySearchDelegate extends SearchDelegate<String> {
     final SearchService _searchService = GetIt.instance<SearchService>();
+    final PostService _postService = GetIt.instance<PostService>();
+    final CampaignService _campaignService = GetIt.instance<CampaignService>();
     final AppPreferences _appPreferences = GetIt.instance<AppPreferences>();
 
     @override
@@ -238,11 +242,17 @@ import 'package:unidy_mobile/widgets/empty.dart';
       for (int i = 0; i < posts.length; i++) {
         if (posts[i] is CampaignPost) {
           CampaignPost campaign = posts[i];
-          postWidgets.add(CampaignPostCard(campaignPost: campaign));
+          postWidgets.add(CampaignPostCard(
+            campaignPost: campaign,
+            onLike: () => _handleLikeCampaign(campaign),
+          ));
         }
         else {
           Post post = posts[i];
-          postWidgets.add(PostCard(post: post));
+          postWidgets.add(PostCard(
+            post: post,
+            onLike: () => _handleLikePost(post),
+          ));
         }
         if (i != posts.length - 1) {
           postWidgets.add(const Divider(height: 0.5));
@@ -294,5 +304,27 @@ import 'package:unidy_mobile/widgets/empty.dart';
       if (keyword == '' || histories.contains(keyword)) return;
       histories.add(keyword);
       await _appPreferences.setString('searchHistory', jsonEncode(histories));
+    }
+
+    void _handleLikePost(Post post) {
+      if (post.isLiked == true) {
+        post.isLiked = false;
+        _postService.unlike(post.postId);
+      }
+      else {
+        post.isLiked = true;
+        _postService.like(post.postId);
+      }
+    }
+
+    void _handleLikeCampaign(CampaignPost campaignPost) {
+      if (campaignPost.isLiked == true) {
+        campaignPost.isLiked = false;
+        _campaignService.unlike(campaignPost.campaign.campaignId);
+      }
+      else {
+        campaignPost.isLiked = true;
+        _campaignService.like(campaignPost.campaign.campaignId);
+      }
     }
   }

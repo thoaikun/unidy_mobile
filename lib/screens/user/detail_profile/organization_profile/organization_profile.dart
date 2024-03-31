@@ -189,7 +189,10 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
     return SliverList.separated(
       itemBuilder: (BuildContext context, int index) {
         if (index < campaigns.length) {
-          return CampaignPostCard(campaignPost: campaigns[index]);
+          return CampaignPostCard(
+            campaignPost: campaigns[index],
+            onLike: () => Provider.of<OrganizationProfileViewModel>(context).handleLikeCampaign(campaigns[index]),
+          );
         }
         else if (index == campaigns.length && Provider.of<OrganizationProfileViewModel>(context).isLoadingMore) {
           return Container(

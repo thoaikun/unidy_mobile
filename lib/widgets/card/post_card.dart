@@ -10,28 +10,29 @@ import 'package:unidy_mobile/screens/user/confirm_participant_campaign/confirm_p
 import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
 import 'package:unidy_mobile/screens/user/donation/donation_screen_container.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
+import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/comment_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/comment/comment_tree.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
-import 'package:unidy_mobile/widgets/input/input.dart';
 
 import '../../screens/user/detail_profile/organization_profile/organization_profile_container.dart';
 
 class PostCard extends StatelessWidget {
+  final Debounce debounce;
   final Post? post;
-  final void Function()? onLikePost;
+  final void Function()? onLike;
 
-  const PostCard({
+  PostCard({
     super.key,
     this.post,
-    this.onLikePost
-  });
+    this.onLike
+  }) : debounce = Debounce(callback: onLike, delay: 1000);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onDoubleTap: () => onLikePost?.call(),
+      onDoubleTap: () => debounce.call(),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
         child: Column(
@@ -172,7 +173,7 @@ class PostCard extends StatelessWidget {
         Row(
           children: [
             IconButton(
-              onPressed: () => onLikePost?.call(),
+              onPressed: () => debounce.call(),
               icon: post?.isLiked ?? false ? const Icon(Icons.favorite_rounded, color: ErrorColor.error500) : const Icon(Icons.favorite_border_rounded)
             ),
             Text('$totalLike lượt thích', style: Theme.of(context).textTheme.bodySmall)
@@ -299,16 +300,19 @@ class PostCard extends StatelessWidget {
 
 class CampaignPostCard extends StatelessWidget {
   final CampaignPost campaignPost;
+  final Debounce debounce;
+  final void Function()? onLike;
 
-  const CampaignPostCard({
+  CampaignPostCard({
     super.key,
-    required this.campaignPost
-  });
+    required this.campaignPost,
+    this.onLike
+  }) : debounce = Debounce(callback: onLike, delay: 1000);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onDoubleTap: () => {},
+      onDoubleTap: () => debounce.call(),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
         child: Column(
@@ -482,10 +486,10 @@ class CampaignPostCard extends StatelessWidget {
   Widget _buildPostInteraction(BuildContext context) {
     int totalLike = 0;
     if (campaignPost.isLiked == true) {
-      totalLike = (campaignPost.likeCount ?? 0) + 1;
+      totalLike = campaignPost.likeCount + 1;
     }
     else if (campaignPost.isLiked == false) {
-      totalLike = campaignPost.likeCount ?? 0;
+      totalLike = campaignPost.likeCount;
     }
     else {
       totalLike = 0;
@@ -497,8 +501,8 @@ class CampaignPostCard extends StatelessWidget {
         Row(
           children: [
             IconButton(
-                onPressed: () => {},
-                icon: const Icon(Icons.favorite_border_rounded)
+                onPressed: () => debounce.call(),
+                icon: campaignPost.isLiked ?? false ? const Icon(Icons.favorite_rounded, color: ErrorColor.error500) : const Icon(Icons.favorite_border_rounded)
             ),
             Text('$totalLike lượt thích', style: Theme.of(context).textTheme.bodySmall)
           ],
