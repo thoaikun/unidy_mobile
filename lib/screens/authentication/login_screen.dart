@@ -5,6 +5,7 @@ import 'package:unidy_mobile/models/authenticate_model.dart';
 import 'package:unidy_mobile/screens/authentication/forgot_password/forgot_password_screen.dart';
 import 'package:unidy_mobile/screens/authentication/signup/signup_screen.dart';
 import 'package:unidy_mobile/screens/organization/home/organization_home_screen.dart';
+import 'package:unidy_mobile/screens/organization/home/organization_home_screen_container.dart';
 import 'package:unidy_mobile/screens/user/home/home_screen_container.dart';
 import 'package:unidy_mobile/screens/user/volunteer_categories_selection/volunteer_categories_selection_screen.dart';
 import 'package:unidy_mobile/viewmodel/login_viewmodel.dart';
@@ -154,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: HomeScreenContainer())));
     }
     else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: OrganizationHomeScreen())));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: OrganizationHomeScreenContainer())));
     }
   }
 

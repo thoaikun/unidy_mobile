@@ -8,11 +8,15 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
 
   bool isFirstLoading = true;
   bool isLoading = false;
-  int _skip = 0;
+  bool error = false;
   int _rangeEnd = 4;
 
   List<FriendSuggestion> _friendSuggestionList = [];
   List<FriendSuggestion> get friendSuggestionList => _friendSuggestionList;
+
+  SuggestionFriendListViewModel() {
+    initData();
+  }
 
   void setFriendSuggestionList(List<FriendSuggestion> value) {
     _friendSuggestionList = value;
@@ -29,57 +33,67 @@ class SuggestionFriendListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setError(bool value) {
+    error = value;
+    notifyListeners();
+  }
+
   void initData() async {
     _rangeEnd = 4;
-    _skip = 0;
     try {
+      setFirstLoading(true);
+      setError(false);
       List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations(
         limit: 10,
-        skip: _skip,
+        skip: _friendSuggestionList.length,
         rangeEnd: _rangeEnd
       );
       setFriendSuggestionList(friendSuggestionResponse);
-      setFirstLoading(false);
-      _skip += 10;
       _rangeEnd += 1;
     }
     catch (error) {
-      print(error);
+      setError(true);
+    }
+    finally {
+      setFirstLoading(false);
     }
   }
 
   void loadMore() async {
     setLoading(true);
+    setError(false);
     try {
       List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations(
         limit: 10,
-        skip: _skip,
+        skip: _friendSuggestionList.length,
         rangeEnd: _rangeEnd
       );
       setFriendSuggestionList([..._friendSuggestionList, ...friendSuggestionResponse]);
-      _skip += 10;
       _rangeEnd += 1;
-      setLoading(false);
     }
     catch (error) {
-      print(error);
+      setError(true);
+    }
+    finally {
+      setLoading(false);
     }
   }
 
   void refreshData() async {
-    setFirstLoading(true);
     try {
-      _skip = 0;
+      setFirstLoading(true);
+      setError(false);
+      _friendSuggestionList.clear();
       _rangeEnd = 4;
       List<FriendSuggestion> friendSuggestionResponse = await _userService.getRecommendations(
         limit: 10,
-        skip: _skip,
+        skip: _friendSuggestionList.length,
         rangeEnd: _rangeEnd
       );
       setFriendSuggestionList(friendSuggestionResponse);
     }
     catch (error) {
-      print(error);
+      setError(true);
     }
     finally {
       setFirstLoading(false);

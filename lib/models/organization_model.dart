@@ -14,6 +14,7 @@ class Organization {
   String firebaseTopic;
   String? image;
   bool isFollow;
+  OverallFigure? overallFigure;
 
   Organization({
     required this.userId,
@@ -24,7 +25,8 @@ class Organization {
     required this.country,
     required this.firebaseTopic,
     this.image,
-    this.isFollow = false
+    this.isFollow = false,
+    this.overallFigure
   });
 
   factory Organization.fromJson(Map<String, dynamic> json) => Organization(
@@ -36,7 +38,8 @@ class Organization {
     country: json["country"],
     firebaseTopic: json["firebaseTopic"],
     image: json["image"],
-    isFollow: json["isFollow"]
+    isFollow: json["isFollow"],
+    overallFigure: json["overallFigure"] != null ? OverallFigure.fromJson(json["overallFigure"]) : null
   );
 
   Map<String, dynamic> toJson() => {
@@ -48,6 +51,35 @@ class Organization {
     "country": country,
     "firebaseTopic": firebaseTopic,
     "image": image,
-    "isFollow": isFollow
+    "isFollow": isFollow,
+    "overallFigure": overallFigure?.toJson()
+  };
+}
+
+class OverallFigure {
+  int totalVolunteer;
+  int totalCampaign;
+  int totalTransaction;
+  int totalTransactionInDay;
+
+  OverallFigure({
+    required this.totalVolunteer,
+    required this.totalCampaign,
+    required this.totalTransaction,
+    required this.totalTransactionInDay
+  });
+
+  factory OverallFigure.fromJson(Map<String, dynamic> json) => OverallFigure(
+    totalVolunteer: json["totalVolunteer"],
+    totalCampaign: json["totalCampaign"],
+    totalTransaction: json["totalTransaction"],
+    totalTransactionInDay: json["totalTransactionInDay"]
+  );
+
+  Map<String, dynamic> toJson() => {
+    "totalVolunteer": totalVolunteer,
+    "totalCampaign": totalCampaign,
+    "totalTransaction": totalTransaction,
+    "totalTransactionInDay": totalTransactionInDay
   };
 }

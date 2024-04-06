@@ -9,7 +9,7 @@ import 'package:unidy_mobile/viewmodel/user/other_profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
 import 'package:unidy_mobile/widgets/error.dart';
-import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
+import 'package:unidy_mobile/widgets/list_item.dart';
 import 'package:unidy_mobile/widgets/profile/profile_archievement.dart';
 
 class VolunteerProfileScreen extends StatefulWidget {
@@ -81,17 +81,7 @@ class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
                       const SizedBox(height: 5),
                       SizedBox(
                         width: 240,
-                        child: user?.isFriend == true ?
-                          FilledButton.icon(
-                              onPressed: () {},
-                              icon: Icon(Icons.people_rounded, size: 20),
-                              label: Text('Bạn bè')
-                          ) :
-                          OutlinedButton.icon(
-                              onPressed: () {},
-                              icon: Icon(Icons.person_add, size: 20),
-                              label: Text('Kết bạn')
-                          ),
+                        child: _buildButton(),
                       )
                     ],
                   ),
@@ -102,6 +92,38 @@ class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
             const Divider(thickness: 5, color: PrimaryColor.primary50)
           ],
         )
+    );
+  }
+
+  Widget _buildButton() {
+    VolunteerProfileViewModel viewModel = Provider.of<VolunteerProfileViewModel>(context);
+    User? user = viewModel.user;
+    if (user?.isFriend == true) {
+      return FilledButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.people_rounded, size: 20),
+          label: const Text('Bạn bè')
+      );
+    }
+    else if (user?.isRequesting == true) {
+      return OutlinedButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.person_add, size: 20),
+          label: const Text('Đã gửi lời mời')
+      );
+    }
+    else if (user?.isRequested == true) {
+      return OutlinedButton.icon(
+          onPressed: viewModel.onAcceptFriendRequest,
+          icon: const Icon(Icons.person_add, size: 20),
+          label: const Text('Chấp nhận lời mời')
+      );
+    }
+
+    return OutlinedButton.icon(
+        onPressed: viewModel.onSendFriendRequest,
+        icon: const Icon(Icons.person_add, size: 20),
+        label: const Text('Kết bạn')
     );
   }
 
@@ -196,20 +218,19 @@ class _VolunteerProfileScreenState extends State<VolunteerProfileScreen> {
       );
     }
 
-    return SliverList.separated(
+    return SliverListItem<Post>(
+      items: postList,
+      length: postList.length,
       itemBuilder: (BuildContext context, int index) {
-        if (index < postList.length) {
-          return PostCard(
-            post: postList[index],
-            onLike: () => volunteerProfileViewModel.handleLikePost(postList[index]),
-          );
-        }
-        else if (index == postList.length && volunteerProfileViewModel.isLoadingMore) {
-          return const LoadingMoreIndicator();
-        }
+        Post post = postList[index];
+        return PostCard(post: post);
       },
-      separatorBuilder: (BuildContext context, int index) => const Divider(),
-      itemCount: postList.length + 1,
+      separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
+      isFirstLoading: volunteerProfileViewModel.isLoading,
+      isLoading: volunteerProfileViewModel.isLoadingMore,
+      error: volunteerProfileViewModel.error,
+      onRetry: volunteerProfileViewModel.loadMoreData,
+      onLoadMore: volunteerProfileViewModel.loadMoreData,
     );
   }
 

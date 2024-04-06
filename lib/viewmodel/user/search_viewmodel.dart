@@ -75,7 +75,7 @@ class SearchViewModel extends ChangeNotifier {
           });
         break;
       case ESearchType.organization:
-        _searchService.search(query, offset: _offset, limit: LIMIT)
+        _searchService.searchUser(query, offset: _offset, limit: LIMIT)
           .then((value) {
             setSearchResult(value);
           })

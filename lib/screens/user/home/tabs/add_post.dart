@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unidy_mobile/bloc/profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/post_emotional_model.dart';
+import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/viewmodel/user/home/add_post_viewmodel.dart';
+import 'package:unidy_mobile/viewmodel/user/home/profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_card.dart';
 import 'package:unidy_mobile/widgets/image/image_preview.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
@@ -47,13 +50,18 @@ class _AddPostState extends State<AddPost> {
   }
 
   SliverToBoxAdapter _buildTextAreaInput(AddPostViewModel addPostViewModel) {
+    User user = context.watch<ProfileCubit>().state;
+
     return SliverToBoxAdapter(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(top: 20),
-            child: AvatarCard(),
+            child: AvatarCard(
+              avatarUrl: user.image,
+              userName: user.fullName,
+            ),
           ),
           const SizedBox(height: 5),
           Input(
@@ -169,6 +177,7 @@ class _AddPostState extends State<AddPost> {
                   addPostController.handleCreatePost()
                     .then((_) {
                       addPostController.cleanInput();
+                      Provider.of<ProfileViewModel>(context, listen: false).cleanPostList();
                       ScaffoldMessenger.of(context).showSnackBar(_buildSnakeBar(true));
                     })
                     .catchError((error) {

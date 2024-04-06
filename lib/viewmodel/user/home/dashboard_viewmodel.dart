@@ -1,9 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
+import 'package:unidy_mobile/models/notification_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/services/campaign_service.dart';
 import 'package:unidy_mobile/services/post_service.dart';
+import 'package:unidy_mobile/services/user_service.dart';
 
 class DashboardViewModel extends ChangeNotifier {
   final PostService _postService = GetIt.instance<PostService>();
@@ -17,6 +19,7 @@ class DashboardViewModel extends ChangeNotifier {
   bool isLoadMoreLoading = false;
   bool error = false;
   List<dynamic> _recommendationList = [];
+
   List<dynamic> get recommendationList => _recommendationList;
 
   DashboardViewModel() {
@@ -54,8 +57,12 @@ class DashboardViewModel extends ChangeNotifier {
         CampaignData campaignData = value[1] as CampaignData;
 
         // update cursor and offset
-        _postOffset += LIMIT;
-        _campaignOffset += LIMIT;
+        if (postList.isNotEmpty) {
+          _postOffset += LIMIT;
+        }
+        if (campaignData.campaigns.isNotEmpty) {
+          _campaignOffset += LIMIT;
+        }
 
         // merge all data
         List<dynamic> recommendationList = [...postList, ...campaignData.campaigns];
@@ -88,8 +95,12 @@ class DashboardViewModel extends ChangeNotifier {
         CampaignData campaignData = value[1] as CampaignData;
 
         // update cursor and offset
-        _postOffset += LIMIT;
-        _campaignOffset += LIMIT;
+        if (postList.isNotEmpty) {
+          _postOffset += LIMIT;
+        }
+        if (campaignData.campaigns.isNotEmpty) {
+          _campaignOffset += LIMIT;
+        }
 
         // merge all data
         List<dynamic> newData = [...postList, ...campaignData.campaigns];

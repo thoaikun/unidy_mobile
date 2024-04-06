@@ -76,6 +76,7 @@ class RequestFriendCard extends StatelessWidget {
   final Future<bool> Function(FriendRequest? friendRequest)? onAccept;
   final Future<bool> Function(FriendRequest? friendRequest)? onDecline;
   final void Function()? onTap;
+
   const RequestFriendCard({
     super.key,
     this.friendRequest,

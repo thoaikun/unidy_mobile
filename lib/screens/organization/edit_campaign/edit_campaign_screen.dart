@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/volunteer_category_model.dart';
 import 'package:unidy_mobile/viewmodel/edit_campaign_viewmodel.dart';
 import 'package:unidy_mobile/widgets/button/upload_btn.dart';
@@ -8,7 +9,9 @@ import 'package:unidy_mobile/widgets/input/editable_chip_input.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 
 class EditCampaignScreen extends StatefulWidget {
-  const EditCampaignScreen({super.key});
+  const EditCampaignScreen({
+    super.key,
+  });
 
   @override
   State<EditCampaignScreen> createState() => _EditCampaignScreenState();
@@ -17,74 +20,69 @@ class EditCampaignScreen extends StatefulWidget {
 class _EditCampaignScreenState extends State<EditCampaignScreen> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => EditCampaignViewModel(
-        showSnackBar: (String content) => ScaffoldMessenger.of(context).showSnackBar(_buildSnakeBar(content)),
-      ),
-      child: PopScope(
-        canPop: false,
-        onPopInvoked: (bool didPop) async {
-          if (didPop) {
-            return;
-          }
-          final NavigatorState navigatorState = Navigator.of(context);
-          final bool shouldPop = await _onWillPop();
-          if (shouldPop == true) {
-            navigatorState.pop();
-          }
-          else {
-            return;
-          }
-        },
-        child: Consumer<EditCampaignViewModel>(
-          builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  'Tạo chiến dịch mới',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                actions: [
-                  TextButton.icon(
-                    onPressed: () => editCampaignViewModel.handleConfirm(),
-                    icon: const Icon(Icons.done),
-                    label: const Text('Hoàn tất')
-                  )
-                ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
+        final NavigatorState navigatorState = Navigator.of(context);
+        final bool shouldPop = await _onWillPop();
+        if (shouldPop == true) {
+          navigatorState.pop();
+        }
+        else {
+          return;
+        }
+      },
+      child: Consumer<EditCampaignViewModel>(
+        builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                editCampaignViewModel.campaign == null ? 'Tạo chiến dịch' : 'Chỉnh sửa chiến dịch',
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-              body: Consumer<EditCampaignViewModel>(
-                builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
-                  return Stack(
-                    children: [
-                      Visibility(
-                        visible: editCampaignViewModel.isLoading,
-                        child: const LinearProgressIndicator(),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: CustomScrollView(
-                          slivers: [
-                            SliverToBoxAdapter(
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 20),
-                                child: Text(
-                                    'Tải hình ảnh',
-                                    style: Theme.of(context).textTheme.titleMedium
-                                ),
+              actions: [
+                TextButton.icon(
+                  onPressed: () => editCampaignViewModel.handleConfirm(),
+                  icon: const Icon(Icons.done),
+                  label: const Text('Hoàn tất')
+                )
+              ],
+            ),
+            body: Consumer<EditCampaignViewModel>(
+              builder: (BuildContext context, EditCampaignViewModel editCampaignViewModel, Widget? child) {
+                return Stack(
+                  children: [
+                    Visibility(
+                      visible: editCampaignViewModel.isLoading,
+                      child: const LinearProgressIndicator(),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: CustomScrollView(
+                        slivers: [
+                          editCampaignViewModel.campaign == null ? SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: Text(
+                                  'Tải hình ảnh',
+                                  style: Theme.of(context).textTheme.titleMedium
                               ),
                             ),
-                            _buildImageGrid(editCampaignViewModel),
-                            _buildCampaignForm(),
-                          ],
-                        ),
+                          ) : const SliverToBoxAdapter(child: SizedBox.shrink()),
+                          editCampaignViewModel.campaign == null ? _buildImageGrid(editCampaignViewModel) : const SliverToBoxAdapter(child: SizedBox.shrink()),
+                          _buildCampaignForm(),
+                        ],
                       ),
-                    ],
-                  );
-                }
-              ),
-            );
-          }
-        ),
+                    ),
+                  ],
+                );
+              }
+            ),
+          );
+        }
       ),
     );
   }
@@ -210,7 +208,7 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
                       onSelected: (bool selected) {
                         editCampaignViewModel.toggleCategory(selected, category);
                       },
-                      selected: editCampaignViewModel.selectedCategories.contains(category),
+                      selected: editCampaignViewModel.selectedCategories.indexWhere((element) => element.key == category.key) != -1,
                     );
                   }).toList(),
                 ),
@@ -240,12 +238,5 @@ class _EditCampaignScreenState extends State<EditCampaignScreen> {
         ],
       ),
     )) ?? false;
-  }
-
-  SnackBar _buildSnakeBar(String message) {
-    return SnackBar(
-      content: Text(message),
-      duration: const Duration(seconds: 2),
-    );
   }
 }

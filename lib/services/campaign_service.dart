@@ -12,6 +12,25 @@ import 'package:unidy_mobile/utils/exception_util.dart';
 class CampaignService extends Service {
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
+  Future<Campaign> getCampaignByCampaignId(String campaignId) async {
+    try {
+      Response response = await httpClient.get('api/v1/campaign/$campaignId');
+
+      switch(response.statusCode) {
+        case 200:
+          Campaign campaign = campaignFromJson(utf8.decode(response.bodyBytes));
+          return campaign;
+        case 400:
+          throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
   Future<CampaignData> getRecommendCampaign({int skip = 0, int limit=5}) async {
     try {
       Map<String, dynamic> payload = {
@@ -283,7 +302,7 @@ class CampaignService extends Service {
 
       switch(response.statusCode) {
         case 200:
-          List<DonationHistory> donations = donationHistoryListFromJson(utf8.decode(response.bodyBytes));
+          List<DonationHistory> donations = listDonationHistoryFromJson(utf8.decode(response.bodyBytes));
           return donations;
         case 400:
           throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);

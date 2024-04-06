@@ -113,11 +113,8 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   }
 
   void onClickConfirmNewPassword() {
-    Sink<String> newPasswordSink = _newPasswordSubject.sink;
-    Sink<String> confirmNewPasswordSink = _confirmNewPasswordSubject.sink;
-
-    newPasswordSink.add(_newPasswordController.text);
-    confirmNewPasswordSink.add(_confirmNewPasswordController.text);
+    _newPasswordSubject.add(_newPasswordController.text);
+    _confirmNewPasswordSubject.add(_confirmNewPasswordController.text);
   }
 
   void _setupEmailStream() {
@@ -126,6 +123,8 @@ class ForgotPasswordViewModel extends ChangeNotifier {
     emailStream.transform(EmailValidationTransformer())
       .debounceTime(const Duration(milliseconds: 500))
       .listen((email) {
+        if (_currentStep != 0) return;
+
         this.email = email;
         _setLoading(true);
         authenticationService.confirmEmail({
@@ -145,6 +144,8 @@ class ForgotPasswordViewModel extends ChangeNotifier {
 
     otpStream.debounceTime(const Duration(milliseconds: 500))
       .listen((otp) {
+        if (_currentStep != 1) return;
+
         _setLoading(true);
         authenticationService.confirmOtp({
           'otp': otp,
@@ -163,13 +164,15 @@ class ForgotPasswordViewModel extends ChangeNotifier {
     Stream<String> newPasswordStream = _newPasswordSubject.stream;
     Stream<String> confirmPasswordStream = _confirmNewPasswordSubject.stream;
 
-    CombineLatestStream.combine2(
+    confirmPasswordStream.withLatestFrom(
       newPasswordStream.transform(PasswordValidationTransformer()),
-      confirmPasswordStream,
-      (password, confirmPassword) => Validation.validateSimilarPassword(password, confirmPassword)
+      (confirmPassword, newPassword) => [newPassword, confirmPassword]
     )
+      .transform(ValidationSimilarPasswordTransformer())
       .debounceTime(const Duration(milliseconds: 500))
       .listen((newPassword) {
+        if (_currentStep != 2) return;
+
         _setLoading(true);
         userService.resetPassword({
           'newPassword' : newPassword,

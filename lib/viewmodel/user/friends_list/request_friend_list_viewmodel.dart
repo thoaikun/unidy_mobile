@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
 import 'package:unidy_mobile/services/user_service.dart';
-import 'package:unidy_mobile/utils/formatter_util.dart';
 
 class RequestFriendListViewModel extends ChangeNotifier {
   final UserService _userService = GetIt.instance<UserService>();
 
   bool isFirstLoading = true;
   bool isLoading = false;
+  bool error = false;
   final int LIMIT = 10;
-  int _skip = 0;
 
   List<FriendRequest> _friendRequests = [];
   List<FriendRequest> get friendRequests => _friendRequests;
+
+  RequestFriendListViewModel() {
+    initData();
+  }
 
   void setFriendRequests(List<FriendRequest> value) {
     _friendRequests = value;
@@ -30,18 +33,23 @@ class RequestFriendListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setError(bool value) {
+    error = value;
+    notifyListeners();
+  }
+
   void initData() async {
     try {
+      setError(false);
       List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests(
         limit: LIMIT,
-        skip: _skip
+        skip: _friendRequests.length
       );
-     _skip += LIMIT;
       setFriendRequests(friendRequestResponse);
       setFirstLoading(false);
     }
     catch (error) {
-      print(error);
+      setError(true);
     }
     finally {
       setFirstLoading(false);
@@ -50,16 +58,16 @@ class RequestFriendListViewModel extends ChangeNotifier {
   
   void loadMore() async {
     setLoading(true);
+    setError(false);
     try {
       List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests(
         limit: LIMIT,
-        skip: _skip
+        skip: _friendRequests.length
       );
-      _skip += LIMIT;
       setFriendRequests([...friendRequests, ...friendRequestResponse]);
     }
     catch (error) {
-      print(error);
+      setError(true);
     }
     finally {
       setLoading(false);
@@ -68,17 +76,17 @@ class RequestFriendListViewModel extends ChangeNotifier {
 
   void refreshData() async {
     setFirstLoading(true);
+    setError(false);
     try {
-      _skip = 0;
+      _friendRequests = [];
       List<FriendRequest> friendRequestResponse = await _userService.getFriendRequests(
         limit: LIMIT,
-        skip: _skip
+        skip: _friendRequests.length
       );
-      _skip += LIMIT;
       setFriendRequests(friendRequestResponse);
     }
     catch (error) {
-      print(error);
+      setError(true);
     }
     finally {
       setFirstLoading(false);

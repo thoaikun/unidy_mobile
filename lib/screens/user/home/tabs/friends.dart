@@ -40,6 +40,7 @@ class _FriendsState extends State<Friends> {
           friendRequest: friendRequest,
           onAccept: Provider.of<FriendsViewModel>(context, listen: false).acceptRequest,
           onDecline: Provider.of<FriendsViewModel>(context, listen: false).declineRequest,
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: friendRequest.userRequest.userId))),
         )
       );
       if (i < requestList.length - 1) {
@@ -93,7 +94,8 @@ class _FriendsState extends State<Friends> {
       recommendationWidgetList.add(
         AddFriendCard(
           friendSuggestion: friendSuggestion,
-          onSendFriendRequest: friendsViewModel.sendFriendRequest
+          onSendFriendRequest: friendsViewModel.sendFriendRequest,
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: friendSuggestion.fiendSuggest.userId))),
         )
       );
       if (i < recommendationList.length - 1) {

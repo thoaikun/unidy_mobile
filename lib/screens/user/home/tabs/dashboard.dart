@@ -7,6 +7,7 @@ import 'package:unidy_mobile/utils/index.dart';
 import 'package:unidy_mobile/viewmodel/user/home/dashboard_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
 import 'package:unidy_mobile/widgets/error.dart';
+import 'package:unidy_mobile/widgets/list_item.dart';
 import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
 
 class Dashboard extends StatefulWidget {
@@ -62,32 +63,31 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   Widget _buildPostCardList() {
     return Consumer<DashboardViewModel>(
       builder: (BuildContext context, DashboardViewModel dashboardViewModel, Widget? child) {
-        return ListView.separated(
-          controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
+        return ListItem<dynamic>(
+          items: dashboardViewModel.recommendationList,
+          length: dashboardViewModel.recommendationList.length,
           itemBuilder: (BuildContext context, int index) {
-            if (index < dashboardViewModel.recommendationList.length) {
-              if (dashboardViewModel.recommendationList[index] is CampaignPost) {
-                CampaignPost campaign = dashboardViewModel.recommendationList[index];
-                return CampaignPostCard(
-                  campaignPost: campaign,
-                  onLike: () => dashboardViewModel.handleLikeCampaign(campaign),
-                );
-              }
-              else {
-                Post post = dashboardViewModel.recommendationList[index];
-                return PostCard(
-                    post: post,
-                    onLike: () => dashboardViewModel.handleLikePost(post),
-                );
-              }
+            if (dashboardViewModel.recommendationList[index] is CampaignPost) {
+              CampaignPost campaign = dashboardViewModel.recommendationList[index];
+              return CampaignPostCard(
+                campaignPost: campaign,
+                onLike: () => dashboardViewModel.handleLikeCampaign(campaign),
+              );
             }
-            else if (index == dashboardViewModel.recommendationList.length && dashboardViewModel.isLoadMoreLoading) {
-              return const LoadingMoreIndicator();
+            else {
+              Post post = dashboardViewModel.recommendationList[index];
+              return PostCard(
+                post: post,
+                onLike: () => dashboardViewModel.handleLikePost(post),
+              );
             }
           },
           separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
-          itemCount: dashboardViewModel.recommendationList.length + 1,
+          isFirstLoading: dashboardViewModel.isFirstLoading,
+          isLoading: dashboardViewModel.isLoadMoreLoading,
+          error: dashboardViewModel.error,
+          onRetry: dashboardViewModel.loadMoreData,
+          onLoadMore: dashboardViewModel.loadMoreData,
         );
       }
     );

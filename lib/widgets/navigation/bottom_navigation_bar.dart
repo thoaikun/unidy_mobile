@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unidy_mobile/bloc/profile_cubit.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/viewmodel/navigation_viewmodel.dart';
+import 'package:unidy_mobile/viewmodel/user/home/profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/avatar/avatar_navigation_icon.dart';
 
 class UnidyMainBottomNavigationBar extends StatefulWidget {
@@ -15,7 +16,7 @@ class UnidyMainBottomNavigationBar extends StatefulWidget {
 class _UnidyMainBottomNavigationBarState extends State<UnidyMainBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
-    User user = context.watch<ProfileCubit>().state;
+    User user = Provider.of<ProfileViewModel>(context).user;
 
     return Consumer<NavigationViewModel>(
       builder: (BuildContext context, NavigationViewModel navigationViewModal, Widget? child) => BottomNavigationBar(

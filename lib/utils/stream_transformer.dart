@@ -31,3 +31,10 @@ class ValidationTransformer extends StreamTransformerBase<String, String> {
     return stream.map((value) => Validation.validateInput(value, validationType ?? 'input'));
   }
 }
+
+class ValidationSimilarPasswordTransformer extends StreamTransformerBase<List<String>, String> {
+  @override
+  Stream<String> bind(Stream<List<String>> stream) {
+    return stream.map((value) => Validation.validateSimilarPassword(value[0], value[1]));
+  }
+}

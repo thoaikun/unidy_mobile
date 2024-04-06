@@ -28,7 +28,7 @@ class CircleProgressBar extends StatelessWidget {
           child: CircularProgressIndicator(
             backgroundColor: backgroundColor,
             color: color,
-            value: value / max,
+            value: max >= value ? value / max : 1,
             strokeWidth: 15,
           ),
         ),

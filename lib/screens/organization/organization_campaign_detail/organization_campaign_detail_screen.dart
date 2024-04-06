@@ -1,9 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
+import 'package:unidy_mobile/screens/organization/edit_campaign/edit_campaign_screen_container.dart';
 import 'package:unidy_mobile/screens/organization/organization_campaign_detail/tabs/sponsor_donation.dart';
 import 'package:unidy_mobile/screens/organization/organization_campaign_detail/tabs/volunteer_accepted.dart';
 import 'package:unidy_mobile/screens/organization/organization_campaign_detail/tabs/volunteer_request.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
+import 'package:unidy_mobile/viewmodel/organization/organization_campaign_detail_viewmodel.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
 import 'package:unidy_mobile/widgets/input/input.dart';
 import 'package:unidy_mobile/widgets/progress_bar/circle_progress_bar.dart';
@@ -33,15 +40,38 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
 
   @override
   Widget build(BuildContext context) {
+    OrganizationCampaignDetailViewModel viewModel = Provider.of<OrganizationCampaignDetailViewModel>(context, listen: true);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tên hoạt động'),
+        title: Text(viewModel.campaign.title ?? 'Chiến dịch'),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.edit_rounded)),
           IconButton(
-            onPressed: _showCompleteCampaignDialog,
-            icon: const Icon(Icons.fact_check_rounded, color: PrimaryColor.primary500,))
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditCampaignScreenContainer(
+                  campaign: viewModel.campaign,
+                  onUpdateCampaign: viewModel.setCampaign
+                ))
+            ),
+            icon: const Icon(Icons.edit_rounded)
+          ),
+          IconButton(
+            onPressed: viewModel.campaign.status == CampaignStatus.inProgress
+                ? () => _showCompleteCampaignDialog(viewModel.onEndCampaign)
+                : null,
+            icon: const Icon(Icons.fact_check_rounded),
+            disabledColor: TextColor.textColor200,
+            color: PrimaryColor.primary500,
+          )
         ],
+        bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(10),
+            child: Visibility(
+              visible: Provider.of<OrganizationCampaignDetailViewModel>(context).updateLoading,
+              child: const LinearProgressIndicator(),
+            ),
+        )
       ),
       body: CustomScrollView(
         slivers: [
@@ -66,16 +96,34 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
   }
 
   SliverToBoxAdapter _buildImageSlider() {
-    return const SliverToBoxAdapter(
-      child: ImageSlider(imageUrls: [
-        'https://upload.wikimedia.org/wikipedia/commons/6/6c/Vilnius_Marathon_2015_volunteers_by_Augustas_Didzgalvis.jpg',
-        'https://kindful.com/wp-content/uploads/volunteer-management_Feature.jpg',
-        'https://images.ctfassets.net/81iqaqpfd8fy/57NATA4649mbTvRfGpd6R1/911f94cdfd6089a77aefb4b1e9ebac7a/Teenvolunteercover.jpg'
-      ])
+    OrganizationCampaignDetailViewModel viewModel = Provider.of<OrganizationCampaignDetailViewModel>(context);
+    List<dynamic> imageUrls = [];
+    if (viewModel.campaign.linkImage == null || viewModel.campaign.linkImage == "") {
+      return const SliverToBoxAdapter(child: SizedBox(height: 0,));
+    }
+
+    imageUrls = List<String>.from(jsonDecode(viewModel.campaign.linkImage ?? '[]'));
+    List<String> result = [];
+    for (String image in imageUrls) {
+      result.add(image);
+    }
+
+    return SliverToBoxAdapter(
+      child: ImageSlider(imageUrls: result)
     );
   }
 
   SliverToBoxAdapter _buildCampaignInfo() {
+    OrganizationCampaignDetailViewModel viewModel = Provider.of<OrganizationCampaignDetailViewModel>(context);
+
+    Widget status = const StatusTag(label: 'Đã kết thúc', type: StatusType.success);
+    if (viewModel.campaign.status == CampaignStatus.inProgress) {
+      status = const StatusTag(label: 'Đang diễn ra', type: StatusType.info);
+    }
+    else if (viewModel.campaign.status == CampaignStatus.canceled) {
+      status = const StatusTag(label: 'Đã hủy', type: StatusType.error);
+    }
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -88,12 +136,12 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
               children: [
                 Expanded(
                   child: Text(
-                    'Vẫn là tên của chiến dịch ở đây chứ khong di day xa cả',
+                    viewModel.campaign.title ?? 'Không rõ',
                     style: Theme.of(context).textTheme.titleMedium,
                   )
                 ),
                 const SizedBox(width: 15),
-                const StatusTag(label: 'Đã kết thúc', type: StatusType.success)
+                status
               ],
             ),
             Wrap(
@@ -104,7 +152,7 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
                     const Text('Thời gian diễn ra: '),
                     Expanded(
                       child: Text(
-                        '20/3/2023 - 23/12/2023',
+                        viewModel.campaign.timeTakePlace ?? '',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300),
                       )
                     )
@@ -115,7 +163,7 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
                     const Text('Địa điểm diễn ra: '),
                     Expanded(
                       child: Text(
-                        'Sở thú thành phố Hồ Chí Minh',
+                        viewModel.campaign.location,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300),
                       ),
                     )
@@ -128,16 +176,19 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
               crossAxisAlignment: WrapCrossAlignment.center,
               runSpacing: 5,
               children: [
-                ReadMoreText(
-                  'Cake or pie? I can tell a lot about you by which one you pick. It may seem silly, but cake people and pie people are really different. I know which one I hope you are, but that\'s not for me to decide. So, what is it? Cake or pie? ',
-                  trimLines: 3,
-                  trimMode: TrimMode.Line,
-                  trimCollapsedText: 'Đọc thêm',
-                  trimExpandedText: '',
-                  moreStyle: Theme.of(context).textTheme.labelLarge?.copyWith(color: TextColor.textColor300),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ReadMoreText(
+                    viewModel.campaign.description ?? '',
+                    trimLines: 3,
+                    trimMode: TrimMode.Line,
+                    trimCollapsedText: 'Đọc thêm',
+                    trimExpandedText: '',
+                    moreStyle: Theme.of(context).textTheme.labelLarge?.copyWith(color: TextColor.textColor300),
+                  ),
                 ),
                 Text(
-                  '#dieforone #gogo',
+                  viewModel.campaign.hashTag ?? '',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(color: PrimaryColor.primary500),
@@ -151,6 +202,8 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
   }
 
   SliverToBoxAdapter _buildProgressInfo() {
+    OrganizationCampaignDetailViewModel viewModel = Provider.of<OrganizationCampaignDetailViewModel>(context);
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
@@ -159,10 +212,11 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
           children: [
             Column(
               children: [
-                const CircleProgressBar(
-                  max: 100,
-                  value: 70,
-                  radius: 100,
+                CircleProgressBar(
+                  max: viewModel.campaign.donationBudget ?? 100,
+                  value: viewModel.campaign.donationBudgetReceived ?? 0,
+                  radius: 180,
+                  label: Formatter.formatCurrency(viewModel.campaign.donationBudgetReceived ?? 0),
                   backgroundColor: SuccessColor.success200,
                   color: SuccessColor.success500,
                 ),
@@ -175,10 +229,10 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
             ),
             Column(
               children: [
-                const CircleProgressBar(
-                  max: 100,
-                  value: 70,
-                  radius: 100,
+                CircleProgressBar(
+                  max: viewModel.campaign.numberVolunteer ?? 100,
+                  value: viewModel.campaign.numberVolunteerRegistered ?? 0,
+                  radius: 80,
                   backgroundColor: PrimaryColor.primary200,
                   color: PrimaryColor.primary500,
                 ),
@@ -207,49 +261,29 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
         isScrollable: true,
         labelColor: PrimaryColor.primary500,
         unselectedLabelColor: TextColor.textColor300,
-        tabs: <Widget>[
+        tabs: const <Widget>[
           Tab(
-            child: Badge.count(
-              offset: const Offset(2,2),
-              isLabelVisible: true,
-              count: 1,
-              child: const Padding(
-                padding: EdgeInsets.only(right: 20),
-                child: Text('Yêu cầu tham gia'),
-              ),
+            child: Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: Text('Yêu cầu tham gia'),
             )
           ),
           Tab(
-              child: Badge.count(
-                offset: const Offset(2,2),
-                isLabelVisible: true,
-                count: 1,
-                child: const Padding(
-                  padding: EdgeInsets.only(right: 20),
-                  child: Text('Người tham gia'),
-                ),
+              child: Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: Text('Người tham gia'),
               )
           ),
           Tab(
-              child: Badge.count(
-                offset: const Offset(2,2),
-                isLabelVisible: true,
-                count: 7,
-                child: const Padding(
-                  padding: EdgeInsets.only(right: 20),
-                  child: Text('Nhà hảo tâm'),
-                ),
+              child: Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: Text('Nhà hảo tâm'),
               )
           ),
           Tab(
-              child: Badge.count(
-                offset: const Offset(2,2),
-                isLabelVisible: true,
-                count: 4,
-                child: const Padding(
-                  padding: EdgeInsets.only(right: 20),
-                  child: Text('Các khoảng chi'),
-                ),
+              child: Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: Text('Các khoảng chi'),
               )
           ),
         ],
@@ -257,7 +291,7 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
     );
   }
 
-  Future<void> _showCompleteCampaignDialog() async {
+  Future<void> _showCompleteCampaignDialog(void Function() onEndCampaign) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -267,10 +301,7 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Bạn có chắc chắn muốn kết thúc chiến dịch. Thông tin chiến dịch và bằng khen sẽ được gửi '
-                  'tới những người tham gia.'),
-              Input(
-                label: 'Nhập tên sự kiện',
-              )
+                  'tới những người tham gia.')
             ],
           ),
           actions: [
@@ -282,6 +313,7 @@ class _OrganizationCampaignDetailScreenState extends State<OrganizationCampaignD
             ),
             FilledButton(
               onPressed: () {
+                onEndCampaign();
                 Navigator.of(context).pop();
               },
               child: const Text('Đồng ý'),

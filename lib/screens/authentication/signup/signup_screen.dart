@@ -31,7 +31,7 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       body: ChangeNotifierProvider<SignUpViewModel>(
-        create: (_) => SignUpViewModel(),
+        create: (_) => SignUpViewModel(showErrorDialog: _buildDialog),
         child: SafeArea(
           child: Consumer<SignUpViewModel>(
             builder: (BuildContext context, SignUpViewModel signUpViewModel, Widget? child)  {
@@ -134,6 +134,22 @@ class _SignUpScreenState extends State<SignUpScreen> with TickerProviderStateMix
           )
         ),
       ),
+    );
+  }
+
+  void _buildDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Đóng'),
+          )
+        ],
+      )
     );
   }
 }

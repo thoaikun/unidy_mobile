@@ -1,5 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:unidy_mobile/bloc/profile_cubit.dart';
+import 'package:unidy_mobile/config/app_preferences.dart';
+import 'package:unidy_mobile/models/local_data_model.dart';
+import 'package:unidy_mobile/models/notification_model.dart';
 import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/services/post_service.dart';
@@ -8,16 +15,26 @@ import 'package:unidy_mobile/services/user_service.dart';
 class ProfileViewModel extends ChangeNotifier {
   final UserService _userService = GetIt.instance<UserService>();
   final PostService _postService = GetIt.instance<PostService>();
+  final AppPreferences _appPreferences = GetIt.instance<AppPreferences>();
+  BuildContext context;
 
   final int LIMIT = 5;
-  int _postOffset = 0;
   bool loading = true;
   bool isLoadMoreLoading = true;
+  bool error = false;
   User _user = User(userId: 0);
   List<Post> _postList = [];
 
   User get user => _user;
   List<Post> get postList => _postList;
+
+  ProfileViewModel({required this.context}) {
+    User user = context.read<ProfileCubit>().state;
+    if (user.fullName == null) {
+      getUserProfile();
+      context.read<ProfileCubit>().setProfile(user);
+    }
+  }
 
   void setLoading(bool value) {
     loading = value;
@@ -29,6 +46,11 @@ class ProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setError(bool value) {
+    error = value;
+    notifyListeners();
+  }
+
   void setUser(User value) {
     _user = value;
     notifyListeners();
@@ -36,6 +58,11 @@ class ProfileViewModel extends ChangeNotifier {
 
   void setPostList(List<Post> value) {
     _postList = _postList + value;
+    notifyListeners();
+  }
+
+  void cleanPostList() {
+    _postList = [];
     notifyListeners();
   }
 
@@ -51,27 +78,30 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void getMyOwnPost() {
-    _postService.getUserPosts(user.userId, skip: _postOffset, limit: LIMIT)
+    setError(false);
+    _postService.getUserPosts(user.userId, skip: _postList.length, limit: LIMIT)
       .then((postList) {
-        _postOffset += LIMIT;
         setPostList(postList);
       })
       .catchError((error) {
-        print(error);
+        setError(true);
       })
       .whenComplete(() => setLoading(false));
   }
 
   void loadMorePosts() {
     setIsLoadMoreLoading(true);
-    _postService.getUserPosts(user.userId, skip: _postOffset, limit: LIMIT)
+    setError(false);
+    _postService.getUserPosts(user.userId, skip: _postList.length, limit: LIMIT)
       .then((postList) {
-        _postOffset += LIMIT;
         setPostList(postList);
       })
-        .whenComplete(() {
-          setIsLoadMoreLoading(false);
-        });
+      .catchError((error) {
+        setError(true);
+      })
+      .whenComplete(() {
+        setIsLoadMoreLoading(false);
+      });
   }
 
   void handleLikePost(Post post) {
@@ -85,5 +115,13 @@ class ProfileViewModel extends ChangeNotifier {
       notifyListeners();
       _postService.like(post.postId);
     }
+  }
+
+  Future<List<NotificationItem>> getNotifications() async {
+    return await _userService.getNotifications();
+  }
+
+  Future<int> getTotalUnseen() async {
+    return await _userService.getTotalUnseenNotification();
   }
 }

@@ -19,6 +19,7 @@ class CommentViewModel extends ChangeNotifier {
   final CampaignService _campaignService = GetIt.instance<CampaignService>();
 
   final int LIMIT = 3;
+  int _skip = 0;
   bool isFirstLoading = true;
   bool isLoading = false;
   bool error = false;

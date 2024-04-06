@@ -1,15 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
-import 'package:unidy_mobile/screens/organization/organization_campaign_detail/organization_campaign_detail.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
+import 'package:unidy_mobile/screens/organization/organization_campaign_detail/organization_campaign_detail_screen.dart';
+import 'package:unidy_mobile/screens/organization/organization_campaign_detail/organization_campaign_detail_screen_container.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/widgets/status_tag.dart';
 
 class OrganizationCampaignCard extends StatelessWidget {
-  const OrganizationCampaignCard({super.key});
+  final Campaign campaign;
+  const OrganizationCampaignCard({super.key, required this.campaign});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const OrganizationCampaignDetailScreen())),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrganizationCampaignDetailScreenContainer(campaign: campaign))),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
@@ -35,7 +41,7 @@ class OrganizationCampaignCard extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Text('Trồng cây gây rừng', style: Theme.of(context).textTheme.titleMedium,),
+                child: Text(campaign.title ?? 'Không rõ', style: Theme.of(context).textTheme.titleMedium,),
               ),
               const SizedBox(height: 10),
               Row(
@@ -48,7 +54,7 @@ class OrganizationCampaignCard extends StatelessWidget {
                         'Đã ủng hộ',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300)
                       ),
-                      const Text('145 triệu')
+                      Text(Formatter.formatCurrency(campaign.donationBudgetReceived ?? 0))
                     ],
                   ),
                   Container(
@@ -63,7 +69,7 @@ class OrganizationCampaignCard extends StatelessWidget {
                         'Mục tiêu',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300)
                       ),
-                      const Text('175 triệu')
+                      Text(Formatter.formatCurrency(campaign.donationBudget ?? 0))
                     ],
                   ),
                   Container(
@@ -78,7 +84,7 @@ class OrganizationCampaignCard extends StatelessWidget {
                         'Tham gia',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300)
                       ),
-                      const Text('100 người')
+                      Text('${campaign.numberVolunteer ?? 0}')
                     ],
                   ),
                 ],
@@ -99,63 +105,46 @@ class OrganizationCampaignCard extends StatelessWidget {
   }
 
   Widget _buildImage() {
+    List<dynamic> imageUrls = [];
+    if (campaign.linkImage != "") {
+      imageUrls =
+      List<String>.from(jsonDecode(campaign.linkImage ?? '[]'));
+    }
+
     return Builder(
       builder: (context) {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            Image.network(
-              'https://upload.wikimedia.org/wikipedia/commons/6/6c/Vilnius_Marathon_2015_volunteers_by_Augustas_Didzgalvis.jpg',
-              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const SizedBox(
-                  width: double.infinity,
-                  height: 240,
-                  child: Center(
-                    child: SizedBox(
-                        width: 25,
-                        height: 25,
-                        child: CircularProgressIndicator()
-                    ),
-                  ),
-                );
-              },
+              imageUrls.isNotEmpty
+                ? Image.network(
+                  imageUrls[0],
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const SizedBox(
+                      width: double.infinity,
+                      height: 240,
+                      child: Center(
+                        child: SizedBox(
+                          width: 25,
+                          height: 25,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    );
+                  },
+                )
+            : Image.asset(
+              'assets/imgs/placeholder.png', // if your image is in a different package
               width: double.infinity,
               height: 240,
               fit: BoxFit.cover,
             ),
-            const Positioned(
+            Positioned(
                 left: 10,
                 top: 0,
-                child: StatusTag(label: 'Còn lại: 25 ngày')
+                child: StatusTag(label: Formatter.calculateTimeRemain(campaign.startDate, campaign.endDate))
             ),
-            Positioned(
-              bottom: -30,
-              right: 20,
-              child: Container(
-                width: 60,
-                height: 60,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  border: Border.all(color: PrimaryColor.primary500, width: 2),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: PrimaryColor.primary500
-                  ),
-                  child: Center(
-                    child: Text(
-                      '100%',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
-                    )
-                  ),
-                ),
-              ),
-            )
           ],
         );
       }

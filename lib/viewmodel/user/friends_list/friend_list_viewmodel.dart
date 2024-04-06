@@ -9,11 +9,15 @@ class FriendListViewModel extends ChangeNotifier {
 
   bool isFirstLoading = true;
   bool isLoading = false;
+  bool error = false;
   final int LIMIT = 10;
-  int _skip = 0;
 
   List<Friend> _friendList = [];
   List<Friend> get friendList => _friendList;
+
+  FriendListViewModel() {
+    initData();
+  }
 
   void setFriendList(List<Friend> value) {
     _friendList = value;
@@ -30,17 +34,23 @@ class FriendListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setError(bool value) {
+    error = value;
+    notifyListeners();
+  }
+
   void initData() async {
     try {
+      setError(false);
+      setIsFirstLoading(true);
       List<Friend> friendListResponse = await _userService.getFriends(
         limit: LIMIT,
-        skip: _skip
+        skip: _friendList.length
       );
-      _skip += LIMIT;
       setFriendList(friendListResponse);
     }
     catch (error) {
-      print(error);
+      setError(true);
     }
     finally {
       setIsFirstLoading(false);
@@ -48,17 +58,17 @@ class FriendListViewModel extends ChangeNotifier {
   }
 
   void loadMore() async {
-    setIsLoading(true);
     try {
+      setError(false);
+      setIsLoading(true);
       List<Friend> friendListResponse = await _userService.getFriends(
         limit: LIMIT,
-        skip: _skip
+        skip: _friendList.length
       );
-      _skip += LIMIT;
       setFriendList([..._friendList , ...friendListResponse]);
     }
     catch (error) {
-      print(error);
+      setError(true);
     }
     finally  {
       setIsLoading(true);
@@ -67,16 +77,20 @@ class FriendListViewModel extends ChangeNotifier {
 
   void refreshData() async {
     try {
-      _skip = 0;
+      _friendList.clear();
+      setError(false);
+      setIsFirstLoading(true);
       List<Friend> friendListResponse = await _userService.getFriends(
         limit: LIMIT,
-        skip: _skip
+        skip: _friendList.length
       );
-      _skip += LIMIT;
       setFriendList(friendListResponse);
     }
     catch (error) {
-      print(error);
+      setError(true);
+    }
+    finally {
+      setIsFirstLoading(false);
     }
   }
 

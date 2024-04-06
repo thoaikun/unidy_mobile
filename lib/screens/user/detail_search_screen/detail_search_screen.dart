@@ -44,13 +44,13 @@ class _DetailSearchScreenState extends State<DetailSearchScreen> {
     SearchViewModel searchViewModel = Provider.of<SearchViewModel>(context);
 
     if (searchViewModel.isLoading) {
-      return SliverFillRemaining(child: const Center(child: CircularProgressIndicator()));
+      return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
     }
     else if (searchViewModel.error) {
-      return SliverFillRemaining(child: ErrorPlaceholder());
+      return const SliverFillRemaining(child: ErrorPlaceholder());
     }
     else if (searchViewModel.searchResult != null && searchViewModel.searchResult!.hits.isEmpty) {
-      return SliverFillRemaining(child: Empty(description: 'Không tìm thấy kết quả nào'));
+      return const SliverFillRemaining(child: Empty(description: 'Không tìm thấy kết quả nào'));
     }
 
     return SliverList.separated(
@@ -59,12 +59,9 @@ class _DetailSearchScreenState extends State<DetailSearchScreen> {
           switch (item.runtimeType) {
             case Friend:
               if (item.role == 'ORGANIZATION') {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: OrganizationCard(
-                    organization: item,
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrganizationProfileContainer(organizationId: item?.userId)))
-                  ),
+                return OrganizationCard(
+                  organization: item,
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => OrganizationProfileContainer(organizationId: item?.userId)))
                 );
               }
               return FriendCard(

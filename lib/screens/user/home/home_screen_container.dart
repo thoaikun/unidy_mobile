@@ -21,9 +21,9 @@ class _HomeScreenContainerState extends State<HomeScreenContainer> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ProfileViewModel(context: context)),
         ChangeNotifierProvider(create: (_) => NavigationViewModel()),
         ChangeNotifierProvider(create: (_) => AddPostViewModel()),
-        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
         ChangeNotifierProvider(create: (_) => DashboardViewModel()),
         ChangeNotifierProvider(create: (_) => FriendsViewModel()),
         ChangeNotifierProvider(create: (_) => HistoryViewModel()),

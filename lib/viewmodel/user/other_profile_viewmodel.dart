@@ -23,7 +23,6 @@ abstract class OtherProfileViewModel extends ChangeNotifier {
 }
 
 class OrganizationProfileViewModel extends OtherProfileViewModel {
-  final OrganizationService _organizationService = GetIt.instance<OrganizationService>();
   final CampaignService _campaignService = GetIt.instance<CampaignService>();
   final UserService _userService = GetIt.instance<UserService>();
   final FirebaseService _firebaseService = GetIt.instance<FirebaseService>();
@@ -74,7 +73,7 @@ class OrganizationProfileViewModel extends OtherProfileViewModel {
 
   @override
   Future<void> getProfile() async {
-    await _organizationService.getOrganizationInfo(organizationId)
+    await _userService.getOrganizationInfo(organizationId)
       .then((value) {
         organization = value;
         notifyListeners();
@@ -157,7 +156,6 @@ class VolunteerProfileViewModel extends OtherProfileViewModel {
   int volunteerId;
   bool isLoading = true;
   bool isLoadingMore = false;
-  int _postOffset = 0;
   bool error = false;
 
   User? user;
@@ -169,10 +167,9 @@ class VolunteerProfileViewModel extends OtherProfileViewModel {
 
   @override
   Future<void> getPosts() async {
-    _postService.getUserPosts(volunteerId, skip: _postOffset, limit: LIMIT)
+    _postService.getUserPosts(volunteerId, skip: posts.length, limit: LIMIT)
       .then((value) {
         posts = value;
-        _postOffset += LIMIT;
         notifyListeners();
       })
       .catchError((error) {
@@ -212,10 +209,9 @@ class VolunteerProfileViewModel extends OtherProfileViewModel {
   @override
   void loadMoreData() {
     setLoadingMore(true);
-    _postService.getUserPosts(volunteerId, skip: _postOffset, limit: LIMIT)
+    _postService.getUserPosts(volunteerId, skip: posts.length, limit: LIMIT)
       .then((value) {
         posts.addAll(value);
-        _postOffset += LIMIT;
         notifyListeners();
       })
       .catchError((error) {
@@ -241,7 +237,7 @@ class VolunteerProfileViewModel extends OtherProfileViewModel {
 
   @override
   void refreshData() {
-    _postOffset = 0;
+    posts = [];
     initData();
   }
 
@@ -261,5 +257,28 @@ class VolunteerProfileViewModel extends OtherProfileViewModel {
   void setError(bool value) {
     error = value;
     notifyListeners();
+  }
+
+  void onSendFriendRequest() async {
+    try {
+      await _userService.sendFriendRequest(volunteerId);
+      user?.isRequesting = true;
+      notifyListeners();
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  void onAcceptFriendRequest() async {
+    try {
+      await _userService.acceptFriendRequest(volunteerId);
+      user?.isFriend = true;
+      user?.isRequested = false;
+      notifyListeners();
+    }
+    catch (error) {
+      rethrow;
+    }
   }
 }

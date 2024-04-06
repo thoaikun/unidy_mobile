@@ -4,7 +4,11 @@ CampaignData campaignDataFromJson(String str) => CampaignData.fromJson(json.deco
 
 List<CampaignPost> campaignPostListFromJson(String str) => List<CampaignPost>.from(json.decode(str).map((x) => CampaignPost.fromJson(x)));
 
+List<Campaign> listCampaignFromJson(String str) => List<Campaign>.from(json.decode(str).map((x) => Campaign.fromJson(x)));
+
 CampaignPost campaignPostFromJson(String str) => CampaignPost.fromJson(json.decode(str));
+
+Campaign campaignFromJson(String str) => Campaign.fromJson(json.decode(str));
 
 String campaignPostToJson(CampaignPost data) => json.encode(data.toJson());
 
@@ -86,6 +90,7 @@ class Campaign {
   int? donationBudgetReceived;
   dynamic userNode;
   List<dynamic> userLikes;
+  CampaignCategory? campaignType;
 
   Campaign({
     required this.campaignId,
@@ -109,6 +114,7 @@ class Campaign {
     this.donationBudget,
     this.donationBudgetReceived,
     required this.userLikes,
+    this.campaignType,
   });
 
   factory Campaign.fromJson(Map<String, dynamic> json) => Campaign(
@@ -133,6 +139,7 @@ class Campaign {
     donationBudget: json["donationBudget"],
     donationBudgetReceived: json["donationBudgetReceived"],
     userLikes: List<dynamic>.from(json["userLikes"]?.map((x) => x) ?? []),
+    campaignType: json["campaignType"] != null ? CampaignCategory.fromJson(json["campaignType"]) : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -157,6 +164,7 @@ class Campaign {
     "donationBudget": donationBudget,
     "donationBudgetReceived": donationBudgetReceived,
     "userLikes": userLikes != null ? List<dynamic>.from(userLikes!.map((x) => x)) : null,
+    "campaignType": campaignType?.toJson(),
   };
 }
 
@@ -202,11 +210,59 @@ CampaignStatus toCampaignStatus(String? value) {
   switch (value) {
     case 'IN_PROGRESS':
       return CampaignStatus.inProgress;
-    case 'DONE':
+    case 'COMPLETE':
       return CampaignStatus.done;
     case 'CANCELED':
       return CampaignStatus.canceled;
     default:
       return CampaignStatus.inProgress;
   }
+}
+
+class CampaignCategory {
+  int typeId;
+  int campaignId;
+  double communityType;
+  double education;
+  double research;
+  double helpOther;
+  double environment;
+  double healthy;
+  double emergencyPreparedness;
+
+  CampaignCategory({
+    required this.typeId,
+    required this.campaignId,
+    required this.communityType,
+    required this.education,
+    required this.research,
+    required this.helpOther,
+    required this.environment,
+    required this.healthy,
+    required this.emergencyPreparedness,
+  });
+
+  factory CampaignCategory.fromJson(Map<String, dynamic> json) => CampaignCategory(
+    typeId: json["typeId"],
+    campaignId: json["campaignId"],
+    communityType: json["communityType"]?.toDouble(),
+    education: json["education"]?.toDouble(),
+    research: json["research"]?.toDouble(),
+    helpOther: json["helpOther"]?.toDouble(),
+    environment: json["environment"]?.toDouble(),
+    healthy: json["healthy"]?.toDouble(),
+    emergencyPreparedness: json["emergencyPreparedness"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "typeId": typeId,
+    "campaignId": campaignId,
+    "communityType": communityType,
+    "education": education,
+    "research": research,
+    "helpOther": helpOther,
+    "environment": environment,
+    "healthy": healthy,
+    "emergencyPreparedness": emergencyPreparedness,
+  };
 }

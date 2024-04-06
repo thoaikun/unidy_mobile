@@ -14,42 +14,39 @@ class UnidyMainAppBar extends StatefulWidget {
 }
 
 class _UnidyMainAppBarState extends State<UnidyMainAppBar> {
+
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => NotificationViewModel())
-      ],
-      child: AppBar(
-        automaticallyImplyLeading: false,
-        title: Image.asset(
-          'assets/imgs/logo/logo_2.png',
-          width: 85,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => showSearch(context: context, delegate: UnidySearchDelegate()),
-            icon: const Icon(Icons.search_rounded, color: PrimaryColor.primary500),
-          ),
-          Consumer<NotificationViewModel>(
-            builder: (BuildContext context, NotificationViewModel notificationViewModel, Widget? child) {
-              return IconButton(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationScreen())),
-                icon: const Badge(
-                  label: Text('1'),
-                  alignment: Alignment.topRight,
-                  child: Icon(Icons.notifications_rounded)
-                ),
-              );
-            }
-          ),
-          UnidyPopupMenu(
-            popupMenuItems: [
-              IPopupMenuItem(value: EPopupMenuOption.logout, label: 'Đăng xuất'),
-            ],
-          )
-        ],
+    return AppBar(
+      automaticallyImplyLeading: false,
+      title: Image.asset(
+        'assets/imgs/logo/logo_2.png',
+        width: 85,
       ),
+      actions: [
+        IconButton(
+          onPressed: () => showSearch(context: context, delegate: UnidySearchDelegate()),
+          icon: const Icon(Icons.search_rounded, color: PrimaryColor.primary500),
+        ),
+        Consumer<NotificationViewModel>(
+          builder: (BuildContext context, NotificationViewModel notificationViewModel, Widget? child) {
+            return IconButton(
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationScreen())),
+              icon: Badge(
+                isLabelVisible: notificationViewModel.totalUnseen > 0,
+                label: Text(notificationViewModel.totalUnseen.toString()),
+                alignment: Alignment.topRight,
+                child: const Icon(Icons.notifications_rounded)
+              ),
+            );
+          }
+        ),
+        UnidyPopupMenu(
+          popupMenuItems: [
+            IPopupMenuItem(value: EPopupMenuOption.logout, label: 'Đăng xuất'),
+          ],
+        )
+      ],
     );
   }
 }

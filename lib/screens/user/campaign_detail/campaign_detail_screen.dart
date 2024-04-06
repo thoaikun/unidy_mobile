@@ -8,18 +8,16 @@ import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/donation_history_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/viewmodel/user/detail_campaign_viewmodel.dart';
-import 'package:unidy_mobile/widgets/card/campaign_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
 import 'package:unidy_mobile/widgets/error.dart';
 import 'package:unidy_mobile/widgets/image/image_slider.dart';
-import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
+import 'package:unidy_mobile/widgets/list_item.dart';
 import 'package:unidy_mobile/widgets/progress_bar/circle_progress_bar.dart';
 import 'package:unidy_mobile/widgets/status_tag.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class CampaignDetailScreen extends StatefulWidget {
-  final Campaign? campaign;
-  const CampaignDetailScreen({super.key, required this.campaign});
+  const CampaignDetailScreen({super.key});
 
   @override
   State<CampaignDetailScreen> createState() => _CampaignDetailScreenState();
@@ -51,9 +49,11 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
 
   @override
   Widget build(BuildContext context) {
+    DetailCampaignViewModel detailCampaignViewModel = Provider.of<DetailCampaignViewModel>(context, listen: true);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.campaign?.title ?? 'Chiến dịch chưa có tên'),
+        title: Text(detailCampaignViewModel.campaign?.title ?? 'Chiến dịch chưa có tên'),
       ),
       body: CustomScrollView(
         slivers: [
@@ -78,12 +78,13 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
   }
 
   SliverToBoxAdapter _buildImageSlider() {
+    DetailCampaignViewModel detailCampaignViewModel = Provider.of<DetailCampaignViewModel>(context, listen: true);
     List<dynamic> imageUrls = [];
-    if (widget.campaign?.linkImage == null || widget.campaign?.linkImage == "") {
+    if (detailCampaignViewModel.campaign?.linkImage == null || detailCampaignViewModel.campaign?.linkImage == "") {
       return const SliverToBoxAdapter(child: SizedBox(height: 0,));
     }
 
-    imageUrls = List<String>.from(jsonDecode(widget.campaign?.linkImage ?? '[]'));
+    imageUrls = List<String>.from(jsonDecode(detailCampaignViewModel.campaign?.linkImage ?? '[]'));
     List<String> result = [];
     for (String image in imageUrls) {
       result.add(image);
@@ -94,11 +95,13 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
   }
 
   SliverToBoxAdapter _buildCampaignInfo() {
+    DetailCampaignViewModel detailCampaignViewModel = Provider.of<DetailCampaignViewModel>(context, listen: true);
+
     Widget status = const StatusTag(label: 'Đã kết thúc', type: StatusType.success);
-    if (widget.campaign?.status == CampaignStatus.inProgress) {
+    if (detailCampaignViewModel.campaign?.status == CampaignStatus.inProgress) {
       status = const StatusTag(label: 'Đang diễn ra', type: StatusType.info);
     }
-    else if (widget.campaign?.status == CampaignStatus.canceled) {
+    else if (detailCampaignViewModel.campaign?.status == CampaignStatus.canceled) {
       status = const StatusTag(label: 'Đã hủy', type: StatusType.error);
     }
 
@@ -114,7 +117,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
               children: [
                 Expanded(
                   child: Text(
-                    widget.campaign?.title ?? 'Chiến dịch chưa có tên',
+                    detailCampaignViewModel.campaign?.title ?? 'Chiến dịch chưa có tên',
                     style: Theme.of(context).textTheme.titleMedium,
                   )
                 ),
@@ -130,7 +133,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
                     const Text('Thời gian diễn ra: '),
                     Expanded(
                       child: Text(
-                        widget.campaign?.timeTakePlace ?? '',
+                        detailCampaignViewModel.campaign?.timeTakePlace ?? '',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300),
                       )
                     )
@@ -141,7 +144,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
                     const Text('Địa điểm diễn ra: '),
                     Expanded(
                       child: Text(
-                        widget.campaign?.location ?? 'Không có địa điểm',
+                        detailCampaignViewModel.campaign?.location ?? 'Không có địa điểm',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TextColor.textColor300),
                       ),
                     )
@@ -157,7 +160,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
                 Align(
                   alignment: Alignment.centerLeft,
                   child: ReadMoreText(
-                    widget.campaign?.description ?? '',
+                    detailCampaignViewModel.campaign?.description ?? '',
                     trimLines: 3,
                     trimMode: TrimMode.Line,
                     trimCollapsedText: 'Đọc thêm',
@@ -166,7 +169,7 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
                   ),
                 ),
                 Text(
-                  widget.campaign?.hashTag ?? '',
+                  detailCampaignViewModel.campaign?.hashTag ?? '',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(color: PrimaryColor.primary500),
@@ -180,6 +183,8 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
   }
 
   SliverToBoxAdapter _buildProgressInfo() {
+    DetailCampaignViewModel detailCampaignViewModel = Provider.of<DetailCampaignViewModel>(context, listen: true);
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
@@ -189,10 +194,10 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
             Column(
               children: [
                 CircleProgressBar(
-                  max: widget.campaign?.donationBudget ?? 100,
-                  value: widget.campaign?.donationBudgetReceived ?? 0,
+                  max: detailCampaignViewModel.campaign?.donationBudget ?? 100,
+                  value: detailCampaignViewModel.campaign?.donationBudgetReceived ?? 0,
                   radius: 180,
-                  label: Formatter.formatCurrency(widget.campaign?.donationBudgetReceived ?? 0),
+                  label: Formatter.formatCurrency(detailCampaignViewModel.campaign?.donationBudgetReceived ?? 0),
                   backgroundColor: SuccessColor.success200,
                   color: SuccessColor.success500,
                 ),
@@ -206,8 +211,8 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
             Column(
               children: [
                  CircleProgressBar(
-                  max: widget.campaign?.numberVolunteer ?? 100,
-                  value: widget.campaign?.numberVolunteer ?? 0,
+                  max: detailCampaignViewModel.campaign?.numberVolunteer ?? 100,
+                  value: detailCampaignViewModel.campaign?.numberVolunteerRegistered ?? 0,
                   radius: 80,
                   backgroundColor: PrimaryColor.primary200,
                   color: PrimaryColor.primary500,
@@ -288,21 +293,19 @@ class _CampaignDetailScreenState extends State<CampaignDetailScreen> with Ticker
       );
     }
 
-    return ListView.builder(
-      itemCount: detailCampaignViewModel.donations.length + 1,
+    return ListItem<DonationHistory>(
+      items: detailCampaignViewModel.donations,
+      length: detailCampaignViewModel.donations.length,
       itemBuilder: (BuildContext context, int index) {
-        if (index < detailCampaignViewModel.donations.length) {
-          return _buildDonationCard(detailCampaignViewModel.donations[index]);
-        }
-        else if (index == detailCampaignViewModel.donations.length) {
-          return TextButton(
-            onPressed: () {
-              detailCampaignViewModel.loadMoreDonations();
-            },
-            child: const Text('Xem thêm'),
-          );
-        }
+        DonationHistory donation = detailCampaignViewModel.donations[index];
+        return _buildDonationCard(donation);
       },
+      separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
+      isFirstLoading: detailCampaignViewModel.isDonationLoading,
+      isLoading: detailCampaignViewModel.isMoreLoading,
+      error: detailCampaignViewModel.reportError,
+      onRetry: detailCampaignViewModel.loadMoreDonations,
+      onLoadMore: detailCampaignViewModel.loadMoreDonations,
     );
   }
 

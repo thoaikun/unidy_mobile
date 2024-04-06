@@ -11,7 +11,6 @@ import 'package:unidy_mobile/models/post_model.dart';
 import 'package:unidy_mobile/models/search_result_model.dart';
 import 'package:unidy_mobile/screens/user/detail_profile/organization_profile/organization_profile_container.dart';
 import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
-import 'package:unidy_mobile/screens/user/detail_search_screen/detail_search_screen.dart';
 import 'package:unidy_mobile/screens/user/detail_search_screen/detail_search_screen_container.dart';
 import 'package:unidy_mobile/services/campaign_service.dart';
 import 'package:unidy_mobile/services/post_service.dart';

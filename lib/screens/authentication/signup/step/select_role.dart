@@ -48,17 +48,6 @@ class SelectRoleStep extends StatelessWidget {
                   const SizedBox(height: 20),
                   RoleCard(
                     icons: [
-                      Image.asset('assets/imgs/icon/role_sponsor_unselected.png', scale: 2.5),
-                      Image.asset('assets/imgs/icon/role_sponsor_selected.png', scale: 2.5),
-                    ],
-                    title: 'Nhà hảo tâm',
-                    description: 'Tài trợ cho các chương trình từ thiện',
-                    isSelected: signUpViewModel.selectedRole == ERole.sponsor ,
-                    onTap: () => signUpViewModel.setUserRole(ERole.sponsor),
-                  ),
-                  const SizedBox(height: 20),
-                  RoleCard(
-                    icons: [
                       Image.asset('assets/imgs/icon/role_organization_unselected.png', scale: 2.5),
                       Image.asset('assets/imgs/icon/role_organization_selected.png', scale: 2.5),
                     ],

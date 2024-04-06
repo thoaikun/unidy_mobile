@@ -1,7 +1,15 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:unidy_mobile/bloc/organization_profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
+import 'package:unidy_mobile/models/donation_history_model.dart';
+import 'package:unidy_mobile/models/organization_model.dart';
+import 'package:unidy_mobile/utils/formatter_util.dart';
+import 'package:unidy_mobile/viewmodel/organization/home/organization_dashboard_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/organization_campaign_card.dart';
+import 'package:unidy_mobile/widgets/empty.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -17,6 +25,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      context.read<OrganizationDashboardViewModel>().changeTab(_tabController.index);
+    });
   }
 
   @override
@@ -38,6 +49,21 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   SliverToBoxAdapter _buildRecentCampaign() {
+    OrganizationDashboardViewModel viewModel = Provider.of<OrganizationDashboardViewModel>(context);
+    List<Campaign> newestCampaign = viewModel.newestCampaign;
+
+    if (viewModel.isCampaignLoading) {
+      return const SliverToBoxAdapter(
+        child: SizedBox(
+          height: 400,
+          child: Center(child: CircularProgressIndicator())
+        )
+      );
+    }
+    else if (newestCampaign.isEmpty) {
+      return const SliverToBoxAdapter(child: SizedBox());
+    }
+
     return SliverToBoxAdapter(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -58,10 +84,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 enlargeStrategy: CenterPageEnlargeStrategy.zoom,
                 enableInfiniteScroll: false
               ),
-              items: const [
-                OrganizationCampaignCard(),
-                OrganizationCampaignCard(),
-              ],
+              items: newestCampaign.map((item) => OrganizationCampaignCard(campaign: item)).toList(),
             ),
             const SizedBox(height: 30),
             const Divider(thickness: 5, color: PrimaryColor.primary50)
@@ -72,6 +95,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   SliverToBoxAdapter _buildOrganizationGeneralInfo() {
+    Organization organization = context.watch<OrganizationProfileCubit>().state;
+
     double size = MediaQuery.of(context).size.width - 40 - 10 / 2;
     BoxDecoration decoration = BoxDecoration(
       borderRadius: BorderRadius.circular(8),
@@ -109,17 +134,17 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Image.asset(
-                          'assets/imgs/icon/role_sponsor_unselected.png',
+                          'assets/imgs/icon/campaign.png',
                           width: 45,
                         ),
                         const SizedBox(height: 15),
                         Text(
-                          '500 triệu đồng',
+                          '${organization.overallFigure?.totalCampaign ?? 0} chiến dịch',
                           style: Theme.of(context).textTheme.titleMedium
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          'Tổng tiền nhận được',
+                          'Số lượng chiến dịch',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TextColor.textColor300)
                         )
                       ],
@@ -140,7 +165,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                         ),
                         const SizedBox(height: 15),
                         Text(
-                            '200 người',
+                            '${organization.overallFigure?.totalVolunteer ?? 0} người',
                             style: Theme.of(context).textTheme.titleMedium
                         ),
                         const SizedBox(height: 5),
@@ -166,7 +191,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                         ),
                         const SizedBox(height: 15),
                         Text(
-                            '500 triệu đồng',
+                            Formatter.formatCurrency(organization.overallFigure?.totalTransactionInDay ?? 0),
                             style: Theme.of(context).textTheme.titleMedium
                         ),
                         const SizedBox(height: 5),
@@ -192,7 +217,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                         ),
                         const SizedBox(height: 15),
                         Text(
-                            '500 triệu đồng',
+                            Formatter.formatCurrency(organization.overallFigure?.totalTransaction ?? 0),
                             style: Theme.of(context).textTheme.titleMedium
                         ),
                         const SizedBox(height: 5),
@@ -215,6 +240,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   SliverToBoxAdapter _buildTopDonationDashboard() {
+
+
     return SliverToBoxAdapter(
       child: SizedBox(
         height: 380,
@@ -222,40 +249,68 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           controller: _tabController,
           children: [
             // Content for Tab 1
-            ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) => ListTile(
-                leading: const CircleAvatar(
-                  radius: 15,
-                  backgroundImage: NetworkImage(
-                    'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
-                  ),
-                ),
-                title: const Text('Thái Lê'),
-                trailing: Text('140 triệu', style: Theme.of(context).textTheme.bodyMedium),
-              ),
-              separatorBuilder: (BuildContext context, int index) => const Divider(),
-            ),
+            _buildNewestDonationList(),
             // Content for Tab 2
-            ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) => ListTile(
-                leading: const CircleAvatar(
-                  radius: 15,
-                  backgroundImage: NetworkImage(
-                    'https://media.istockphoto.com/id/1335941248/photo/shot-of-a-handsome-young-man-standing-against-a-grey-background.jpg?s=612x612&w=0&k=20&c=JSBpwVFm8vz23PZ44Rjn728NwmMtBa_DYL7qxrEWr38=',
-                  ),
-                ),
-                title: const Text('Johnny Nguyễn'),
-                trailing: Text('340 triệu', style: Theme.of(context).textTheme.bodyMedium),
-              ),
-              separatorBuilder: (BuildContext context, int index) => const Divider(),
-            ),
+            _buildTopDonationList(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildNewestDonationList() {
+    OrganizationDashboardViewModel viewModel = Provider.of<OrganizationDashboardViewModel>(context);
+    List<DonationHistory> newestDonations = viewModel.newestDonations;
+
+    if (viewModel.isNewestLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    else if (newestDonations.isEmpty) {
+      return const Empty(description: 'Chưa có dữ liệu');
+    }
+
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: newestDonations.length,
+      itemBuilder: (BuildContext context, int index) => ListTile(
+        leading: CircleAvatar(
+          radius: 15,
+          backgroundImage: NetworkImage(
+            newestDonations[index].user.linkImage ?? 'https://api.dicebear.com/7.x/initials/png?seed=${newestDonations[index].user.fullName}',
+          ),
+        ),
+        title: Text(newestDonations[index].user.fullName, style: Theme.of(context).textTheme.bodyMedium),
+        trailing: Text(Formatter.formatCurrency(newestDonations[index].transactionAmount), style: Theme.of(context).textTheme.bodyMedium),
+      ),
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
+    );
+  }
+
+  Widget _buildTopDonationList() {
+    OrganizationDashboardViewModel viewModel = Provider.of<OrganizationDashboardViewModel>(context);
+    List<DonationHistory> topDonations = viewModel.topDonations;
+
+    if (viewModel.isTopLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    else if (topDonations.isEmpty) {
+      return const Empty(description: 'Chưa có dữ liệu');
+    }
+
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: topDonations.length,
+      itemBuilder: (BuildContext context, int index) => ListTile(
+        leading: CircleAvatar(
+          radius: 15,
+          backgroundImage: NetworkImage(
+            topDonations[index].user.linkImage ?? 'https://api.dicebear.com/7.x/initials/png?seed=${topDonations[index].user.fullName}',
+          ),
+        ),
+        title: Text(topDonations[index].user.fullName, style: Theme.of(context).textTheme.bodyMedium),
+        trailing: Text(Formatter.formatCurrency(topDonations[index].transactionAmount), style: Theme.of(context).textTheme.bodyMedium),
+      ),
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
   }
 

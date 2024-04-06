@@ -9,6 +9,7 @@ import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class SignUpViewModel extends ChangeNotifier {
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
+  final void Function(String title, String name)? showErrorDialog;
 
   static const int MAX_STEP = 4;
   final Duration debounceTime = const Duration(milliseconds: 500);
@@ -58,7 +59,7 @@ class SignUpViewModel extends ChangeNotifier {
   TextEditingController get jobController => _jobController;
   TextEditingController get workPlaceController => _workplaceController;
 
-  SignUpViewModel() {
+  SignUpViewModel({ this.showErrorDialog }) {
     _selectedRole = ERole.volunteer;
     _emailController.addListener(() => _setEmailError(null));
     _passwordController.addListener(() => _setPasswordError(null));
@@ -170,7 +171,7 @@ class SignUpViewModel extends ChangeNotifier {
 
     CombineLatestStream.combine2(
       emailStream.transform(EmailValidationTransformer()),
-      passwordStream,
+      passwordStream.transform(PasswordValidationTransformer()),
       (email, password) => {
         'email': email,
         'password': password
@@ -221,13 +222,17 @@ class SignUpViewModel extends ChangeNotifier {
     )
       .debounceTime(debounceTime)
       .listen((payload) {
+        if (_selectedRole != ERole.volunteer) {
+          return;
+        }
+
         _setLoading(true);
         authenticationService.signUp(payload)
           .then((_) {
             nextStep();
           })
           .catchError((error) {
-            print(error);
+          handleSignUpError(error);
           })
           .whenComplete(() => _setLoading(false));
       })
@@ -261,13 +266,17 @@ class SignUpViewModel extends ChangeNotifier {
     )
       .debounceTime(debounceTime)
       .listen((payload) {
+        if (_selectedRole != ERole.organization) {
+          return;
+        }
+
         _setLoading(true);
         authenticationService.signUp(payload)
           .then((_) {
             nextStep();
           })
           .catchError((error) {
-            print(error);
+            handleSignUpError(error);
           })
           .whenComplete(() => _setLoading(false));
       })
@@ -354,7 +363,9 @@ class SignUpViewModel extends ChangeNotifier {
       }
     }
     else if (error is ResponseException) {
-      print(error.message);
+      if (error.message == 'Invalid Email') {
+        showErrorDialog?.call('Email đã được sử dụng', 'Vui lòng kiểm tra lại email của bạn');
+      }
     }
   }
 

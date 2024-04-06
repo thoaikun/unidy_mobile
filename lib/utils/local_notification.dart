@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:unidy_mobile/main.dart';
+import 'package:unidy_mobile/screens/user/campaign_detail/campaign_detail_screen_container.dart';
 import 'package:unidy_mobile/screens/user/friends_list/friend_list/friend_list_container.dart';
 import 'package:unidy_mobile/screens/user/friends_list/request_friend_list/request_friend_list_container.dart';
 
@@ -60,6 +61,9 @@ class LocalNotification {
         break;
       case 'friendAccept':
         navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => const FriendListContainer()));
+        break;
+      case 'campaignDetail':
+        navigatorKey.currentState?.push(MaterialPageRoute(builder: (context) => CampaignDetailScreenContainer(campaignId: data['campaign'])));
         break;
     }
   }

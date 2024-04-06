@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/certificate_model.dart';
 import 'package:unidy_mobile/models/donation_history_model.dart';
 import 'package:unidy_mobile/services/campaign_service.dart';
@@ -13,10 +14,10 @@ class DetailCampaignViewModel extends ChangeNotifier {
   final CampaignService _campaignService = GetIt.instance<CampaignService>();
 
   EDetailCampaignTab _currentTab = EDetailCampaignTab.certificate;
-  String campaignId;
+  String? campaignId;
+  Campaign? campaign;
   List<DonationHistory> _donations = [];
   Certificate? _certificate;
-  int _donationOffset = 0;
   final int LIMIT = 5;
   bool _isCertificateLoading = true;
   bool _isDonationLoading = true;
@@ -31,7 +32,13 @@ class DetailCampaignViewModel extends ChangeNotifier {
   bool get isDonationLoading => _isDonationLoading;
   bool get isMoreLoading => _isLoadingMore;
 
-  DetailCampaignViewModel({required this.campaignId}) {
+  DetailCampaignViewModel({this.campaignId, this.campaign}) {
+    if (campaignId == null && campaign != null) {
+      campaignId = campaign!.campaignId;
+    }
+    else if (campaignId != null && campaign == null) {
+      getCampaignData();
+    }
     initData();
   }
 
@@ -70,7 +77,7 @@ class DetailCampaignViewModel extends ChangeNotifier {
       case EDetailCampaignTab.certificate:
         try {
           if (!_isCertificateLoading) break;
-          Certificate? certificate = await _campaignService.getCertificateInCampaign(campaignId);
+          Certificate? certificate = await _campaignService.getCertificateInCampaign(campaignId ?? '0');
           setCertificate(certificate);
         }
         catch (e) {
@@ -84,7 +91,7 @@ class DetailCampaignViewModel extends ChangeNotifier {
       case EDetailCampaignTab.report:
         try {
           if (!_isDonationLoading) break;
-          List<DonationHistory> donations = await _campaignService.getDonationsInCampaign(campaignId, pageNumber: _donationOffset, pageSize: LIMIT);
+          List<DonationHistory> donations = await _campaignService.getDonationsInCampaign(campaignId ?? '0', pageNumber: _donations.length, pageSize: LIMIT);
           setDonations(donations);
         }
         catch (e) {
@@ -101,8 +108,7 @@ class DetailCampaignViewModel extends ChangeNotifier {
   void loadMoreDonations() async {
     try {
       setMoreLoading(true);
-      _donationOffset += LIMIT;
-      List<DonationHistory> donations = await _campaignService.getDonationsInCampaign(campaignId, pageNumber: _donationOffset, pageSize: LIMIT);
+      List<DonationHistory> donations = await _campaignService.getDonationsInCampaign(campaignId ?? '0', pageNumber: _donations.length, pageSize: LIMIT);
       setDonations(donations);
     }
     catch (e) {
@@ -111,6 +117,16 @@ class DetailCampaignViewModel extends ChangeNotifier {
     }
     finally {
       setMoreLoading(false);
+    }
+  }
+
+  void getCampaignData() async {
+    try {
+      campaign = await _campaignService.getCampaignByCampaignId(campaignId ?? '0');
+      notifyListeners();
+    }
+    catch (e) {
+      print(e);
     }
   }
 }

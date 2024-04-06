@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 class HttpClient {
   final Client client = Client();
   final Duration timeLimit = const Duration(seconds: 20);
-  String baseUri = dotenv.env['MAIN_SERVER_URL'] ?? 'http://192.168.0.132:8080';
+  String baseUri = dotenv.env['MAIN_SERVER_URL'] ?? 'http://192.168.1.33:8080';
   Map<String, String>? headers;
 
   HttpClient({ this.headers });

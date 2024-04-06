@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
 
-List<DonationHistory> donationHistoryListFromJson(String str) => List<DonationHistory>.from(json.decode(str).map((x) => DonationHistory.fromJson(x)));
+List<DonationHistory> listDonationHistoryFromJson(String str) => List<DonationHistory>.from(json.decode(str).map((x) => DonationHistory.fromJson(x)));
 
 DonationHistory donationHistoryFromJson(String str) => DonationHistory.fromJson(json.decode(str));
 
@@ -63,7 +63,7 @@ class DonationHistory {
 class UserInfo {
   int userId;
   String fullName;
-  String linkImage;
+  String? linkImage;
 
   UserInfo({
     required this.userId,

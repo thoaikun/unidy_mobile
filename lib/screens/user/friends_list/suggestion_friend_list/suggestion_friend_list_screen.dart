@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
+import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
 import 'package:unidy_mobile/viewmodel/user/friends_list/suggestion_friend_list_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
+import 'package:unidy_mobile/widgets/list_item.dart';
 import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
 
 class SuggestionFriendListScreen extends StatefulWidget {
@@ -27,7 +29,6 @@ class _SuggestionFriendListScreenState extends State<SuggestionFriendListScreen>
         suggestionFriendListViewModel.loadMore();
       }
     });
-    suggestionFriendListViewModel.initData();
   }
 
   SliverFillRemaining _buildList() {
@@ -43,20 +44,22 @@ class _SuggestionFriendListScreenState extends State<SuggestionFriendListScreen>
     }
 
     return SliverFillRemaining(
-      child: ListView.separated(
-          itemBuilder: (BuildContext context, int index) {
-            if (index < friendSuggestionList.length) {
-              return AddFriendCard(
-                friendSuggestion: friendSuggestionList[index],
-                onSendFriendRequest: suggestionFriendListViewModel.sendFriendRequest,
-              );
-            }
-            else if (index == friendSuggestionList.length && context.watch<SuggestionFriendListViewModel>().isLoading) {
-              return const LoadingMoreIndicator();
-            }
-          },
-          separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5,),
-          itemCount: friendSuggestionList.length + 1
+      child: ListItem<FriendSuggestion>(
+        items: friendSuggestionList,
+        length: friendSuggestionList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return AddFriendCard(
+            friendSuggestion: friendSuggestionList[index],
+            onSendFriendRequest: suggestionFriendListViewModel.sendFriendRequest,
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: friendSuggestionList[index].fiendSuggest.userId))),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5,),
+        isFirstLoading: suggestionFriendListViewModel.isFirstLoading,
+        isLoading: suggestionFriendListViewModel.isLoading,
+        error: suggestionFriendListViewModel.error,
+        onRetry: suggestionFriendListViewModel.loadMore,
+        onLoadMore: suggestionFriendListViewModel.loadMore,
       ),
     );
   }

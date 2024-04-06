@@ -6,6 +6,8 @@ import 'package:unidy_mobile/models/campaign_joined_history_model.dart';
 import 'package:unidy_mobile/models/donation_history_model.dart';
 import 'package:unidy_mobile/models/error_response_model.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
+import 'package:unidy_mobile/models/notification_model.dart';
+import 'package:unidy_mobile/models/organization_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/services/base_service.dart';
 import 'package:unidy_mobile/services/firebase_service.dart';
@@ -36,7 +38,7 @@ class UserService extends Service {
 
   Future<User> getOtherUserProfile(int userId) async {
     try {
-      Response response = await httpClient.get('api/v1/users/profile/$userId');
+      Response response = await httpClient.get('api/v1/users/profile/volunteers/$userId');
 
       switch(response.statusCode) {
         case 200:
@@ -50,6 +52,28 @@ class UserService extends Service {
       }
     }
     catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<Organization> getOrganizationInfo(int organizationId) async {
+    try {
+      Response response = await httpClient.get('api/v1/users/profile/organizations/$organizationId');
+
+      switch(response.statusCode) {
+        case 200:
+          Organization organizationResponse = organizationFromJson(utf8.decode(response.bodyBytes));
+          return organizationResponse;
+        case 400:
+          throw ResponseException(value: 'organization id không đúng', code: ExceptionErrorCode.invalidUserId);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (e) {
       rethrow;
     }
   }
@@ -407,7 +431,7 @@ class UserService extends Service {
 
       switch(response.statusCode) {
         case 200:
-          List<DonationHistory> donationHistory = donationHistoryListFromJson(utf8.decode(response.bodyBytes));
+          List<DonationHistory> donationHistory = listDonationHistoryFromJson(utf8.decode(response.bodyBytes));
           return donationHistory;
         case 400:
           throw ResponseException(value: 'Không thể lấy lịch sử quyên góp', code: ExceptionErrorCode.invalid);
@@ -419,6 +443,96 @@ class UserService extends Service {
       }
     }
     catch(error) {
+      rethrow;
+    }
+  }
+
+
+  Future<List<NotificationItem>> getNotifications({int pageSize = 10, int pageNumber = 0}) async {
+    try {
+      Map<String, String> payload = {
+        'pageSize': pageSize.toString(),
+        'pageNumber': pageNumber.toString()
+      };
+      Response response = await httpClient.get('api/v1/users/notifications', payload);
+
+      switch(response.statusCode) {
+        case 200:
+          List<NotificationItem> notificationItems = notificationItemListFromJson(utf8.decode(response.bodyBytes));
+          return notificationItems;
+        case 400:
+          throw ResponseException(value: 'Không thể lấy thông báo', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<int> getTotalUnseenNotification() async {
+    try {
+      Response response = await httpClient.get('api/v1/users/notifications/unseen/count');
+
+      switch(response.statusCode) {
+        case 200:
+          return jsonDecode(response.body)['unseenCount'];
+        case 400:
+          throw ResponseException(value: 'Không thể lấy thông báo chưa đọc', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> markAllNotificationAsRead() async {
+    try {
+      Response response = await httpClient.patch('api/v1/users/notifications/unseen');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Không thể đánh dấu tất cả thông báo đã đọc', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> markNotificationAsRead(int notificationId) async {
+    try {
+      Response response = await httpClient.patch('api/v1/users/notifications/unseen/$notificationId');
+
+      switch(response.statusCode) {
+        case 200:
+          return;
+        case 400:
+          throw ResponseException(value: 'Không thể đánh dấu thông báo đã đọc', code: ExceptionErrorCode.invalid);
+        case 403:
+          catchForbidden();
+          throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        default:
+          throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
+      }
+    }
+    catch (error) {
       rethrow;
     }
   }

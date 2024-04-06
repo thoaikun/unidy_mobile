@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 import 'package:unidy_mobile/bloc/network_detect_cubit.dart';
+import 'package:unidy_mobile/bloc/organization_profile_cubit.dart';
 import 'package:unidy_mobile/bloc/profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/theme_config.dart';
 import 'package:unidy_mobile/firebase_options.dart';
@@ -13,6 +15,7 @@ import 'package:unidy_mobile/screens/authentication/login_screen.dart';
 import 'package:unidy_mobile/screens/placeholder/placeholder_screen.dart';
 import 'package:unidy_mobile/screens/user/donation/donation_success_screen.dart';
 import 'package:unidy_mobile/utils/local_notification.dart';
+import 'package:unidy_mobile/viewmodel/notification_viewmodel.dart';
 
 import 'config/getit_config.dart';
 
@@ -88,16 +91,20 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (BuildContext context) => NetworkDetectCubit()),
-        BlocProvider(create: (BuildContext context) => ProfileCubit())
+        BlocProvider(create: (BuildContext context) => ProfileCubit()),
+        BlocProvider(create: (BuildContext context) => OrganizationProfileCubit()),
       ],
-      child: MaterialApp(
-        title: 'Unidy',
-        theme: unidyThemeData,
-        home: const PlaceholderScreen(),
-        navigatorKey: navigatorKey,
-        routes: {
-          '/login': (context) => const LoginScreen()
-        },
+      child: ChangeNotifierProvider(
+        create: (context) => NotificationViewModel(),
+        child: MaterialApp(
+          title: 'Unidy',
+          theme: unidyThemeData,
+          home: const PlaceholderScreen(),
+          navigatorKey: navigatorKey,
+          routes: {
+            '/login': (context) => const LoginScreen()
+          },
+        ),
       )
     );
   }

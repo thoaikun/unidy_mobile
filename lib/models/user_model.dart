@@ -16,6 +16,8 @@ class User {
   String? role;
   String? image;
   bool? isFriend;
+  bool? isRequested;
+  bool? isRequesting;
 
   User({
     required this.userId,
@@ -28,7 +30,9 @@ class User {
     this.workLocation,
     this.role,
     this.image,
-    this.isFriend
+    this.isFriend,
+    this.isRequested,
+    this.isRequesting
   });
 
 
@@ -43,7 +47,9 @@ class User {
     workLocation: json["workLocation"],
     role: json["role"],
     image: json['image'],
-    isFriend: json['isFriend']
+    isFriend: json['isFriend'],
+    isRequested: json['isRequested'],
+    isRequesting: json['isRequesting']
   );
 
   Map<String, dynamic> toJson() => {
@@ -57,6 +63,8 @@ class User {
     "workLocation": workLocation,
     "role": role,
     "image": image,
-    "isFriend": isFriend
+    "isFriend": isFriend,
+    "isRequested": isRequested,
+    "isRequesting": isRequesting
   };
 }

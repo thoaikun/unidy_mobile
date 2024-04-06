@@ -9,6 +9,7 @@ import 'package:unidy_mobile/screens/user/edit_profile/edit_profile_screen.dart'
 import 'package:unidy_mobile/utils/formatter_util.dart';
 import 'package:unidy_mobile/viewmodel/user/home/profile_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/post_card.dart';
+import 'package:unidy_mobile/widgets/list_item.dart';
 import 'package:unidy_mobile/widgets/profile/profile_archievement.dart';
 
 class Profile extends StatefulWidget {
@@ -179,30 +180,26 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  SliverList _buildRecentPost(List<Post> postList, User user) {
-    return SliverList.separated(
-      itemBuilder: (BuildContext context, int index) {
-        if (index < postList.length) {
+  SliverListItem<Post> _buildRecentPost(List<Post> postList, User user) {
+    ProfileViewModel profileViewModel = Provider.of<ProfileViewModel>(context, listen: true);
+    List<Post> postList = profileViewModel.postList;
+
+    return SliverListItem<Post>(
+        items: postList,
+        length: postList.length,
+        itemBuilder: (BuildContext context, int index) {
+          Post post = postList[index];
           return PostCard(
-            post: postList[index],
-            onLike: () => context.read<ProfileViewModel>().handleLikePost(postList[index]),
+            post: post,
+            onLike: () => profileViewModel.handleLikePost(post),
           );
-        }
-        else if (index == postList.length && context.watch<ProfileViewModel>().isLoadMoreLoading) {
-          return Container(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: const Center(
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-        }
-      },
-      separatorBuilder: (BuildContext context, int index) => const Divider(),
-      itemCount: postList.length + 1,
+        },
+        separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
+        isFirstLoading: profileViewModel.loading,
+        isLoading: profileViewModel.isLoadMoreLoading,
+        error: profileViewModel.error,
+        onRetry: profileViewModel.loadMorePosts,
+        onLoadMore: profileViewModel.loadMorePosts,
     );
   }
 

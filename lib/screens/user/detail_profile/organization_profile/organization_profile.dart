@@ -10,6 +10,8 @@ import 'package:unidy_mobile/widgets/card/post_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
 import 'package:unidy_mobile/widgets/error.dart';
 
+import '../../../../widgets/list_item.dart';
+
 class OrganizationProfileScreen extends StatefulWidget {
   const OrganizationProfileScreen({super.key});
 
@@ -178,7 +180,8 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
   }
 
   Widget _buildRecentPost() {
-    List<CampaignPost> campaigns = Provider.of<OrganizationProfileViewModel>(context).campaigns;
+    OrganizationProfileViewModel organizationProfileViewModel = Provider.of<OrganizationProfileViewModel>(context);
+    List<CampaignPost> campaigns = organizationProfileViewModel.campaigns;
 
     if (campaigns.isEmpty) {
       return const SliverToBoxAdapter(
@@ -186,29 +189,22 @@ class _OrganizationProfileScreenState extends State<OrganizationProfileScreen> {
       );
     }
 
-    return SliverList.separated(
+    return SliverListItem<CampaignPost>(
+      items: campaigns,
+      length: campaigns.length,
       itemBuilder: (BuildContext context, int index) {
-        if (index < campaigns.length) {
-          return CampaignPostCard(
-            campaignPost: campaigns[index],
-            onLike: () => Provider.of<OrganizationProfileViewModel>(context).handleLikeCampaign(campaigns[index]),
-          );
-        }
-        else if (index == campaigns.length && Provider.of<OrganizationProfileViewModel>(context).isLoadingMore) {
-          return Container(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: const Center(
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-        }
+        CampaignPost campaign = campaigns[index];
+        return CampaignPostCard(
+          campaignPost: campaign,
+          onLike: () => Provider.of<OrganizationProfileViewModel>(context, listen: false).handleLikeCampaign(campaign),
+        );
       },
-      separatorBuilder: (BuildContext context, int index) => const Divider(),
-      itemCount: campaigns.length + 1,
+      separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
+      isFirstLoading: organizationProfileViewModel.isLoading,
+      isLoading: organizationProfileViewModel.isLoadingMore,
+      error: organizationProfileViewModel.error,
+      onRetry: organizationProfileViewModel.loadMoreData,
+      onLoadMore: organizationProfileViewModel.loadMoreData
     );
   }
 

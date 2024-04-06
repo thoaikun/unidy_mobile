@@ -203,6 +203,10 @@ class PostCard extends StatelessWidget {
     List<dynamic> imageUrls = [];
     if (post?.linkImage != "") {
       imageUrls = List<String>.from(jsonDecode(post?.linkImage ?? '[]'));
+      if(imageUrls.isEmpty) {
+        return const SizedBox();
+      }
+
       List<String> result = [];
       for (String image in imageUrls) {
         result.add(image);
@@ -531,6 +535,10 @@ class CampaignPostCard extends StatelessWidget {
     List<dynamic> imageUrls = [];
     if (campaignPost.campaign.linkImage != "") {
       imageUrls = List<String>.from(jsonDecode(campaignPost.campaign.linkImage ?? '[]'));
+      if (imageUrls.isEmpty) {
+        return const SizedBox();
+      }
+
       List<String> result = [];
       for (String image in imageUrls) {
         result.add(image);

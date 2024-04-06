@@ -8,14 +8,19 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/volunteer_category_model.dart';
 import 'package:unidy_mobile/services/campaign_service.dart';
+import 'package:unidy_mobile/services/organization_service.dart';
 import 'package:unidy_mobile/utils/exception_util.dart';
 import 'package:unidy_mobile/utils/stream_transformer.dart';
 
 class EditCampaignViewModel extends ChangeNotifier {
   final CampaignService _campaignService = GetIt.instance<CampaignService>();
+  final OrganizationService _organizationService = GetIt.instance<OrganizationService>();
   final void Function(String content) showSnackBar;
+  final void Function(Campaign updatedCampaign)? onUpdateCampaign;
+  Campaign? campaign;
 
   final List<File> _files = [];
   List<VolunteerCategory> _selectedCategories = [];
@@ -60,8 +65,14 @@ class EditCampaignViewModel extends ChangeNotifier {
   TextEditingController get startDateController => _startDateController;
 
   EditCampaignViewModel({
-    required this.showSnackBar
+    required this.showSnackBar,
+    this.onUpdateCampaign,
+    this.campaign
   }) {
+    if (campaign != null) {
+      initUpdateCampaignData();
+    }
+
     titleController.addListener(() => _setTitleError(null));
     descriptionController.addListener(() => _setDescriptionError(null));
     openFormTimeController.addListener(() => _setOpenFormTimeError(null));
@@ -70,6 +81,47 @@ class EditCampaignViewModel extends ChangeNotifier {
     startDateController.addListener(() => _setStartDateError(null));
 
     verifyForm();
+  }
+
+  void initUpdateCampaignData() {
+    DateTime startDate = DateTime.parse(campaign?.startDate ?? DateTime.now().toString());
+    DateTime endDate = DateTime.parse(campaign?.endDate ?? DateTime.now().toString());
+    DateTime timeTakePlace = DateTime.parse(campaign?.timeTakePlace ?? DateTime.now().toString());
+
+    titleController.text = campaign?.title ?? '';
+    descriptionController.text = campaign?.description ?? '';
+    openFormTimeController.text = DateFormat('dd/MM/yyyy').format(startDate).toString();
+    closeFormTimeController.text = DateFormat('dd/MM/yyyy').format(endDate).toString();
+    locationController.text = campaign?.location ?? '';
+    budgetTargetController.text = campaign?.donationBudget.toString() ?? '';
+    targetVolunteerController.text = campaign?.numberVolunteer.toString() ?? '';
+    startDateController.text = DateFormat('dd/MM/yyyy').format(timeTakePlace).toString();
+    _hagTags = campaign?.hashTag?.split('#') ?? [];
+
+    if (campaign?.campaignType != null) {
+      if ((campaign?.campaignType?.emergencyPreparedness ?? 0.0) > 0.0) {
+        _selectedCategories.add(VolunteerCategory(VolunteerCategoryKey.emergencyPreparedness));
+      }
+      if ((campaign?.campaignType?.education ?? 0.0) > 0.0) {
+        _selectedCategories.add(VolunteerCategory(VolunteerCategoryKey.education));
+      }
+      if ((campaign?.campaignType?.environment ?? 0.0) > 0.0) {
+        _selectedCategories.add(VolunteerCategory(VolunteerCategoryKey.environment));
+      }
+      if ((campaign?.campaignType?.healthy ?? 0.0) > 0.0) {
+        _selectedCategories.add(VolunteerCategory(VolunteerCategoryKey.health));
+      }
+      if ((campaign?.campaignType?.helpOther ?? 0.0) > 0.0) {
+        _selectedCategories.add(VolunteerCategory(VolunteerCategoryKey.helpingNeighbours));
+      }
+      if ((campaign?.campaignType!.communityType ?? 0.0) > 0.0) {
+        _selectedCategories.add(VolunteerCategory(VolunteerCategoryKey.strengtheningCommunities));
+      }
+      if ((campaign?.campaignType?.research ?? 0.0) > 0.0) {
+        _selectedCategories.add(VolunteerCategory(VolunteerCategoryKey.researchWritingEditing));
+      }
+    }
+    notifyListeners();
   }
 
   void setLoading(bool value) {
@@ -130,7 +182,7 @@ class EditCampaignViewModel extends ChangeNotifier {
 
   void toggleCategory(bool selected, VolunteerCategory category) {
     if (!selected) {
-      _selectedCategories.remove(category);
+      _selectedCategories.removeWhere((element) => element.key == category.key);
     } else {
       _selectedCategories.add(category);
     }
@@ -256,9 +308,22 @@ class EditCampaignViewModel extends ChangeNotifier {
       targetVolunteerStream,
       startDateStream.transform(ValidationTransformer(validationType: 'campaignStartDate')),
       (title, description, openFormTime, closeFormTime, location, budgetTarget, targetVolunteer, startDate) {
-        openFormTime = DateFormat('yyyy-MM-ddTHH:mm:ss').format(DateFormat('dd/MM/yyyy').parse(openFormTime).toLocal()).toString();
-        closeFormTime = DateFormat('yyyy-MM-ddTHH:mm:ss').format(DateFormat('dd/MM/yyyy').parse(closeFormTime).toLocal()).toString();
-        startDate = DateFormat('yyyy-MM-ddTHH:mm:ss').format(DateFormat('dd/MM/yyyy').parse(startDate).toLocal()).toString();
+        openFormTime = DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(openFormTime).toLocal()).toString();
+        closeFormTime = DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(closeFormTime).toLocal()).toString();
+        startDate = DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(startDate).toLocal()).toString();
+
+        if (campaign != null && onUpdateCampaign != null) {
+          campaign?.title = title;
+          campaign?.description = description;
+          campaign?.startDate = openFormTime;
+          campaign?.endDate = closeFormTime;
+          campaign?.timeTakePlace = startDate;
+          campaign?.location = location;
+          campaign?.donationBudget = int.tryParse(budgetTarget) ?? 0;
+          campaign?.numberVolunteer = int.tryParse(targetVolunteer) ?? 0;
+          campaign?.hashTag = _hagTags.map((hagTag) => '#$hagTag').join(' ');
+          onUpdateCampaign?.call(campaign!);
+        }
 
         return <String, String>{
           'title': title,
@@ -269,36 +334,48 @@ class EditCampaignViewModel extends ChangeNotifier {
           'endDate': closeFormTime,
           'timeTakePlace': startDate,
           'location': location,
-          'budgetTarget': budgetTarget,
-          'numberOfVolunteer': targetVolunteer,
-          'hagTags': _hagTags.map((hagTag) => '#$hagTag').join(' ')
+          'donationBudget': budgetTarget,
+          'numberVolunteer': targetVolunteer,
+          'hashTag': _hagTags.map((hagTag) => '#$hagTag').join(' ')
         };
       }
     )
       .debounceTime(const Duration(milliseconds: 500))
       .listen((payload) {
         setLoading(true);
-        // _convertToMultipartFiles()
-        //   .then((images) {
-        //     return _campaignService.create(payload, images);
-        //   })
-        //   .then((_) {
-        //     showSnackBar.call('Tạo chiến dịch thành công');
-        //     // empty all fields
-        //     _titleController.clear();
-        //     _descriptionController.clear();
-        //     _openFormTimeController.clear();
-        //     _closeFormTimeController.clear();
-        //     _locationController.clear();
-        //     _budgetTargetController.clear();
-        //     _targetVolunteerController.clear();
-        //     _startDateController.clear();
-        //     _files.clear();
-        //     _selectedCategories.clear();
-        //     _hagTags.clear();
-        //   })
-        //   .catchError(() => showSnackBar.call('Có lỗi xảy ra'))
-        //   .whenComplete(() => setLoading(false));
+        if (campaign == null) {
+          _convertToMultipartFiles()
+            .then((images) {
+              return _campaignService.create(payload, images);
+            })
+            .then((_) {
+              showSnackBar.call('Tạo chiến dịch thành công');
+              // empty all fields
+              _titleController.clear();
+              _descriptionController.clear();
+              _openFormTimeController.clear();
+              _closeFormTimeController.clear();
+              _locationController.clear();
+              _budgetTargetController.clear();
+              _targetVolunteerController.clear();
+              _startDateController.clear();
+              _files.clear();
+              _selectedCategories.clear();
+              _hagTags.clear();
+            })
+            .catchError(() => showSnackBar.call('Có lỗi xảy ra'))
+            .whenComplete(() => setLoading(false));
+        }
+        else {
+          _organizationService.updateCampaign(payload, campaign!.campaignId)
+              .then((_) {
+                showSnackBar.call('Cập nhật chiến dịch thành công');
+              })
+              .catchError((error) {
+                showSnackBar.call('Có lỗi xảy ra');
+              })
+              .whenComplete(() => setLoading(false));
+        }
       })
       .onError(_handleError);
   }

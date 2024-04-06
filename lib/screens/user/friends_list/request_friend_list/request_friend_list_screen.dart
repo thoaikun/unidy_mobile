@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unidy_mobile/models/friend_model.dart';
+import 'package:unidy_mobile/screens/user/detail_profile/volunteer_profile/volunteer_profile_container.dart';
 import 'package:unidy_mobile/viewmodel/user/friends_list/request_friend_list_viewmodel.dart';
 import 'package:unidy_mobile/widgets/card/friend_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
+import 'package:unidy_mobile/widgets/list_item.dart';
 import 'package:unidy_mobile/widgets/loadmore_indicator.dart';
 
 class RequestFriendListScreen extends StatefulWidget {
@@ -14,19 +16,6 @@ class RequestFriendListScreen extends StatefulWidget {
 }
 
 class _RequestFriendListScreenState extends State<RequestFriendListScreen> {
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    Provider.of<RequestFriendListViewModel>(context, listen: false).initData();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        Provider.of<RequestFriendListViewModel>(context, listen: false).loadMore();
-      }
-    });
-  }
-
   SliverFillRemaining _buildList() {
     RequestFriendListViewModel requestFriendListViewModel = Provider.of<RequestFriendListViewModel>(context, listen: true);
     List<FriendRequest> friendRequests = requestFriendListViewModel.friendRequests;
@@ -40,21 +29,23 @@ class _RequestFriendListScreenState extends State<RequestFriendListScreen> {
     }
 
     return SliverFillRemaining(
-      child: ListView.separated(
+      child: ListItem<FriendRequest>(
+        items: friendRequests,
+        length: friendRequests.length,
         itemBuilder: (BuildContext context, int index) {
-          if (index < friendRequests.length) {
-            return RequestFriendCard(
-              friendRequest: friendRequests[index],
-              onAccept: requestFriendListViewModel.acceptFriendRequest,
-              onDecline: requestFriendListViewModel.declineFriendRequest,
-            );
-          }
-          else if (index == friendRequests.length && context.watch<RequestFriendListViewModel>().isLoading) {
-            return const LoadingMoreIndicator();
-          }
+          return RequestFriendCard(
+            friendRequest: friendRequests[index],
+            onAccept: requestFriendListViewModel.acceptFriendRequest,
+            onDecline: requestFriendListViewModel.declineFriendRequest,
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VolunteerProfileContainer(volunteerId: friendRequests[index].userRequest.userId))),
+          );
         },
-        separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5,),
-        itemCount: friendRequests.length + 1
+        separatorBuilder: (BuildContext context, int index) => const Divider(height: 0.5),
+        isFirstLoading: requestFriendListViewModel.isFirstLoading,
+        isLoading: requestFriendListViewModel.isLoading,
+        error: requestFriendListViewModel.error,
+        onRetry: () => requestFriendListViewModel.loadMore(),
+        onLoadMore: () => requestFriendListViewModel.loadMore(),
       ),
     );
   }

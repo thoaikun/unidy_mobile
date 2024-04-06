@@ -43,6 +43,26 @@ class Formatter {
     }
   }
 
+  static String calculateTimeRemain(String? startTime, String? endTime) {
+    if (startTime == null || endTime == null) return '';
+
+    DateFormat format = DateFormat('yyyy-MM-ddTHH:mm:ss', Intl.systemLocale);
+    DateTime start = format.parse(startTime);
+    DateTime end = format.parse(endTime);
+
+    Duration difference = end.difference(start);
+
+    if (difference.inDays > 0) {
+      return 'Còn lại: ${difference.inDays} ngày';
+    } else if (difference.inHours > 0) {
+      return 'Còn lại: ${difference.inHours} giờ';
+    } else if (difference.inMinutes > 0) {
+      return 'Còn lại: ${difference.inMinutes} phút';
+    } else {
+      return 'Hết hạn';
+    }
+  }
+
   static String formatCurrency(dynamic value) {
     if (value is String) {
       return NumberFormat.currency(locale: 'vi', symbol: 'đ').format(double.parse(value));

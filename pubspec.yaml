@@ -106,6 +106,7 @@ flutter:
     - assets/imgs/icon/role_sponsor_selected.png
     - assets/imgs/icon/role_organization_unselected.png
     - assets/imgs/icon/role_organization_selected.png
+    - assets/imgs/icon/campaign.png
     - assets/imgs/icon/trophy.png
     - assets/imgs/icon/green_medal.png
     - assets/imgs/icon/silver_medal.png
@@ -120,6 +121,7 @@ flutter:
     - assets/imgs/emotional_emoji/relax.png
     - assets/imgs/emotional_emoji/excited.png
     - assets/imgs/emotional_emoji/wonderful.png
+    - assets/imgs/placeholder.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

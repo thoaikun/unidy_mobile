@@ -132,7 +132,6 @@ class CampaignDonationCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(width: 30),
             status
           ],
         ),
