@@ -107,8 +107,7 @@ class OrganizationCampaignCard extends StatelessWidget {
   Widget _buildImage() {
     List<dynamic> imageUrls = [];
     if (campaign.linkImage != "") {
-      imageUrls =
-      List<String>.from(jsonDecode(campaign.linkImage ?? '[]'));
+      imageUrls = List<String>.from(jsonDecode(campaign.linkImage ?? '[]'));
     }
 
     return Builder(
@@ -119,6 +118,8 @@ class OrganizationCampaignCard extends StatelessWidget {
               imageUrls.isNotEmpty
                 ? Image.network(
                   imageUrls[0],
+                  height: 240,
+                  fit: BoxFit.cover,
                   loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                     if (loadingProgress == null) return child;
                     return const SizedBox(
@@ -143,7 +144,7 @@ class OrganizationCampaignCard extends StatelessWidget {
             Positioned(
                 left: 10,
                 top: 0,
-                child: StatusTag(label: Formatter.calculateTimeRemain(campaign.startDate, campaign.endDate))
+                child: StatusTag(label: campaign.status == CampaignStatus.done  ? 'ĐÃ KẾT THÚC' : Formatter.calculateTimeRemain(campaign.startDate, campaign.endDate))
             ),
           ],
         );

@@ -75,7 +75,7 @@ class SearchViewModel extends ChangeNotifier {
           });
         break;
       case ESearchType.organization:
-        _searchService.searchUser(query, offset: _offset, limit: LIMIT)
+        _searchService.searchUser(query, offset: _offset, limit: LIMIT, role: 'ORGANIZATION')
           .then((value) {
             setSearchResult(value);
           })
@@ -87,7 +87,7 @@ class SearchViewModel extends ChangeNotifier {
           });
         break;
       case ESearchType.user:
-        _searchService.searchUser(query, offset: _offset, limit: LIMIT)
+        _searchService.searchUser(query, offset: _offset, limit: LIMIT, role: 'VOLUNTEER')
           .then((value) {
             setSearchResult(value);
           })

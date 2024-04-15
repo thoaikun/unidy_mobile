@@ -27,7 +27,7 @@ class Input extends StatelessWidget {
     this.onTap,
     this.prefixIcon,
     this.suffixIcon,
-    required this.label, 
+    required this.label,
     this.placeholder,
     this.error,
     this.numberKeyboard = false,
@@ -75,7 +75,7 @@ class Input extends StatelessWidget {
           width: 1.5,
           style: BorderStyle.solid
         )
-      ) : null
+      ) : null,
     );
   }
 

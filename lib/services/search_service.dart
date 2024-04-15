@@ -81,12 +81,13 @@ class SearchService extends Service {
     }
   }
 
-  Future<SearchResult> searchUser(String query, {int offset = 0, int limit = 5}) async {
+  Future<SearchResult> searchUser(String query, {int offset = 0, int limit = 5, String role = "ALL"}) async {
     try {
       Map<String, dynamic> payload = {
         'searchTerm': query,
         'offset': offset.toString(),
         'limit': limit.toString(),
+        'role': role,
       };
       final response = await _httpClient.get('api/v1/search/user', payload);
       switch(response.statusCode) {

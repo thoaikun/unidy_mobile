@@ -4,6 +4,7 @@ import 'package:unidy_mobile/bloc/organization_profile_cubit.dart';
 import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/organization_model.dart';
 import 'package:unidy_mobile/utils/formatter_util.dart';
+import 'package:unidy_mobile/viewmodel/organization/home/organization_profile_viewmodel.dart';
 
 class OrganizationProfile extends StatefulWidget {
   const OrganizationProfile({super.key});
@@ -25,7 +26,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
   }
 
   SliverToBoxAdapter _buildProfileHeader() {
-    Organization organization = context.watch<OrganizationProfileCubit>().state;
+    Organization organization = Provider.of<OrganizationProfileViewModel>(context).organization;
 
     return SliverToBoxAdapter(
         child: Column(
@@ -90,7 +91,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
   }
 
   SliverToBoxAdapter _buildProfileInfo() {
-    Organization organization = context.watch<OrganizationProfileCubit>().state;
+    Organization organization = Provider.of<OrganizationProfileViewModel>(context).organization;
 
     return SliverToBoxAdapter(
       child: Column(
@@ -166,7 +167,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
   }
 
   SliverToBoxAdapter _buildProfileActivity() {
-    Organization organization = context.watch<OrganizationProfileCubit>().state;
+    Organization organization = Provider.of<OrganizationProfileViewModel>(context).organization;
 
     return SliverToBoxAdapter(
       child: Container(

@@ -96,7 +96,7 @@ class _ProfileState extends State<Profile> {
   }
 
   SliverToBoxAdapter _buildProfileInfo() {
-    User user = context.watch<ProfileCubit>().state;
+    User user =  Provider.of<ProfileViewModel>(context, listen: true).user;
 
     return SliverToBoxAdapter(
       child: Column(

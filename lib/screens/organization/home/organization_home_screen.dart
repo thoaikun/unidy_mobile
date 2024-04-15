@@ -25,23 +25,6 @@ class _OrganizationHomeScreenState extends State<OrganizationHomeScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    Organization organization = context.watch<OrganizationProfileCubit>().state;
-    if (organization.userId == 0) {
-      OrganizationProfileViewModel organizationProfileViewModel = Provider.of<OrganizationProfileViewModel>(context, listen: true);
-      organizationProfileViewModel.getOrganizationProfile();
-      context.read<OrganizationProfileCubit>().setProfile(organizationProfileViewModel.organization);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Consumer<NavigationViewModel>(
       builder: (BuildContext context, NavigationViewModel navigationViewModel, Widget? child) => Scaffold(

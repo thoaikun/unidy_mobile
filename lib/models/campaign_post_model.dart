@@ -133,7 +133,7 @@ class Campaign {
     createDate: json["createDate"],
     updateDate: json["updateDate"],
     isBlock: json["isBlock"],
-    linkImage: json["linkImage"],
+    linkImage: json["linkImage"] ?? json['link_image'],
     userNode: json["userNode"],
     donate: json["donate"],
     donationBudget: json["donationBudget"],

@@ -18,8 +18,8 @@ class _OrganizationHomeScreenContainerState extends State<OrganizationHomeScreen
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
+          ChangeNotifierProvider(create: (_) => OrganizationProfileViewModel(context: context)),
           ChangeNotifierProvider(create: (_) => NavigationViewModel()),
-          ChangeNotifierProvider(create: (_) => OrganizationProfileViewModel()),
           ChangeNotifierProvider(create: (_) => OrganizationDashboardViewModel()),
           ChangeNotifierProvider(create: (_) => OrganizationCampaignHistoryViewModel())
         ],

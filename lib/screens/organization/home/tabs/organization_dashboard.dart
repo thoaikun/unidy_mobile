@@ -11,6 +11,8 @@ import 'package:unidy_mobile/viewmodel/organization/home/organization_dashboard_
 import 'package:unidy_mobile/widgets/card/organization_campaign_card.dart';
 import 'package:unidy_mobile/widgets/empty.dart';
 
+import '../../../../viewmodel/organization/home/organization_profile_viewmodel.dart';
+
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
@@ -95,7 +97,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   SliverToBoxAdapter _buildOrganizationGeneralInfo() {
-    Organization organization = context.watch<OrganizationProfileCubit>().state;
+    Organization organization = Provider.of<OrganizationProfileViewModel>(context).organization;
 
     double size = MediaQuery.of(context).size.width - 40 - 10 / 2;
     BoxDecoration decoration = BoxDecoration(
