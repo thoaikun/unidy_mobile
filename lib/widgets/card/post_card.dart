@@ -158,7 +158,7 @@ class PostCard extends StatelessWidget {
   Widget _buildPostInteraction(BuildContext context) {
     int totalLike = 0;
     if (post?.isLiked == true) {
-      totalLike = (post?.likeCount ?? 0) + 1;
+      totalLike = (post?.likeCount ?? 0);
     }
     else if (post?.isLiked == false) {
       totalLike = post?.likeCount ?? 0;
@@ -490,7 +490,7 @@ class CampaignPostCard extends StatelessWidget {
   Widget _buildPostInteraction(BuildContext context) {
     int totalLike = 0;
     if (campaignPost.isLiked == true) {
-      totalLike = campaignPost.likeCount + 1;
+      totalLike = campaignPost.likeCount;
     }
     else if (campaignPost.isLiked == false) {
       totalLike = campaignPost.likeCount;
