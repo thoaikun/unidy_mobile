@@ -20,7 +20,8 @@ class ProfileCubit extends Cubit<User> {
         job: payload['job'] ?? state.job,
         role: payload['role'] ?? state.role,
         dayOfBirth: payload['dayOfBirth'] ?? state.dayOfBirth,
-        workLocation: payload['workLocation'] ?? state.workLocation
+        workLocation: payload['workLocation'] ?? state.workLocation,
+        image: state.image
     );
     emit(newProfile);
   }

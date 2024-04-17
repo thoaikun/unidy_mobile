@@ -118,7 +118,7 @@ class Input extends StatelessWidget {
       controller: controller,
       focusNode: focusNode,
       decoration: getInputDecoration(),
-      minLines: 1,
+      minLines: 3,
       keyboardType: TextInputType.multiline,
       maxLines: null,
     );

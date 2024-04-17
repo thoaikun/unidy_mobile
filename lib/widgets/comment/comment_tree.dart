@@ -131,8 +131,7 @@ class _CommentTreeState extends State<CommentTree> {
                             placeholder: 'Nhập bình luận',
                             suffixIcon: IconButton(
                                 onPressed: () {
-                                  User user = context.read<ProfileCubit>().state;
-                                  commentViewModel.onWriteComment(user);
+                                  commentViewModel.onWriteComment();
                                 },
                                 icon: const Icon(Icons.send_rounded))
                         )

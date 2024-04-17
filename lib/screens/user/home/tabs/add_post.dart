@@ -50,20 +50,10 @@ class _AddPostState extends State<AddPost> {
   }
 
   SliverToBoxAdapter _buildTextAreaInput(AddPostViewModel addPostViewModel) {
-    User user = context.watch<ProfileCubit>().state;
-
     return SliverToBoxAdapter(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: 20),
-            child: AvatarCard(
-              avatarUrl: user.image,
-              userName: user.fullName,
-            ),
-          ),
-          const SizedBox(height: 5),
           Input(
             controller: addPostViewModel.contentController,
             label: 'Nêu cảm nghĩ của bạn',

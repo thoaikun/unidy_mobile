@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:unidy_mobile/config/app_preferences.dart';
 import 'package:unidy_mobile/models/comment_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/services/campaign_service.dart';
@@ -17,6 +19,7 @@ class CommentViewModel extends ChangeNotifier {
   final TextEditingController commentController = TextEditingController();
   final PostService _postService = GetIt.instance<PostService>();
   final CampaignService _campaignService = GetIt.instance<CampaignService>();
+  final AppPreferences _appPreferences = GetIt.instance<AppPreferences>();
 
   final int LIMIT = 3;
   int _skip = 0;
@@ -163,7 +166,12 @@ class CommentViewModel extends ChangeNotifier {
     }
   }
 
-  void onWriteComment(User user) async {
+  void onWriteComment() async {
+    String? data = _appPreferences.getString("profile");
+    if (data == null) return;
+    Map<String, dynamic> json = jsonDecode(data);
+    User user = User.fromJson(json);
+
     try {
       if (focusCommentId != null) {
         if (commentType == ECommentType.campaignComment) {

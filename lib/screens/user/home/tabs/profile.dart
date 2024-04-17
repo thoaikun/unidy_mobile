@@ -207,22 +207,35 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Consumer<ProfileViewModel>(
       builder: (BuildContext context, ProfileViewModel profileViewModel, Widget? child) {
-        return Skeletonizer(
-          enabled: profileViewModel.loading,
-          child: CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              _buildProfileHeader(profileViewModel.user),
-              _buildProfileInfo(),
-              _buildProfileAchievement(),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                  child: Text('Bài đăng gần đây', style: Theme.of(context).textTheme.titleMedium),
+        return RefreshIndicator(
+          onRefresh: () async {
+            profileViewModel.cleanPostList();
+            profileViewModel.getUserProfile();
+            profileViewModel.getMyOwnPost();
+          },
+          backgroundColor: Colors.white,
+          strokeWidth: 2,
+          notificationPredicate: (ScrollNotification notification) {
+            return notification.depth == 0;
+          },
+          child: Skeletonizer(
+            enabled: profileViewModel.loading,
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                _buildProfileHeader(profileViewModel.user),
+                _buildProfileInfo(),
+                _buildProfileAchievement(),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                    child: Text('Bài đăng gần đây', style: Theme.of(context).textTheme.titleMedium),
+                  ),
                 ),
-              ),
-              _buildRecentPost(profileViewModel.postList, profileViewModel.user)
-            ],
+                _buildRecentPost(profileViewModel.postList, profileViewModel.user)
+              ],
+            ),
           ),
         );
       }
