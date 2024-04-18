@@ -103,7 +103,7 @@ class FriendsViewModel extends ChangeNotifier {
 
     try {
       await _userService.unfriend(userId);
-      _friendList.removeWhere((element) => element.userId != userId);
+      _friendList.removeWhere((element) => element.userId == userId);
       setFriendList(_friendList);
       return true;
     }

@@ -70,6 +70,7 @@ class ProfileViewModel extends ChangeNotifier {
     _userService.whoAmI()
       .then((user) {
         setUser(user);
+        return _appPreferences.setString('profile', jsonEncode(user.toJson()));
       })
       .catchError((error) {
         print(error);
@@ -107,11 +108,13 @@ class ProfileViewModel extends ChangeNotifier {
   void handleLikePost(Post post) {
     if (post.isLiked == true) {
       post.isLiked = false;
+      post.likeCount -= 1;
       notifyListeners();
       _postService.unlike(post.postId);
     }
     else {
       post.isLiked = true;
+      post.likeCount += 1;
       notifyListeners();
       _postService.like(post.postId);
     }

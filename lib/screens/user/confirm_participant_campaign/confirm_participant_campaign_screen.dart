@@ -5,6 +5,7 @@ import 'package:unidy_mobile/config/themes/color_config.dart';
 import 'package:unidy_mobile/models/campaign_post_model.dart';
 import 'package:unidy_mobile/models/user_model.dart';
 import 'package:unidy_mobile/viewmodel/user/confirm_participant_campaign_viewmodel.dart';
+import 'package:unidy_mobile/viewmodel/user/home/profile_viewmodel.dart';
 
 class ConfirmParticipantCampaign extends StatefulWidget {
   final CampaignPost campaignPost;
@@ -45,7 +46,7 @@ class _ConfirmParticipantCampaignState extends State<ConfirmParticipantCampaign>
   }
 
   Widget _buildPersonalInfo() {
-    User user = context.read<ProfileCubit>().state;
+    User? user = Provider.of<ConfirmParticipantCampaignViewModel>(context, listen: true).user;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -59,7 +60,7 @@ class _ConfirmParticipantCampaignState extends State<ConfirmParticipantCampaign>
           children: [
             const Icon(Icons.person_rounded, color: PrimaryColor.primary500, size: 18,),
             const Text('Họ và tên: '),
-            Text(user.fullName ?? 'Chưa cập nhật'),
+            Text(user?.fullName ?? 'Chưa cập nhật'),
           ],
         ),
         const SizedBox(height: 10),
@@ -69,7 +70,7 @@ class _ConfirmParticipantCampaignState extends State<ConfirmParticipantCampaign>
           children: [
             const Icon(Icons.phone_rounded, color: PrimaryColor.primary500, size: 18,),
             const Text('Số điện thoại: '),
-            Text(user.phone ?? 'Chưa cập nhật'),
+            Text(user?.phone ?? 'Chưa cập nhật'),
           ],
         )
       ],

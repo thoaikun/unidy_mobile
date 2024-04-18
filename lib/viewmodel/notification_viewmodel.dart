@@ -6,7 +6,7 @@ import 'package:unidy_mobile/services/user_service.dart';
 class NotificationViewModel extends ChangeNotifier {
   final UserService _userService = GetIt.instance<UserService>();
 
-  final int _limit = 5;
+  final int _limit = 10;
   int _page = 0;
   bool isFirstLoading = true;
   bool isLoadMoreLoading = false;
@@ -94,6 +94,12 @@ class NotificationViewModel extends ChangeNotifier {
 
   void onMarkAsReadItem(int notificationId) async {
     await _userService.markNotificationAsRead(notificationId);
+    for (var item in notificationItems) {
+      if (item.notificationId == notificationId) {
+        item.seenTime = DateTime.now();
+        break;
+      }
+    }
     totalUnseen --;
     notifyListeners();
   }

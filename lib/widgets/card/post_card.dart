@@ -156,27 +156,18 @@ class PostCard extends StatelessWidget {
   }
 
   Widget _buildPostInteraction(BuildContext context) {
-    int totalLike = 0;
-    if (post?.isLiked == true) {
-      totalLike = (post?.likeCount ?? 0);
-    }
-    else if (post?.isLiked == false) {
-      totalLike = post?.likeCount ?? 0;
-    }
-    else {
-      totalLike = 0;
-    }
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Row(
           children: [
             IconButton(
-              onPressed: () => debounce.call(),
+              onPressed: () {
+                debounce.call();
+              },
               icon: post?.isLiked ?? false ? const Icon(Icons.favorite_rounded, color: ErrorColor.error500) : const Icon(Icons.favorite_border_rounded)
             ),
-            Text('$totalLike lượt thích', style: Theme.of(context).textTheme.bodySmall)
+            Text('${post?.likeCount ?? 0} lượt thích', style: Theme.of(context).textTheme.bodySmall)
           ],
         ),
         IconButton(
@@ -316,7 +307,9 @@ class CampaignPostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onDoubleTap: () => debounce.call(),
+        onDoubleTap: () {
+          debounce.call();
+        },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 0, 15),
         child: Column(
@@ -488,17 +481,6 @@ class CampaignPostCard extends StatelessWidget {
   }
 
   Widget _buildPostInteraction(BuildContext context) {
-    int totalLike = 0;
-    if (campaignPost.isLiked == true) {
-      totalLike = campaignPost.likeCount;
-    }
-    else if (campaignPost.isLiked == false) {
-      totalLike = campaignPost.likeCount;
-    }
-    else {
-      totalLike = 0;
-    }
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -508,7 +490,7 @@ class CampaignPostCard extends StatelessWidget {
                 onPressed: () => debounce.call(),
                 icon: campaignPost.isLiked ?? false ? const Icon(Icons.favorite_rounded, color: ErrorColor.error500) : const Icon(Icons.favorite_border_rounded)
             ),
-            Text('$totalLike lượt thích', style: Theme.of(context).textTheme.bodySmall)
+            Text('${campaignPost.likeCount} lượt thích', style: Theme.of(context).textTheme.bodySmall)
           ],
         ),
         IconButton(

@@ -133,11 +133,13 @@ class DashboardViewModel extends ChangeNotifier {
   void handleLikeCampaign(CampaignPost campaign) {
     if (campaign.isLiked == true) {
       campaign.isLiked = false;
+      campaign.likeCount -= 1;
       notifyListeners();
       _campaignService.unlike(campaign.campaign.campaignId);
     }
     else {
       campaign.isLiked = true;
+      campaign.likeCount += 1;
       notifyListeners();
       _campaignService.like(campaign.campaign.campaignId);
     }

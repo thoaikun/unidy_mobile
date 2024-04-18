@@ -132,7 +132,7 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   void appendReplies(int commentId, List<Comment> replies, List<Comment> baseComment, int level) {
-    if (level > 3) return;
+    if (level > 3 || baseComment.isEmpty) return;
 
     for (Comment comment in baseComment) {
       if (comment.body.commentId == commentId) {
@@ -146,7 +146,7 @@ class CommentViewModel extends ChangeNotifier {
     }
 
     for (Comment comment in baseComment) {
-      return appendReplies(commentId, replies, comment.replies, level + 1);
+      appendReplies(commentId, replies, comment.replies, level + 1);
     }
   }
 
@@ -162,7 +162,7 @@ class CommentViewModel extends ChangeNotifier {
     }
 
     for (Comment comment in baseComment) {
-      return updateHaveReply(commentId, replies, comment.replies, level + 1, value);
+      updateHaveReply(commentId, replies, comment.replies, level + 1, value);
     }
   }
 

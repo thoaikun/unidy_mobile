@@ -122,7 +122,8 @@ class DetailCampaignViewModel extends ChangeNotifier {
 
   void getCampaignData() async {
     try {
-      campaign = await _campaignService.getCampaignByCampaignId(campaignId ?? '0');
+      CampaignPost data = await _campaignService.getCampaignByCampaignId(campaignId ?? '0');
+      campaign = data.campaign;
       notifyListeners();
     }
     catch (e) {

@@ -12,13 +12,13 @@ import 'package:unidy_mobile/utils/exception_util.dart';
 class CampaignService extends Service {
   HttpClient httpClient = GetIt.instance<HttpClient>();
 
-  Future<Campaign> getCampaignByCampaignId(String campaignId) async {
+  Future<CampaignPost> getCampaignByCampaignId(String campaignId) async {
     try {
       Response response = await httpClient.get('api/v1/campaign/$campaignId');
 
       switch(response.statusCode) {
         case 200:
-          Campaign campaign = campaignFromJson(utf8.decode(response.bodyBytes));
+          CampaignPost campaign = campaignPostFromJson(utf8.decode(response.bodyBytes));
           return campaign;
         case 400:
           throw ResponseException(value: 'CampaignId không đúng', code: ExceptionErrorCode.invalid);
