@@ -105,7 +105,7 @@ class CampaignService extends Service {
 
   Future<void> registerAsVolunteer(String campaignId) async {
     try {
-      Response response = await httpClient.get('api/v1/campaign/register?campaignId=$campaignId',);
+      Response response = await httpClient.patch('api/v1/campaign/register?campaignId=$campaignId',);
 
       switch(response.statusCode) {
         case 200:
