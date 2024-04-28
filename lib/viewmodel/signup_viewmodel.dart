@@ -111,8 +111,8 @@ class SignUpViewModel extends ChangeNotifier {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(1800),
+      lastDate: DateTime(DateTime.now().year),
     );
     if (picked != null && picked != DateTime.now()) {
       String date = DateFormat('dd/MM/yyyy').format(picked).toString();

@@ -163,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PopScope(canPop: false, child: VolunteerCategoriesSelectionScreen())));
   }
 
-  void showErrorDialog([String? title, String? content]) {
+  void showErrorDialog({String? title, String? content}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

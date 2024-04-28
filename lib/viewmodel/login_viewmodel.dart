@@ -16,7 +16,7 @@ import 'package:unidy_mobile/utils/stream_transformer.dart';
 class LoginViewModel extends ChangeNotifier {
   void Function(ERole role) navigateToHomeScreen;
   void Function() navigateToVolunteerCategoriesSelectionScreen;
-  void Function([String? title, String? content]) showErrorDialog;
+  void Function({String? title, String? content}) showErrorDialog;
 
   final AuthenticationService authenticationService = GetIt.instance<AuthenticationService>();
   HttpClient httpClient = GetIt.instance<HttpClient>();
@@ -137,8 +137,13 @@ class LoginViewModel extends ChangeNotifier {
       _setLoadingLogin(false);
     }
     else if (error is ResponseException) {
-      _setEmailError(error.message);
-      _setPasswordError(error.message);
+      if (error.code == ExceptionErrorCode.invalidLogin) {
+        _setEmailError(error.message);
+        _setPasswordError(error.message);
+      }
+      else if (error.code == ExceptionErrorCode.notApproveAccount) {
+        showErrorDialog(title: 'Tài khoản chưa được xác thực', content: 'Tài khoản của bạn chưa được phê duyệt, vui lòng liên hệ với quản trị viên để được hỗ trợ');
+      }
       _setLoadingLogin(false);
     }
     else {

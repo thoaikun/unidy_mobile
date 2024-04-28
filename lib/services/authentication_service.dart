@@ -23,8 +23,10 @@ class AuthenticationService extends Service {
           ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
         case 403:
-          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
+        case 406:
+          ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
+          throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.notApproveAccount);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
       }
@@ -45,7 +47,6 @@ class AuthenticationService extends Service {
           ErrorResponse errorResponse = errorFromJson(response.body);
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidLogin);
         case 403:
-          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -81,7 +82,6 @@ class AuthenticationService extends Service {
           ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidEmail);
         case 403:
-          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
@@ -104,7 +104,6 @@ class AuthenticationService extends Service {
           ErrorResponse errorResponse = errorFromJson(utf8.decode(response.bodyBytes));
           throw ResponseException(value: errorResponse.error, code: ExceptionErrorCode.invalidOtp);
         case 403:
-          catchForbidden();
           throw ResponseException(value: 'Bạn không có quyền phù hợp', code: ExceptionErrorCode.invalidToken);
         default:
           throw Exception(['Hệ thống đang bận, vui lòng thử lại sau']);
